@@ -63,9 +63,6 @@ namespace Com.MyCompany.MyGame
 
         #region MonoBehaviour CallBacks
 
-        /// <summary>
-        /// MonoBehaviour method called on GameObject by Unity during early initialization phase.
-        /// </summary>
         void Awake()
         {
             if (beams == null)
@@ -85,17 +82,17 @@ namespace Com.MyCompany.MyGame
             }
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
+            // 레벨 씬이 로드될 때 인스턴스가 살아남도록 함 
             DontDestroyOnLoad(this.gameObject);
         }
 
-        /// <summary>
-        /// MonoBehaviour method called on GameObject by Unity during initialization phase.
-        /// </summary>
         void Start()
         {
+            // CameraWork 를 불러옴
             CameraWork _cameraWork = this.gameObject.GetComponent<CameraWork>();
             if (_cameraWork != null)
             {
+                // 해당 뷰가 로컬 클라이언트이면 카메라가 따라다니도록 함 
                 if (photonView.IsMine)
                 {
                     _cameraWork.OnStartFollowing();
@@ -108,6 +105,7 @@ namespace Com.MyCompany.MyGame
             if (playerUiPrefab != null)
             {
                 GameObject _uiGo = Instantiate(playerUiPrefab);
+                // 대상의 SetTarget 메서드를 호출함
                 _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
             }
             else

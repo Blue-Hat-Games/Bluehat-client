@@ -18,16 +18,11 @@ namespace Com.MyCompany.MyGame
 
         #region Photon Callbacks
 
-
-        /// <summary>
-        /// Called when the local player left the room. We need to load the launcher scene.
-        /// </summary>
+        // 로컬 플레이어가 룸을 떠날 때 호출되고, 'Launcher' 씬을 로드함 
         public override void OnLeftRoom()
         {
             SceneManager.LoadScene(0);
         }
-
-
         #endregion
 
 
@@ -40,15 +35,14 @@ namespace Com.MyCompany.MyGame
          * 추상화를 위해서 public 메소드로 wrap 하였습니다. 
          * 다음 단계에서는 데이터 저장 또는 확인 단계 추가등 더 많은 기능 추가를 원할 것 입니다.
          * */
+        
+        // 'Leave Button' 온클릭 메서드
         public void LeaveRoom()
         {
             PhotonNetwork.LeaveRoom();
         }
 
-
         #endregion
-
-        
 
         #region MonoBehaviour CallBacks
         void Start()
@@ -60,10 +54,12 @@ namespace Com.MyCompany.MyGame
             }
             else
             {
+                // 로컬 플레이어 인스턴스가 없으면,
                 if (PlayerManager.LocalPlayerInstance == null)
                 {
                     Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
+                    // 
                     PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 5f, 0f), Quaternion.identity, 0);
                 }
                 else
