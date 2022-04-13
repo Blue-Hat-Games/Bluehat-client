@@ -35,6 +35,7 @@ public class Login : MonoBehaviour
     private string key_sendedEmail = "SendedEmail";
     private string key_completedAuth = "CompletedAuth";
 
+    private string url_emailLoginVerify = "http://api.bluehat.games/auth";
     // PlayerPref에 저장할 것
     // 1. 이메일 인증을 보내서 완료만 하면 되는지
     // - Login 버튼을 이메일 다시 보내기 버튼으로 변경 
@@ -50,7 +51,7 @@ public class Login : MonoBehaviour
         btn_play.gameObject.SetActive(false);
         btn_login.onClick.AddListener(() =>
         {
-            StartCoroutine(RequestAuthToServer(URL, inputEmail.text, inputWallet.text));
+            StartCoroutine(RequestAuthToServer(url_emailLoginVerify, inputEmail.text, inputWallet.text));
         });
 
         btn_refresh.onClick.AddListener(() =>
@@ -146,6 +147,9 @@ public class Login : MonoBehaviour
             }
             else
             {
+                if(request.downloadHandler.text == "success") {
+                    
+                }
                 StartCoroutine(ShowAlertPopup("이메일에서 인증을 완료해주세요."));
                 // 웹서버로부터 받은 응답 내용 출력
                 Debug.Log(request.downloadHandler.text);
