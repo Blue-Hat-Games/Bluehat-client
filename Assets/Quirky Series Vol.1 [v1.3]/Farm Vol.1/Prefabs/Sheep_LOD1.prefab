@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!136 &6538804005589490477
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8441212669261301438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.88480496
+  m_Height: 2.7179973
+  m_Direction: 2
+  m_Center: {x: -0.00035232306, y: 1.181133, z: 0.045187593}
+--- !u!1001 &8441212669261332490
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 100020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_Name
+      value: Sheep_LOD1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400020, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: b5c87c7e49910b044ae03118ab4e61c2, type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1a858ad6b4beec34282c15210b1f93ae, type: 3}
+--- !u!1 &8441212669261301438 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100020, guid: 1a858ad6b4beec34282c15210b1f93ae,
+    type: 3}
+  m_PrefabInstance: {fileID: 8441212669261332490}
+  m_PrefabAsset: {fileID: 0}
