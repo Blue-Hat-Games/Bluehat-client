@@ -34,6 +34,8 @@ public class GetColorTest : MonoBehaviour
                 Debug.Log(request.downloadHandler.data);
             }
     }
+
+    
     void Start()
     {
         StartCoroutine(DownLoadGet(URL));
