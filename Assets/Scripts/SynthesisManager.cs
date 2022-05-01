@@ -46,9 +46,12 @@ public class SynthesisManager : MonoBehaviour
     private float adjustAnimaionSpeed = 0.2f;
 
     private GameObject[] contentUis;
+    private DataManager dataManager;
     // Start is called before the first frame update
     void Start()
     {
+        dataManager = GameObject.FindObjectOfType<DataManager>();
+        //testAnimalList[6] = dataManager.GetAnimal();
         contentUis = new GameObject[testAnimalList.Length];
         StartCoroutine(MakeThumbnailAnimalList());
 

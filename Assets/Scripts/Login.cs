@@ -40,6 +40,7 @@ namespace BluehatGames
         public GameObject alertPopup;
         public Text alertText;
         private string emailMessage = "이메일에서 인증을 완료해주세요.";
+        private string authCompleted = "로그인에 성공했습니다!";
         private string warnEmailMessage = "올바른 이메일 주소가 아닙니다.";
         private string warnWalletMessage = "올바른 지갑 주소가 아닙니다.";
 
@@ -114,10 +115,19 @@ namespace BluehatGames
                     Debug.Log($"response => {response} | response.msg = {response.msg}");
                     if(response.msg == "Register Success")
                     {
+                        if (null != popupCoroutine)
+                        {
+                            // 기존 코루틴이 있었다면 정지시키고 새로운 코루틴이 실행되도록 함 
+                            StopCoroutine(popupCoroutine);
+                        }
+
+                        StartCoroutine(ShowAlertPopup(authCompleted));
+
                         SetJoinCompletedSetting();
                         SaveClientInfo(key_authStatus, AuthStatus._JOIN_COMPLETED);
                         PlayerPrefs.SetString("access_token", response.access_token);
                         Debug.Log("Login access_token response => " + PlayerPrefs.GetString("access_token"));
+                        
                     } else
                     {
                         Debug.LogError("Server: Email not Verified.");
@@ -195,21 +205,23 @@ namespace BluehatGames
             if (URL == ApiUrl.emailLoginVerify)
             {
                 jsonData = SetPlayerJoinInfoToJsonData(inputEmail, inputWallet);
+                // TEST; 이메일 인증 완료된 경우의 플로우
+                if (null != popupCoroutine)
+                {
+                    // 기존 코루틴이 있었다면 정지시키고 새로운 코루틴이 실행되도록 함 
+                    StopCoroutine(popupCoroutine);
+                }
+
+                StartCoroutine(ShowAlertPopup(emailMessage));
             } 
             else if (URL == ApiUrl.login)
             {
                 jsonData = SetPlayerInfoToJsonData(inputEmail, inputWallet);
+
             }
             Debug.Log(jsonData);
 
 
-            // TEST; 이메일 인증 완료된 경우의 플로우
-            if (null != popupCoroutine)
-            {
-                // 기존 코루틴이 있었다면 정지시키고 새로운 코루틴이 실행되도록 함 
-                StopCoroutine(popupCoroutine);
-            }
-            StartCoroutine(ShowAlertPopup(emailMessage));
             btn_login.GetComponentInChildren<Text>().text = "Resend Email";
 
             // 이메일을 보냈다는 걸 저장함
@@ -234,6 +246,8 @@ namespace BluehatGames
                 {
                     Debug.Log("request Success! Action Invoke");
                     action.Invoke(request);
+                   
+
 
                 }
             }

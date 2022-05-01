@@ -9,7 +9,10 @@ public class ColorChangeManager : MonoBehaviour
 {
 
     private GameObject targetAnimal;
-    
+    public Color tempColor1;
+    public Color tempColor2;
+    public Color tempColor3;
+    public Color tempColor4;
     public void SetTargetAnimal(GameObject animal)
     {
         targetAnimal = animal;
@@ -50,35 +53,37 @@ public class ColorChangeManager : MonoBehaviour
             {
                 UnityEngine.Color color = sourcePixels[h * originalTex.width + w];
                 // 1. 이번 픽셀을 변경될 것인가에 대한 랜덤값
-                var random = UnityEngine.Random.Range(0, 2);
-                bool isChangeThisPixel = random == 0? false : true;
+                var random = UnityEngine.Random.Range(0, 10);
+                bool isChangeThisPixel = random > 4 ? false : true;
 
                 UnityEngine.Color randomColor = color;
                 if (isChangeThisPixel)
                 {
                     // 2. 1번이 true일 경우 변경할 색에 대한 랜덤값
                     var randomColorValue = UnityEngine.Random.Range(0.0f, 1.0f);
-
+                    Debug.Log($"random Color Value = {randomColorValue}");
                     // 3. r,g,b, 중 어느 값을 바꿀 것인거에 대한 랜덤값
-                    random = UnityEngine.Random.Range(0, 5);
+                    random = UnityEngine.Random.Range(0, 10);
 
+                    Debug.Log($"Before => {randomColor}");
                     switch (random)
                     {
                         case 0:
-                            randomColor = new UnityEngine.Color(randomColorValue, color.g, color.b);
+                            randomColor = tempColor1;
                             break;
                         case 1:
-                            randomColor = new UnityEngine.Color(color.r, randomColorValue, color.b);
+                            randomColor = tempColor2;
                             break;
                         case 2:
-                            randomColor = new UnityEngine.Color(color.r, color.g, randomColorValue);
+                            randomColor = tempColor3;
                             break;
                         default:
-                            randomColor = new UnityEngine.Color(randomColorValue, randomColorValue, randomColorValue);
+                            randomColor = tempColor4;
                             break;
                     }
-
+                    Debug.Log($"After => {randomColor}");
                 }
+
                 resultTex.SetPixel(w, h, randomColor);     
             }
         }

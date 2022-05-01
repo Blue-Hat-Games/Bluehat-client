@@ -15,6 +15,7 @@ public class SaveData
 	public string wallet_address;
 
 }
+
 public static class SaveSystem
 {
 	private static string SavePath => Application.persistentDataPath + "/saves/";

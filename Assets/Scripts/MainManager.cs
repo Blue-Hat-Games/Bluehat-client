@@ -15,8 +15,16 @@ namespace BluehatGames
         private string key_autoStatus = "AuthStatus";
         public Button btn_synthesis;
         public Button btn_multiplay;
+
+        private DataManager dataManager;
+
+        public Text text_fistAnimal;
+
         void Start()
         {
+            text_fistAnimal.gameObject.SetActive(false);
+            dataManager = GameObject.FindObjectOfType<DataManager>();
+
             if (GetClientInfo(key_autoStatus) == AuthStatus._JOIN_COMPLETED)
             {
                 Debug.Log("첫 번째 동물 획득 플로우");
@@ -45,19 +53,7 @@ namespace BluehatGames
 
         public IEnumerator GetFirstAnimalFromServer(string URL)
         {
-            //// 서버로 보낼 Json 데이터 셋팅
-            //PlayerInfo playerInfo = new PlayerInfo();
-            //SaveData loadData = SaveSystem.Load("userInfo");
-            //if (loadData != null)
-            //{
-            //    Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
-            //}
 
-            //playerInfo.email = loadData.email;
-            //playerInfo.wallet_address = loadData.wallet_address;
-
-            //var jsonData = JsonUtility.ToJson(playerInfo); ;
-            //byte[] byteInfo = Encoding.UTF8.GetBytes(jsonData);
             // 웹서버로 Post 요청을 보냄
             using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
             {
@@ -67,6 +63,7 @@ namespace BluehatGames
                                                                                         // 헤더를 Json으로 설정
 
                 string access_token = PlayerPrefs.GetString("access_token");
+                Debug.Log($"access_token = {access_token}");
                 request.SetRequestHeader("Authorization", access_token);
 
                 yield return request.SendWebRequest();
@@ -82,7 +79,13 @@ namespace BluehatGames
 
                     Debug.Log(request.downloadHandler.text);
                     var animalName = responseType;
+                    dataManager.AddNewAnimal(animalName);
                     LoadAnimalPrefab(animalName);
+
+                    text_fistAnimal.text = $"Your First Animal is {animalName}!";
+                    text_fistAnimal.gameObject.SetActive(true);
+                    yield return new WaitForSeconds(2);
+                    text_fistAnimal.gameObject.SetActive(false);
                 }
             }
         }

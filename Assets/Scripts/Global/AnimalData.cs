@@ -1,32 +1,51 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class AnimalData : MonoBehaviour
+public static class AnimalData 
 {
-   
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private static string SavePath => Application.persistentDataPath + "/saves/";
+	
+	
+	public static void Save(AnimalListForSave saveData, string saveFileName)
+	{
+		if (!Directory.Exists(SavePath))
+		{
+			Directory.CreateDirectory(SavePath);
+		}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+		AnimalListForSave animalSaveData = new AnimalListForSave();
+		
+
+		
+		string saveJson = JsonUtility.ToJson(animalSaveData);
+
+		string saveFilePath = SavePath + saveFileName + ".json";
+		File.WriteAllText(saveFilePath, saveJson);
+		Debug.Log("Save Success: " + saveFilePath);
+	}
+
+
+	public static AnimalListForSave Load(string saveFileName)
+	{
+		string saveFilePath = SavePath + saveFileName + ".json";
+
+		if (!File.Exists(saveFilePath))
+		{
+			Debug.LogError("No such saveFile exists");
+			return null;
+		}
+
+		string saveFile = File.ReadAllText(saveFilePath);
+		AnimalListForSave saveData = JsonUtility.FromJson<AnimalListForSave>(saveFile);
+		return saveData;
+	}
 }
 
 [Serializable]
-public class MainData
+public class AnimalListForSave
 {
-    public Animal[] animalList;
-}
-
-public class Animal
-{
-    public string email;
-    public string name;
+    public List<string> myAnimalList = new List<string>();
 }
