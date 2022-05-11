@@ -12,7 +12,6 @@ namespace BluehatGames
 
     public class MainManager : MonoBehaviour
     {
-        private string key_autoStatus = "AuthStatus";
         public Button btn_synthesis;
         public Button btn_multiplay;
 
@@ -25,10 +24,10 @@ namespace BluehatGames
             text_fistAnimal.gameObject.SetActive(false);
             dataManager = GameObject.FindObjectOfType<DataManager>();
 
-            if (GetClientInfo(key_autoStatus) == AuthStatus._JOIN_COMPLETED)
+            if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
             {
                 Debug.Log("첫 번째 동물 획득 플로우");
-                StartCoroutine(GetFirstAnimalFromServer(ApiUrl.animalNew));
+                StartCoroutine(GetFirstAnimalFromServer(ApiUrl.postAnimalNew));
             }
 
             btn_synthesis.onClick.AddListener(() =>
@@ -62,9 +61,9 @@ namespace BluehatGames
                 request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // 다운로드 핸들러
                                                                                         // 헤더를 Json으로 설정
 
-                string access_token = PlayerPrefs.GetString("access_token");
+                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
                 Debug.Log($"access_token = {access_token}");
-                request.SetRequestHeader("Authorization", access_token);
+                request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
 
                 yield return request.SendWebRequest();
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)

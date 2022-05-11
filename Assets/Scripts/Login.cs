@@ -52,6 +52,7 @@ namespace BluehatGames
         private Coroutine popupCoroutine;
         // PlayerPref
         private string key_authStatus = "AuthStatus";
+        private string key_accessToken = "AccessToken";
 
         // PlayerPref에 저장할 것
         // 1. 이메일 인증을 보내서 완료만 하면 되는지
@@ -73,6 +74,12 @@ namespace BluehatGames
 
         void Start()
         {
+            SaveData loadData = SaveSystem.Load("userInfo");
+            if (loadData != null)
+            {
+                Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
+            }
+
             Debug.Log($"Client Current Status => {GetClientInfo(key_authStatus)}");
             // 로그인 버튼 onClick
             btn_login.onClick.AddListener(() =>
@@ -113,7 +120,7 @@ namespace BluehatGames
                     Debug.Log(request.downloadHandler.text);
                     var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                     Debug.Log($"response => {response} | response.msg = {response.msg}");
-                    if(response.msg == "Register Success")
+                    if(response.msg == "Register Success" || response.msg == "Login Success")
                     {
                         if (null != popupCoroutine)
                         {
@@ -125,8 +132,8 @@ namespace BluehatGames
 
                         SetJoinCompletedSetting();
                         SaveClientInfo(key_authStatus, AuthStatus._JOIN_COMPLETED);
-                        PlayerPrefs.SetString("access_token", response.access_token);
-                        Debug.Log("Login access_token response => " + PlayerPrefs.GetString("access_token"));
+                        PlayerPrefs.SetString(PlayerPrefsKey.key_accessToken, response.access_token);
+                        Debug.Log("Login access_token response => " + PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken));
                         
                     } else
                     {
@@ -246,9 +253,6 @@ namespace BluehatGames
                 {
                     Debug.Log("request Success! Action Invoke");
                     action.Invoke(request);
-                   
-
-
                 }
             }
         }
