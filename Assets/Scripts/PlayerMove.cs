@@ -1,0 +1,85 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// 마우스 입력에 따라 카메라는 상하로만 회전
+// 좌우는 몸체 회전하고 싶다
+// 사용자 입력에 따라 이동하고 싶다
+
+public class PlayerMove : MonoBehaviour
+{
+    public Transform camera;
+
+    // 필요속성
+    public float speed = 5;
+    public float jumpPower = 10;
+    public float gravity = -20;
+    public float rotSpeed = 10;
+    float yVelocity = 0;
+    float camAngle; // 상하로만
+    float bodyAngle; // 좌우로만 eulerangles의 y만
+
+    CharacterController cc;
+    void Start()
+    {
+        cc = GetComponent<CharacterController>();
+        
+    }
+
+    void Update()
+    {
+        // 마우스 입력에 따라 카메라는 상하로만 회전
+        RotateCamera();
+        // 좌우는 몸체 회전하고 싶다
+        RotateBody();
+        // 사용자 입력에 따라 이동하고 싶다
+        Move();
+    }
+
+    private void RotateCamera()
+    {
+        float value = Input.GetAxis("Mouse Y");
+        camAngle += value * rotSpeed * Time.deltaTime;
+        camAngle = Mathf.Clamp(camAngle, -60, 60);
+
+        // Camera는 플레이어의 자식이므로 로컬 기준에서 돌려야 함 
+        camera.localEulerAngles = new Vector3(-camAngle, 0, 0);
+        
+    }
+
+    private void RotateBody()
+    {
+        float value = Input.GetAxis("Mouse X");
+        bodyAngle += value * rotSpeed * Time.deltaTime;
+
+        // 좌우는 플레이어 전체를 회전 
+        transform.eulerAngles = new Vector3(0, bodyAngle, 0);
+    }
+
+    private void Move()
+    {
+        // 1. 사용자 입력에 따라 
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        // 2. 방향이 필요
+        Vector3 dir = new Vector3(h, 0, v) * speed; // speed를 곱해서 벡터의 길이까지
+        // -> 카메라가 바라보는 방향으로 방향 전환 
+        dir = camera.TransformDirection(dir);
+
+        // 바닥에 있으면 수직 속도를 0으로 하자 (수직항력)
+        if(cc.isGrounded)
+        {
+            yVelocity = 0;
+        }
+        // 점프
+        if(Input.GetButtonDown("Jump"))
+        {
+            yVelocity = jumpPower;
+        }
+        // 중력을 적용하고 싶다. v = v0 + at
+        yVelocity += gravity * Time.deltaTime;
+        dir.y = yVelocity;         
+        // 3. 이동하고 싶다 p = p0 + vt
+        cc.Move(dir * Time.deltaTime);
+    }
+}
