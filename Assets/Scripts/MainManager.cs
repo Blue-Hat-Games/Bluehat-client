@@ -90,8 +90,8 @@ namespace BluehatGames
         }
 
         private void LoadAnimalPrefab(string animalName) {
-            var path = $"Assets/Prefab/Animals/{animalName}.prefab";
-            GameObject obj = (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
+            var path = $"Prefab/Animals/{animalName}";
+            GameObject obj = Resources.Load(path) as GameObject;
             GameObject animal = Instantiate(obj, Vector3.zero, Quaternion.identity);
             animal.transform.LookAt(Camera.main.transform);
             Debug.Log($"Creating Animal is Success! => {animalName}");

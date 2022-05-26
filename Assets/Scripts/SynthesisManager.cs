@@ -242,8 +242,8 @@ public class SynthesisManager : MonoBehaviour
 
     private GameObject LoadAnimalPrefab(string animalName, Vector3 position, GameObject lookAtTarget)
     {
-        var path = $"Assets/Prefab/Animals/{animalName}.prefab";
-        GameObject obj = (GameObject)AssetDatabase.LoadAssetAtPath(path, typeof(GameObject));
+        var path = $"Prefab/Animals/{animalName}";
+        GameObject obj = Resources.Load(path) as GameObject;
         GameObject animal = Instantiate(obj, position, Quaternion.identity);
        
         animal.transform.LookAt(lookAtTarget.transform);

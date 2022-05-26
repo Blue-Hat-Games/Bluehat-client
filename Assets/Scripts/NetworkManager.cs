@@ -42,6 +42,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Vector3 randPos = Random.insideUnitSphere * 10; 
         // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
         randPos.y = 0;
+        // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
         PhotonNetwork.Instantiate("Player", randPos, Quaternion.identity);
     }
 

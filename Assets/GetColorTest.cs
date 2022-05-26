@@ -66,14 +66,14 @@ public class GetColorTest : MonoBehaviour
         // 새로 생성된 텍스처를 로컬에 저장
         //SaveTexture2DToPNGFile(huskyTex2, directoryPath, fileName);
         // 쉐이더 프로퍼티 출력
-        string[] shaderPropertyTypes = new string[] { "Color", "Vector", "Float", "Range", "Texture" };
-        int propertyCount = ShaderUtil.GetPropertyCount(huskyMesh_j.material.shader);
+        //string[] shaderPropertyTypes = new string[] { "Color", "Vector", "Float", "Range", "Texture" };
+        //int propertyCount = ShaderUtil.GetPropertyCount(huskyMesh_j.material.shader);
 
-        for (int index = 0; index < propertyCount; ++index)
-        {
-            Debug.Log(ShaderUtil.GetPropertyName(huskyMesh_j.material.shader, index) + "      "
-            + shaderPropertyTypes[(int)ShaderUtil.GetPropertyType(huskyMesh_j.material.shader, index)]);
-        }
+        //for (int index = 0; index < propertyCount; ++index)
+        //{
+        //    Debug.Log(ShaderUtil.GetPropertyName(huskyMesh_j.material.shader, index) + "      "
+        //    + shaderPropertyTypes[(int)ShaderUtil.GetPropertyType(huskyMesh_j.material.shader, index)]);
+        //}
 
     }
      private void SaveTexture2DToPNGFile(Texture2D texture, string directoryPath, string fileName)
