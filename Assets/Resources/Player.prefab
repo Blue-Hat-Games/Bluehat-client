@@ -260,7 +260,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6992068761411456399}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!1 &6992068762442259118
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,7 +457,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 6992068762494050900}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

@@ -20,6 +20,11 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
     float bodyAngle; // 좌우로만 eulerangles의 y만
 
     CharacterController cc;
+
+    // 받은 데이터 기억 변수 (보간처리하기 위해서)
+    Vector3 remotePos = Vector3.zero;
+    Quaternion remoteRot = Quaternion.identity;
+    Quaternion remoteCamRot = Quaternion.identity;
     void Start()
     {
         cc = GetComponent<CharacterController>();        
@@ -29,8 +34,13 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
     {
         // 나 자신이 아니라면 입력 무시
         if (false == photonView.IsMine)
+        {
+            transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
+            camera.rotation = Quaternion.Lerp(camera.rotation, remoteCamRot, 10 * Time.deltaTime);
             return;
-        
+        }
+    
         // 마우스 입력에 따라 카메라는 상하로만 회전
         RotateCamera();
         // 좌우는 몸체 회전하고 싶다
@@ -91,7 +101,7 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         // 내가 데이터를 보내는 중이라면
-        if(stream.IsWriting)
+        if(stream.IsWriting) // 내꺼보내는 거
         {
             // 이 방안에 있는 모든 사용자에게 브로드캐스트 
             // - 내 포지션 값을 보내보자
@@ -100,12 +110,16 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
             stream.SendNext(camera.rotation);
         }
         // 내가 데이터를 받는 중이라면 
-        else
+        else // 원격에 있는 나 
         {
             // 순서대로 보내면 순서대로 들어옴. 근데 타입캐스팅 해주어야 함
-            transform.position = (Vector3)stream.ReceiveNext();
-            transform.rotation = (Quaternion)stream.ReceiveNext();
-            camera.rotation = (Quaternion)stream.ReceiveNext(); 
+            // - 여기서 바로 적용하면 뚝뚝 끊김
+            //transform.position = (Vector3)stream.ReceiveNext();
+            //transform.rotation = (Quaternion)stream.ReceiveNext();
+            //camera.rotation = (Quaternion)stream.ReceiveNext(); 
+            remotePos = (Vector3)stream.ReceiveNext();
+            remoteRot = (Quaternion)stream.ReceiveNext();
+            remoteCamRot = (Quaternion)stream.ReceiveNext();
         }
     }
 }

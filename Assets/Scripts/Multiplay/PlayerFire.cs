@@ -51,10 +51,24 @@ public class PlayerFire : MonoBehaviourPun // Pun 상속해서 Network 객체가 됨
             {
                 // 없애자!
                 //Destroy(hitInfo.transform.gameObject);
-
+                // 그냥 Destroy하면 네트워크 상태에서는 사라지지 않음
+                // PhotonNetwork.Destory()로 없애야 하는데 단, PhotonView가 있는 객체만 없앨 수 있음
+                PhotonView pv = hitInfo.transform.GetComponent<PhotonView>();
+                if(pv)
+                {
+                    // RPC에 등록된 Damage라는 함수를 이 방안에 있는 모두에게 전송
+                    pv.RPC(nameof(Damage), RpcTarget.All); 
+                }
             }
-
-        }
-        
+        }        
     }
+
+    [PunRPC] // 이 밑의 함수는 RPC함수가 되고, 원격에서 호출할 수 있는 상태가 됨
+    public void Damage() 
+    {
+        // 자기가 스스로를 삭제 
+        PhotonNetwork.Destroy(this.gameObject);
+    }
+
 }
+
