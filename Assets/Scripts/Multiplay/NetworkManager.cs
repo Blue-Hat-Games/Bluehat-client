@@ -43,6 +43,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
         randPos.y = 0;
         // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
+        // - 첫번째 매개변수가 Resources에서 어떤 프리팹을 불러올 것인지를 나타냄 (로컬,리모트 둘다)
         PhotonNetwork.Instantiate("Player", randPos, Quaternion.identity);
     }
 

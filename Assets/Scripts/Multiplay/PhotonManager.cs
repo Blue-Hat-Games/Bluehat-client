@@ -78,11 +78,32 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("04. 방 입장 완료");        
         if(PhotonNetwork.IsMasterClient)
         {
+            // 방 입장을 위한 씬 로드
             PhotonNetwork.LoadLevel(SceneName._PhotonNetworkScene);
-            MultiplayGameManager.instance.isConnect = true;
+            StartCoroutine(RepeatIsConnect());
         }
     }
 
+    IEnumerator RepeatIsConnect() {
+        while (PhotonNetwork.LevelLoadingProgress < 1 ){ 
+            Debug.Log($"PhotonNetwork.LevelLoadingProgress => {PhotonNetwork.LevelLoadingProgress}");
+            yield return new WaitForEndOfFrame(); 
+        }
+
+        MultiplayGameManager.instance?.SetIsConnectTrue();
+        // while(true) {
+        //     yield return null;
+        //     Debug.Log("RepeatIsConnect....");
+        //     if(MultiplayGameManager.instance) {
+        //         MultiplayGameManager.instance?.SetIsConnectTrue();
+        //         if(MultiplayGameManager.instance.IsConnectTrue()) {
+        //             yield break;
+        //         }    
+        //     }
+            
+                
+        // }
+    }
     
     // 1. connection 과정 시작
     // - 이미 연결되었다면, 랜덤룸 입장 시도

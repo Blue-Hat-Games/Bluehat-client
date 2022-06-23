@@ -8,7 +8,7 @@ using Photon.Realtime;
 public class MultiplayGameManager : MonoBehaviour
 {
     public static MultiplayGameManager instance = null;
-    public bool isConnect = false;
+    private bool isConnect = false;
     
     private void Awake()
     {
@@ -28,9 +28,23 @@ public class MultiplayGameManager : MonoBehaviour
         StartCoroutine(CreatePlayer());
     }
 
+    public bool IsConnectTrue() {
+        Debug.Log("IsConnectTrue");
+        return isConnect;
+    }
+
+    public void SetIsConnectTrue() {
+        Debug.Log("SetIsConnectTrue");
+        this.isConnect = true;
+    }
+    
     IEnumerator CreatePlayer()
     {
-        yield return new WaitUntil(() => isConnect);
+        Debug.Log("MultiplayGameManager => CreatePlayer()");
+        // isConnect = true
+        // yield return new WaitUntil(() => isConnect);
+        // TODO: 로딩이 다 되고나서 되어야 하는데, 관련 포톤 함수를 못찾아서 일단 3초 정도 지연 후 Create 되도록 함
+        yield return new WaitForSeconds(3); // TEST 
         // 360도 Sphere 공간안에서 랜덤으로 한 점을 찍은 것
         Vector3 randPos = Random.insideUnitSphere * 10;
         // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
