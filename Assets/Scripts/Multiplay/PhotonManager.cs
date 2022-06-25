@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
+namespace BluehatGames {
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     private readonly string gameVersion = "v1.0";
@@ -132,4 +133,5 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
     }
 
+}
 }

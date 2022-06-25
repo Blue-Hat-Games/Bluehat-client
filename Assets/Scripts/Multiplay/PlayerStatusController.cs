@@ -1,15 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 /** 멀티플레이에서 플레이어의 상태
 - 에테르 에너지
 - 에테르 획득 개수
 */
-
+namespace BluehatGames {
 public class PlayerStatusController : MonoBehaviour
 {
+    public TextMeshProUGUI aetherCountText;
+    public TextMeshProUGUI gameOverTime;
+    public float gameTime;
     public static PlayerStatusController instance = null;
+    
     private void Awake()
     {
         if(instance == null) {
@@ -25,14 +30,56 @@ public class PlayerStatusController : MonoBehaviour
     private int aetherCount;
     
     public float addedAetherEnergyValue = 10;
-
     public int energyToExchangeAether = 50;
-    // slider가 0~1까지니까... 물체의 크기별로 획득가능한 걸 차등을 주면 좋은데
-    // 일단 빠르게 하기 위해
+
+    private void Start() {
+        aetherCountText.text = aetherCount.ToString();
+    }
+    private bool isStartTimeAttack = false;
+    public void SetStartTimeAttack() {
+        isStartTimeAttack = true;
+    }
+
+    private float elapsedTime = 0;
+    private bool isGameOver = false;
+    void Update() {
+        if(false == isStartTimeAttack)
+            return;
+        
+        gameTime -= Time.deltaTime;
+        if(gameTime < 0) {
+            gameOverTime.text = "00:00";
+            if(false == isGameOver) {
+                isGameOver = true;
+                
+                int myCoin = PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
+                SaveAetherCount(myCoin);
+                MultiplayUIController.instance.GameOver(GetAetherCount(), myCoin + GetAetherCount());
+            }
+        } else {
+            if((int)gameTime >=10) {
+                gameOverTime.text = $"00:{(int)gameTime}";
+            } else {
+                gameOverTime.text = $"00:0{(int)gameTime}";
+            }
+            
+        }      
+    }
+
+    private void SaveAetherCount(int myCoin) {
+        Debug.Log($"Save Completed: myCoin = {myCoin}, obtainedCoin = {GetAetherCount()}");
+        PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, myCoin + GetAetherCount());
+        
+    }
 
     public int GetAetherCount()
     {
         return aetherCount;
+    }
+
+    private void SetAetherCount() {
+        aetherCount++;
+        aetherCountText.text = aetherCount.ToString();
     }
 
     public float GetAetherEnergy()
@@ -41,15 +88,19 @@ public class PlayerStatusController : MonoBehaviour
     }
 
     public void AddAetherEnergy() {
-        aetherEnergy += addedAetherEnergyValue;
-        float adjustedEnergyValue = aetherEnergy/100;
-        // UI 설정
-        MultiplayUIController.instance.SetAetherProgressBar(adjustedEnergyValue);
         
+        aetherEnergy += addedAetherEnergyValue;
+        float adjustedEnergyValue = aetherEnergy/energyToExchangeAether;
+ 
         // 교환 가능한 만큼 에너지를 다 모았으면 에너지 초기화, 에테르 획득
-        if(aetherEnergy > energyToExchangeAether) {
+        if(aetherEnergy >= energyToExchangeAether) {
             aetherEnergy = 0;
-            aetherCount += 1;
+            // UI 설정
+            MultiplayUIController.instance.ResetAetherProgressBar();
+            SetAetherCount();
+        } else {
+            // UI 설정
+            MultiplayUIController.instance.SetAetherProgressBar(adjustedEnergyValue);
         }
     }
     
@@ -62,15 +113,5 @@ public class PlayerStatusController : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+}
 }

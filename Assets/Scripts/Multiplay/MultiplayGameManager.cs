@@ -5,11 +5,20 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
+namespace BluehatGames{
 public class MultiplayGameManager : MonoBehaviour
 {
     public static MultiplayGameManager instance = null;
     private bool isConnect = false;
     
+    public string playerPrefabPath;
+    public GameObject cameraPrefab;
+    private string selectedAnimal;
+    public void SetPlayerPrefabPath(string animalName) {
+        Debug.Log($"setPlayerPrefabPath -> {animalName}");
+        playerPrefabPath = $"Prefab/MultiplayAnimal/{animalName}";
+    }
+
     private void Awake()
     {
         if(instance == null)
@@ -23,8 +32,16 @@ public class MultiplayGameManager : MonoBehaviour
         }
         
     }
+
+    public void GameOver() {
+
+    }
+
     void Start()
     {
+        string animalName = PlayerPrefs.GetString(PlayerPrefsKey.key_multiplayAnimal);
+        SetPlayerPrefabPath(animalName);
+
         StartCoroutine(CreatePlayer());
     }
 
@@ -45,11 +62,15 @@ public class MultiplayGameManager : MonoBehaviour
         // yield return new WaitUntil(() => isConnect);
         // TODO: 로딩이 다 되고나서 되어야 하는데, 관련 포톤 함수를 못찾아서 일단 3초 정도 지연 후 Create 되도록 함
         yield return new WaitForSeconds(3); // TEST 
+        PlayerStatusController.instance.SetStartTimeAttack();
         // 360도 Sphere 공간안에서 랜덤으로 한 점을 찍은 것
         Vector3 randPos = Random.insideUnitSphere * 10;
         // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
         randPos.y = 0;
         // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
-        GameObject playerTemp = PhotonNetwork.Instantiate("Player", randPos, Quaternion.identity);
+        GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, randPos, Quaternion.identity);
+        GameObject camera = GameObject.Instantiate(cameraPrefab);
+        camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
     }
+}
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-
+using System.Collections;
 namespace BluehatGames
 {
 
@@ -14,6 +14,8 @@ namespace BluehatGames
     {
         public Button btn_synthesis;
         public Button btn_multiplay;
+        public Button btn_nftMarket;
+        public Button btn_exit;
 
         private DataManager dataManager;
 
@@ -26,7 +28,7 @@ namespace BluehatGames
 
             if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
             {
-                Debug.Log("ì²« ë²ˆì§¸ ë™ë¬¼ íšë“ í”Œë¡œìš°");
+                Debug.Log("ì²? ë²ˆì§¸ ?™ë¬? ?š?“ ?”Œë¡œìš°");
                 StartCoroutine(GetFirstAnimalFromServer(ApiUrl.postAnimalNew));
             }
 
@@ -34,9 +36,18 @@ namespace BluehatGames
             {
                 SceneManager.LoadScene(SceneName._04_Synthesis);
             });
+
             btn_multiplay.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneName._05_Multiplay);
+            });
+
+            btn_nftMarket.onClick.AddListener(() => {
+                // web ¿­±â
+            });
+
+            btn_exit.onClick.AddListener(() => {
+                Application.Quit();
             });
         }
         void SaveClientInfo(string key, int value)
@@ -53,13 +64,13 @@ namespace BluehatGames
         public IEnumerator GetFirstAnimalFromServer(string URL)
         {
 
-            // ì›¹ì„œë²„ë¡œ Post ìš”ì²­ì„ ë³´ëƒ„
+            // ?›¹?„œë²„ë¡œ Post ?š”ì²??„ ë³´ëƒ„
             using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
             {
 
-                //request.uploadHandler = new UploadHandlerRaw(byteInfo); // ì—…ë¡œë“œ í•¸ë“¤ëŸ¬
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // ë‹¤ìš´ë¡œë“œ í•¸ë“¤ëŸ¬
-                                                                                        // í—¤ë”ë¥¼ Jsonìœ¼ë¡œ ì„¤ì •
+                //request.uploadHandler = new UploadHandlerRaw(byteInfo); // ?—…ë¡œë“œ ?•¸?“¤?Ÿ¬
+                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // ?‹¤?š´ë¡œë“œ ?•¸?“¤?Ÿ¬
+                                                                                        // ?—¤?”ë¥? Json?œ¼ë¡? ?„¤? •
 
                 string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
                 Debug.Log($"access_token = {access_token}");
@@ -72,7 +83,7 @@ namespace BluehatGames
                 }
                 else
                 {
-                    // ì›¹ì„œë²„ë¡œë¶€í„° ë°›ì€ ì‘ë‹µ ë‚´ìš© ì¶œë ¥
+                    // ?›¹?„œë²„ë¡œë¶??„° ë°›ì?? ?‘?‹µ ?‚´?š© ì¶œë ¥
                     string responseText = request.downloadHandler.text;
                     string responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
 

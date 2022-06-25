@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
+namespace BluehatGames {
 public class SynthesisManager : MonoBehaviour
 {
     public string[] testAnimalList = { "Zebra", "Flamingo", "Cheetah" };
@@ -84,7 +86,8 @@ public class SynthesisManager : MonoBehaviour
             }
 
             colorChangeManager.ChangeTextureColor();
-            animalListView.SetActive(false);            
+            animalListView.SetActive(false);    
+            AetherController.instance.SubAetherCount();
         });
 
         btn_fusion.onClick.AddListener(() =>
@@ -118,15 +121,46 @@ public class SynthesisManager : MonoBehaviour
 
         btn_startFusion.onClick.AddListener(() =>
         {
+            AetherController.instance.SubAetherCount();
             fusionManager.CreateFusionTexture();
             panel_result.SetActive(true);
+            StartCoroutine(SaveScreenPNG());
             for (int i = 0; i < text_NFTs.Length; i++)
             {
                 text_NFTs[i].SetActive(true);
             }
             ClearAnimals();
+            AetherController.instance.SubAetherCount();
         });
+    }
 
+    IEnumerator SaveScreenPNG()
+    {
+        yield return new WaitForEndOfFrame();
+        Texture2D texture = new Texture2D(Screen.width, Screen.height);
+        texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        texture.Apply();
+        byte[] bytes = texture.EncodeToPNG();
+
+        // Create a Web Form
+        WWWForm form = new WWWForm();
+        form.AddField("wallet_address", "0x9b09EfC0a10BaCd3f296B069D1C8bD0032570EB8");
+        form.AddBinaryData("file", bytes);
+
+        // Upload to a cgi script
+        var w = UnityWebRequest.Post("http://api.bluehat.games/nft/test-nft", form);
+        yield return w.SendWebRequest();
+
+        if (w.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(w.error);
+        }
+        else
+        {
+            Debug.Log(w.result);
+            Debug.Log("Finished Uploading Screenshot");
+        }
+    
     }
 
     void ClearAnimals()
@@ -270,4 +304,9 @@ public class SynthesisManager : MonoBehaviour
 
         }
     }
+
+    private void MakeNFTMargetImage() {
+
+    }
+}
 }
