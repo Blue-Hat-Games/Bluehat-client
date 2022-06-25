@@ -489,10 +489,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.6148921
-  m_Height: 2.1201932
+  m_Radius: 1.3
+  m_Height: 2.6
   m_Direction: 2
-  m_Center: {x: 0, y: 1.0627471, z: -0.052658677}
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!1 &2698195540591965742
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,6 +503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2698195540591602190}
   - component: {fileID: 2698195540584662508}
+  - component: {fileID: 1198480468699606962}
   m_Layer: 0
   m_Name: Cat_LOD0
   m_TagString: Untagged
@@ -547,3 +548,23 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1198480468699606962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2698195540591965742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters: []
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
+  - SynchronizeType: 0
+    LayerIndex: 1
