@@ -72,5 +72,12 @@ public class MultiplayGameManager : MonoBehaviour
         GameObject camera = GameObject.Instantiate(cameraPrefab);
         camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
     }
+
+    public void LeaveRoom() {
+        // PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
+    }
+
+
 }
 }

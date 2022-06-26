@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace BluehatGames {
 public class SynthesisManager : MonoBehaviour
@@ -42,13 +43,18 @@ public class SynthesisManager : MonoBehaviour
     public FusionManager fusionManager;
 
     private int currentMode;
-    private int COLOR_CHANGE_MODE = 0;
-    private int FUSION_MODE = 1;
+    private int SELECT_MENU_MODE = 0;
+    private int COLOR_CHANGE_MODE = 1;
+    private int FUSION_MODE = 2;
 
     private float adjustAnimaionSpeed = 0.2f;
 
     private GameObject[] contentUis;
     private DataManager dataManager;
+
+    public float firstAnimalX;
+    public float secondAnimalX;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -96,7 +102,7 @@ public class SynthesisManager : MonoBehaviour
             currentMode = FUSION_MODE;            
             panel_fusion.SetActive(true);
             btn_startFusion.gameObject.SetActive(false);
-            animalListView.GetComponent<RectTransform>().anchoredPosition = new Vector2(1375, 0);
+           
             animalListView.SetActive(false);
             for (int i = 0; i < contentUis.Length; i++)
             {
@@ -106,9 +112,17 @@ public class SynthesisManager : MonoBehaviour
 
         btn_goToMain.onClick.AddListener(() =>
         {
-            panel_fusion.SetActive(false);
+            if(currentMode == SELECT_MENU_MODE) {
+                SceneManager.LoadScene(SceneName._03_Main);
+            }else if(currentMode == COLOR_CHANGE_MODE) {
+                currentMode = SELECT_MENU_MODE;
+                panel_colorChange.SetActive(false);
+            } else if(currentMode == FUSION_MODE) {
+                currentMode = SELECT_MENU_MODE;
+                    panel_fusion.SetActive(false);
+            }
+     
             animalListView.SetActive(false);
-            panel_colorChange.SetActive(false);
             panel_result.SetActive(false);
             ClearAnimals();
             fusionManager.ClearAnimals();
@@ -257,7 +271,7 @@ public class SynthesisManager : MonoBehaviour
                         
                         selectedAnimal_1 = LoadAnimalPrefab(selectedAnimalName, Vector3.zero, Camera.main.gameObject);
                         selectedAnimal_1.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-                        selectedAnimal_1.transform.position = new Vector3(-7, selectedAnimal_1.transform.position.y, selectedAnimal_1.transform.position.z);
+                        selectedAnimal_1.transform.position = new Vector3(firstAnimalX, selectedAnimal_1.transform.position.y, selectedAnimal_1.transform.position.z);
                         fusionManager.SetTargetAnimal(0, selectedAnimal_1);
                     }
                     else if(focusedButtonIndex == 1)
@@ -268,7 +282,7 @@ public class SynthesisManager : MonoBehaviour
                         }
                         selectedAnimal_2 = LoadAnimalPrefab(selectedAnimalName, Vector3.zero, Camera.main.gameObject);
                         selectedAnimal_2.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-                        selectedAnimal_2.transform.position = new Vector3(-3.5f, selectedAnimal_2.transform.position.y, selectedAnimal_2.transform.position.z);
+                        selectedAnimal_2.transform.position = new Vector3(secondAnimalX, selectedAnimal_2.transform.position.y, selectedAnimal_2.transform.position.z);
                         fusionManager.SetTargetAnimal(1, selectedAnimal_2);
                     }
 

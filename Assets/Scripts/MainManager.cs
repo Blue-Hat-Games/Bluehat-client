@@ -15,7 +15,7 @@ namespace BluehatGames
         public Button btn_synthesis;
         public Button btn_multiplay;
         public Button btn_nftMarket;
-        public Button btn_exit;
+        // public Button btn_exit;
 
         private DataManager dataManager;
 
@@ -46,9 +46,9 @@ namespace BluehatGames
                 // web ¿­±â
             });
 
-            btn_exit.onClick.AddListener(() => {
-                Application.Quit();
-            });
+            // btn_exit.onClick.AddListener(() => {
+            //     Application.Quit();
+            // });
         }
         void SaveClientInfo(string key, int value)
         {

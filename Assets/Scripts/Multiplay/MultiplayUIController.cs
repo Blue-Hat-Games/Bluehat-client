@@ -26,6 +26,8 @@ public class MultiplayUIController : MonoBehaviour
     public TextMeshProUGUI myAetherCoin;
 
     public Button goToMainButton;
+    public Button startPanelExitButton;
+    public GameObject startPanel;
 
     public void ResetAetherProgressBar() {
         aetherProgressBar.value = 0;
@@ -51,7 +53,12 @@ public class MultiplayUIController : MonoBehaviour
         aetherProgressBar.value = 0;
         resultPanel.SetActive(false);
         goToMainButton.onClick.AddListener(() => {
-            SceneManager.LoadScene(SceneName._03_Main);
+            MultiplayGameManager.instance.LeaveRoom();
+            
+        });
+
+        startPanelExitButton.onClick.AddListener(() => {
+            startPanel.SetActive(false);
         });
     }
 

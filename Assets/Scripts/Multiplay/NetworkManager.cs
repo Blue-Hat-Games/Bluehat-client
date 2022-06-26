@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-
+using UnityEngine.SceneManagement;
 // 포톤을 이용하여 게임서버까지 들어가게 하는 것이 목적
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -51,4 +51,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OnJoinRoomFailed");
     }
+
+    public override void OnLeftRoom() {
+        SceneManager.LoadScene(SceneName._03_Main);
+    }
+
+   	public override void OnDisconnected(DisconnectCause cause)
+	{
+		// SetCallbackLabel("OnDisconnected");
+        SceneManager.LoadScene(SceneName._03_Main);
+	}
 }
