@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class FusionManager : MonoBehaviour
 {
-    public Button btn_select;
+
     public GameObject listView;
 
     private GameObject targetAnimal_1;
@@ -101,6 +101,9 @@ public class FusionManager : MonoBehaviour
         }
     }
 
+    public GameObject GetResultAnimal() {
+        return resultAnimal;
+    }
     public void ClearAnimals()
     {
         Destroy(resultAnimal);
