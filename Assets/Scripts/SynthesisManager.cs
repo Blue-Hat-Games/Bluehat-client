@@ -174,7 +174,7 @@ public class SynthesisManager : MonoBehaviour
             form.AddBinaryData("file", bytes);
 
             // Upload to a cgi script
-            var w = UnityWebRequest.Post("http://api.bluehat.games/nft/test-nft", form);
+            var w = UnityWebRequest.Post("https://api.bluehat.games/nft/test-nft", form);
             yield return w.SendWebRequest();
 
             if (w.result != UnityWebRequest.Result.Success)
