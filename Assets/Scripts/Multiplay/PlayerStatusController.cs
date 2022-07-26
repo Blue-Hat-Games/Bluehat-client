@@ -8,11 +8,9 @@ using TMPro;
 - 에테르 획득 개수
 */
 namespace BluehatGames {
+
 public class PlayerStatusController : MonoBehaviour
 {
-    public TextMeshProUGUI aetherCountText;
-    public TextMeshProUGUI gameOverTime;
-    public float gameTime;
     public static PlayerStatusController instance = null;
     
     private void Awake()
@@ -25,63 +23,72 @@ public class PlayerStatusController : MonoBehaviour
         }
     }
 
-    // 플레이어끼리 부딪혔을 때 이 에너지를 비교해서 더 작은 쪽의 에너지를 일정량 깎도록 할 것 
-    private float aetherEnergy;
-    private int aetherCount;
+    private int aetherCount = 0;
+    private float aetherEnergy = 0;
     
-    public float addedAetherEnergyValue = 10;
     public int energyToExchangeAether = 50;
+    public float addedAetherEnergyValue = 10;
+
+    public float gameTime = 0;
+    private float elapsedTime = 0;
+
+    private bool isGameOver = false;
+    private bool isStartTimeAttack = false;
 
     private void Start() {
-        aetherCountText.text = aetherCount.ToString();
-    }
-    private bool isStartTimeAttack = false;
-    public void SetStartTimeAttack() {
-        isStartTimeAttack = true;
+        MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
     }
 
-    private float elapsedTime = 0;
-    private bool isGameOver = false;
+
     void Update() {
+
         if(false == isStartTimeAttack)
             return;
         
         gameTime -= Time.deltaTime;
-        if(gameTime < 0) {
-            gameOverTime.text = "00:00";
-            if(false == isGameOver) {
-                isGameOver = true;
-                
-                int myCoin = PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
-                SaveAetherCount(myCoin);
-                MultiplayUIController.instance.GameOver(GetAetherCount(), myCoin + GetAetherCount());
-            }
-        } else {
-            if((int)gameTime >=10) {
-                gameOverTime.text = $"00:{(int)gameTime}";
-            } else {
-                gameOverTime.text = $"00:0{(int)gameTime}";
-            }
-            
+
+        if(gameTime < 0) 
+        {
+           GameOver();
+        } 
+        else 
+        {
+            MultiplayUIController.instance.UpdateGameTimeText(gameTime);          
         }      
     }
 
-    private void SaveAetherCount(int myCoin) {
-        Debug.Log($"Save Completed: myCoin = {myCoin}, obtainedCoin = {GetAetherCount()}");
-        PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, myCoin + GetAetherCount());
-        
+    public void SetStartTimeAttack() {
+        isStartTimeAttack = true;
     }
 
-    public int GetAetherCount()
+    private void GameOver()
+    {
+        // Update에서 여러 번 호출될 수 있는 경우를 방지하기 위함
+        if(isGameOver) return;
+
+        MultiplayUIController.instance.ResetGameTimeText();
+        
+        isGameOver = true;
+        // 이번 판에서 획득한 코인
+        int myCoin = GetMultiplyAetherCount();
+        // AetherController를 통해 획득 정보 저장
+        AetherController.instance.AddAetherCount(myCoin);
+        // UI에 반영
+        MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), myCoin + GetMultiplyAetherCount());
+    }
+
+    // 멀티플레이 도중에 얻는 Aether Count에 대한 처리
+    public int GetMultiplyAetherCount()
     {
         return aetherCount;
     }
 
-    private void SetAetherCount() {
+    private void AddMultiplayAetherCount() {
         aetherCount++;
-        aetherCountText.text = aetherCount.ToString();
+        MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
     }
 
+    // Aether Energy는 멀티플레이에서 플레이어 상태 정보이므로 여기에서 관리함
     public float GetAetherEnergy()
     {
         return aetherEnergy;
@@ -97,7 +104,7 @@ public class PlayerStatusController : MonoBehaviour
             aetherEnergy = 0;
             // UI 설정
             MultiplayUIController.instance.ResetAetherProgressBar();
-            SetAetherCount();
+            AddMultiplayAetherCount();
         } else {
             // UI 설정
             MultiplayUIController.instance.SetAetherProgressBar(adjustedEnergyValue);

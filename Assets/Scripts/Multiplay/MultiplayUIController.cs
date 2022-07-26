@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 namespace BluehatGames {
+
 public class MultiplayUIController : MonoBehaviour
 {
     public static MultiplayUIController instance = null;
@@ -20,19 +21,45 @@ public class MultiplayUIController : MonoBehaviour
     }
 
     // 멀티플레이에 이용되는 UI들 처리
-    public Slider aetherProgressBar;
-    public GameObject resultPanel;
-    public TextMeshProUGUI obtainedAetherCoin;
-    public TextMeshProUGUI myAetherCoin;
-
+    public GameObject startPanel;
     public Button goToMainButton;
     public Button startPanelExitButton;
-    public GameObject startPanel;
 
+    public Slider aetherProgressBar;
+    public TextMeshProUGUI aetherCountText;
+
+    public TextMeshProUGUI gameOverTime;
+
+    public GameObject resultPanel;
+    public TextMeshProUGUI resultObtainedAetherCoin;
+    public TextMeshProUGUI resultMyAetherCoin;
+
+
+
+     void Start()
+    {
+        aetherProgressBar.value = 0;
+        resultPanel.SetActive(false);
+        goToMainButton.onClick.AddListener(() => {
+            MultiplayGameManager.instance.LeaveRoom();
+            
+        });
+
+        startPanelExitButton.onClick.AddListener(() => {
+            startPanel.SetActive(false);
+        });
+    }
+    
+
+    public void SetCurrentAetherCoinCount(int count)
+    {
+        aetherCountText.text = count.ToString();
+    }
+    
     public void ResetAetherProgressBar() {
         aetherProgressBar.value = 0;
     }
-    
+
     public void SetAetherProgressBar(float value) {
         StartCoroutine(FadeSliderValue(value));
     }
@@ -48,23 +75,23 @@ public class MultiplayUIController : MonoBehaviour
         }
     }
 
-    void Start()
+    public void UpdateGameTimeText(float gameTime)
     {
-        aetherProgressBar.value = 0;
-        resultPanel.SetActive(false);
-        goToMainButton.onClick.AddListener(() => {
-            MultiplayGameManager.instance.LeaveRoom();
-            
-        });
-
-        startPanelExitButton.onClick.AddListener(() => {
-            startPanel.SetActive(false);
-        });
+        if((int)gameTime >=10) {
+            gameOverTime.text = $"00:{(int)gameTime}";
+        } else {
+            gameOverTime.text = $"00:0{(int)gameTime}";
+        }
     }
 
-    public void GameOver(int obtainedCoin, int myCoin) {
-        obtainedAetherCoin.text = obtainedCoin.ToString();
-        myAetherCoin.text = myCoin.ToString();
+    public void ResetGameTimeText()
+    {
+        gameOverTime.text = "00:00";
+    }
+
+    public void SetMultiplayResultPanel(int obtainedCoin, int myCoin) {
+        resultObtainedAetherCoin.text = obtainedCoin.ToString();
+        resultMyAetherCoin.text = myCoin.ToString();
         resultPanel.SetActive(true);
     }
 

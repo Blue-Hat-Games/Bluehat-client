@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class AnimalController : MonoBehaviourPun, IPunObservable
+public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 {
     public Transform camera;
     private float camAngle;

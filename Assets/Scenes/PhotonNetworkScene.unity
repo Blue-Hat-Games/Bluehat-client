@@ -4445,13 +4445,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4910ef8ab173493084e357fd5ca7939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aetherProgressBar: {fileID: 1615622386}
-  resultPanel: {fileID: 1822779260}
-  obtainedAetherCoin: {fileID: 800497189}
-  myAetherCoin: {fileID: 810771034}
+  startPanel: {fileID: 1106804492}
   goToMainButton: {fileID: 143761348}
   startPanelExitButton: {fileID: 2000927030}
-  startPanel: {fileID: 1106804492}
+  aetherProgressBar: {fileID: 1615622386}
+  aetherCountText: {fileID: 1393291516}
+  gameOverTime: {fileID: 1868835942}
+  resultPanel: {fileID: 1822779260}
+  resultObtainedAetherCoin: {fileID: 800497189}
+  resultMyAetherCoin: {fileID: 810771034}
 --- !u!4 &437033236
 Transform:
   m_ObjectHideFlags: 0
@@ -17881,11 +17883,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926843fba0bb84c69871f876c8779847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aetherCountText: {fileID: 1393291516}
-  gameOverTime: {fileID: 1868835942}
-  gameTime: 30
-  addedAetherEnergyValue: 10
   energyToExchangeAether: 50
+  addedAetherEnergyValue: 10
+  gameTime: 30
 --- !u!4 &1589526180
 Transform:
   m_ObjectHideFlags: 0
