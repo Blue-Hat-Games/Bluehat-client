@@ -28,7 +28,7 @@ namespace BluehatGames
 
             if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
             {
-                Debug.Log("Ï≤? Î≤àÏß∏ ?èôÎ¨? ?öç?ìù ?îåÎ°úÏö∞");
+                Debug.Log("Player Status => Join Completed");
                 StartCoroutine(GetFirstAnimalFromServer(ApiUrl.postAnimalNew));
             }
 
@@ -68,19 +68,22 @@ namespace BluehatGames
             using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
             {
 
-                //request.uploadHandler = new UploadHandlerRaw(byteInfo); // ?óÖÎ°úÎìú ?ï∏?ì§?ü¨
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // ?ã§?ö¥Î°úÎìú ?ï∏?ì§?ü¨
-                                                                                        // ?ó§?çîÎ•? Json?úºÎ°? ?Ñ§?†ï
+                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); 
 
+                // Access Token
                 string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
                 Debug.Log($"access_token = {access_token}");
+                // send access token to server
                 request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
 
                 yield return request.SendWebRequest();
+
+                // error
                 if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log(request.error);
                 }
+                // success
                 else
                 {
                     // ?õπ?ÑúÎ≤ÑÎ°úÎ∂??Ñ∞ Î∞õÏ?? ?ùë?ãµ ?Ç¥?ö© Ï∂úÎ†•
@@ -88,7 +91,9 @@ namespace BluehatGames
                     string responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
 
                     Debug.Log(request.downloadHandler.text);
+
                     var animalName = responseType;
+                    // Data manager
                     dataManager.AddNewAnimal(animalName);
                     LoadAnimalPrefab(animalName);
 

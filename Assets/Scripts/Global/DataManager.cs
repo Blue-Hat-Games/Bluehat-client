@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/* DataManager
+    - Hold Animal List For Saving
+*/
 public class DataManager : MonoBehaviour
 {
     private void Awake() { 
+
         var obj = FindObjectsOfType<DataManager>(); 
         if (obj.Length == 1) { 
             DontDestroyOnLoad(gameObject); 
@@ -15,11 +18,6 @@ public class DataManager : MonoBehaviour
     }
 
     private AnimalListForSave animalListForSave = new AnimalListForSave();
-    private void Start()
-    {
-        
-        
-    }
 
     public void AddNewAnimal(string animalName)
     {
@@ -29,7 +27,7 @@ public class DataManager : MonoBehaviour
 
     public string GetAnimal()
     {
-        string name = "Chick"; // 아무것도 없을 경우  임시값
+        string name = "Chick"; // 아무것도 없을 경우 임시값
        
         animalListForSave.myAnimalList.ForEach((string animalName) =>
         {

@@ -9,16 +9,6 @@ public class Joybutton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     public Animator buttonAnim;
 
     private string ANIM_PARAMETER_ISPRESSED = "IsPressed";
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
