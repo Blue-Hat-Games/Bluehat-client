@@ -39,10 +39,10 @@ namespace BluehatGames
         [Header("Alert Popup")]
         public GameObject alertPopup;
         public Text alertText;
-        private string emailMessage = "?ù¥Î©îÏùº?óê?Ñú ?ù∏Ï¶ùÏùÑ ?ôÑÎ£åÌï¥Ï£ºÏÑ∏?öî.";
-        private string authCompleted = "Î°úÍ∑∏?ù∏?óê ?Ñ±Í≥µÌñà?äµ?ãà?ã§!";
-        private string warnEmailMessage = "?ò¨Î∞îÎ•∏ ?ù¥Î©îÏùº Ï£ºÏÜåÍ∞? ?ïÑ?ãô?ãà?ã§.";
-        private string warnWalletMessage = "?ò¨Î∞îÎ•∏ Ïß?Í∞? Ï£ºÏÜåÍ∞? ?ïÑ?ãô?ãà?ã§.";
+        private string emailMessage = "Email OK.";
+        private string authCompleted = "Auth OK";
+        private string warnEmailMessage = "Email Not OK.";
+        private string warnWalletMessage = "Wallet Address Not OK.";
 
 
         [Header("Control Variables")]
@@ -71,6 +71,7 @@ namespace BluehatGames
 
         void Start()
         {
+            // ¡ˆ±› æÓ∂≤ ∞Ë¡§¿∏∑Œ µ«æÓ ¿÷¥¬¡ˆ µπˆ±Î 
             SaveData loadData = SaveSystem.LoadUserInfoFile();
             if (loadData != null)
             {
@@ -111,8 +112,7 @@ namespace BluehatGames
                     Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
                 }
 
-                // ?ù¥ ?ú†???Í∞? ?ù∏Ï¶? ?ôÑÎ£åÎêú ?ú†????ù∏Ïß? ?ÑúÎ≤ÑÏóê ?ôï?ù∏ ?öîÏ≤??ï® 
-                // - ?ù∏Ï¶? ?ôÑÎ£åÎêú ?ú†????ù¥Î©? ?†ë?Üç?ïòÍ∏? Î≤ÑÌäº ?ôú?Ñ±?ôî
+                // ¿Ã∏ﬁ¿œ ¿Œ¡ı«“ ∂ß ¿‘∑¬«— ∞™¿ª ∑Œƒ√ø° ¿˙¿Âµ» ∞… ∫“∑ØøÕº≠ ¿Ã∏ﬁ¿œ ¿Œ¡ı øœ∑· ø©∫Œø° ¥Î«ÿ º≠πˆø° √º≈©«‘
                 StartCoroutine(RequestAuthToServer(ApiUrl.login, loadData.email, loadData.wallet_address, (UnityWebRequest request) =>
                 {                  
                     // ?õπ?ÑúÎ≤ÑÎ°úÎ∂??Ñ∞ Î∞õÏ?? ?ùë?ãµ ?Ç¥?ö© Ï∂úÎ†•
@@ -189,11 +189,7 @@ namespace BluehatGames
             btn_play.gameObject.SetActive(true);
 
         }
-        private bool IsValidEmail(string email)
-        {
-            bool valid = Regex.IsMatch(email, @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
-            return valid;
-        }
+
 
         IEnumerator ShowAlertPopup(string text)
         {
@@ -222,6 +218,7 @@ namespace BluehatGames
             } 
             else if (URL == ApiUrl.login)
             {
+                // ¿Œ¡ı ¡§∫∏∏¶ ø‰√ª«œ∑¡¥¬ µ•¿Ã≈Õ∏¶ Json¿∏∑Œ πŸ≤ﬁ 
                 jsonData = SetPlayerInfoToJsonData(inputEmail, inputWallet);
 
             }
@@ -229,9 +226,6 @@ namespace BluehatGames
 
 
             btn_login.GetComponentInChildren<Text>().text = "Resend Email";
-
-            // ?ù¥Î©îÏùº?ùÑ Î≥¥ÎÉà?ã§?äî Í±? ????û•?ï®
-            SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);            
 
             byte[] byteEmail = Encoding.UTF8.GetBytes(jsonData);
             // ?õπ?ÑúÎ≤ÑÎ°ú Post ?öîÏ≤??ùÑ Î≥¥ÎÉÑ
@@ -252,6 +246,15 @@ namespace BluehatGames
                 {
                     Debug.Log("request Success! Action Invoke");
                     action.Invoke(request);
+                    // ¿Ã∏ﬁ¿œ ¿¸º€ø° º∫∞¯«— ∞ÊøÏø°∏∏ ¿Œ¡ıªÛ≈¬∏¶ ∫Ø∞Ê
+                    if(URL == ApiUrl.emailLoginVerify)
+                    {
+                        SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);  
+                    }
+                    else
+                    {
+                        SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);  
+                    }
                 }
             }
         }
@@ -298,6 +301,11 @@ namespace BluehatGames
             }
 
             return true;
+        }
+        private bool IsValidEmail(string email)
+        {
+            bool valid = Regex.IsMatch(email, @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
+            return valid;
         }
     }
 }
