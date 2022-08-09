@@ -39,10 +39,10 @@ namespace BluehatGames
         [Header("Alert Popup")]
         public GameObject alertPopup;
         public Text alertText;
-        private string emailMessage = "ì´ë©”ì¼ì—ì„œ ì¸ì¦ì„ ì™„ë£Œí•´ì£¼ì„¸ìš”.";
-        private string authCompleted = "ë¡œê·¸ì¸ì— ì„±ê³µí–ˆìŠµë‹ˆë‹¤!";
-        private string warnEmailMessage = "ì˜¬ë°”ë¥¸ ì´ë©”ì¼ ì£¼ì†Œê°€ ì•„ë‹™ë‹ˆë‹¤.";
-        private string warnWalletMessage = "ì˜¬ë°”ë¥¸ ì§€ê°‘ ì£¼ì†Œê°€ ì•„ë‹™ë‹ˆë‹¤.";
+        private string emailMessage = "?´ë©”ì¼?—?„œ ?¸ì¦ì„ ?™„ë£Œí•´ì£¼ì„¸?š”.";
+        private string authCompleted = "ë¡œê·¸?¸?— ?„±ê³µí–ˆ?Šµ?‹ˆ?‹¤!";
+        private string warnEmailMessage = "?˜¬ë°”ë¥¸ ?´ë©”ì¼ ì£¼ì†Œê°? ?•„?‹™?‹ˆ?‹¤.";
+        private string warnWalletMessage = "?˜¬ë°”ë¥¸ ì§?ê°? ì£¼ì†Œê°? ?•„?‹™?‹ˆ?‹¤.";
 
 
         [Header("Control Variables")]
@@ -50,15 +50,12 @@ namespace BluehatGames
 
 
         private Coroutine popupCoroutine;
-        // PlayerPref
-        private string key_authStatus = "AuthStatus";
-        private string key_accessToken = "AccessToken";
 
-        // PlayerPrefì— ì €ì¥í•  ê²ƒ
-        // 1. ì´ë©”ì¼ ì¸ì¦ì„ ë³´ë‚´ì„œ ì™„ë£Œë§Œ í•˜ë©´ ë˜ëŠ”ì§€
-        // - Login ë²„íŠ¼ì„ ì´ë©”ì¼ ë‹¤ì‹œ ë³´ë‚´ê¸° ë²„íŠ¼ìœ¼ë¡œ ë³€ê²½ 
-        // 2. ì´ë©”ì¼ ì¸ì¦ì„ ì™„ë£Œí–ˆëŠ”ì§€
-        // - ì ‘ì†í•˜ê¸° ë²„íŠ¼ìœ¼ë¡œ ë³€ê²½
+        // PlayerPref?— ????¥?•  ê²?
+        // 1. ?´ë©”ì¼ ?¸ì¦ì„ ë³´ë‚´?„œ ?™„ë£Œë§Œ ?•˜ë©? ?˜?Š”ì§?
+        // - Login ë²„íŠ¼?„ ?´ë©”ì¼ ?‹¤?‹œ ë³´ë‚´ê¸? ë²„íŠ¼?œ¼ë¡? ë³?ê²? 
+        // 2. ?´ë©”ì¼ ?¸ì¦ì„ ?™„ë£Œí–ˆ?Š”ì§?
+        // - ? ‘?†?•˜ê¸? ë²„íŠ¼?œ¼ë¡? ë³?ê²?
 
         [Header("ForTest")]
         public bool isCompletedAuth;
@@ -74,49 +71,51 @@ namespace BluehatGames
 
         void Start()
         {
-            SaveData loadData = SaveSystem.Load("userInfo");
+            SaveData loadData = SaveSystem.LoadUserInfoFile();
             if (loadData != null)
             {
                 Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
             }
 
-            Debug.Log($"Client Current Status => {GetClientInfo(key_authStatus)}");
-            // ë¡œê·¸ì¸ ë²„íŠ¼ onClick
+            Debug.Log($"Client Current Status => {GetClientInfo(PlayerPrefsKey.key_authStatus)}");
+            // ë¡œê·¸?¸ ë²„íŠ¼ onClick
             btn_login.onClick.AddListener(() =>
             {
                 
                 if (false == IsValidInputData(inputEmail.text, inputWallet.text))
                     return;
+
                 btn_refresh.gameObject.SetActive(true);
                 StartCoroutine(RequestAuthToServer(ApiUrl.emailLoginVerify, inputEmail.text, inputWallet.text, (UnityWebRequest request) =>
                 {
                     StartCoroutine(ShowAlertPopup(emailMessage));
-                    // ì›¹ì„œë²„ë¡œë¶€í„° ë°›ì€ ì‘ë‹µ ë‚´ìš© ì¶œë ¥
+
+                    // json text from server response
                     var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                     Debug.Log($"response => {response.msg}");
 
                     if (response.msg != "fail")
                     {
                         SaveData user = new SaveData(inputEmail.text, inputWallet.text);
-                        SaveSystem.Save(user, "userInfo");
+                        SaveSystem.SaveUserInfoFile(user);
                     }
                 }));
             });
 
-            // ë¦¬í”„ë ˆì‹œ ë²„íŠ¼ onClick 
+            // ë¦¬í”„? ˆ?‹œ ë²„íŠ¼ onClick 
             btn_refresh.onClick.AddListener(() =>
             {
-                SaveData loadData = SaveSystem.Load("userInfo");
+                SaveData loadData = SaveSystem.LoadUserInfoFile();
                 if(loadData != null)
                 {
                     Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
                 }
 
-                // ì´ ìœ ì €ê°€ ì¸ì¦ ì™„ë£Œëœ ìœ ì €ì¸ì§€ ì„œë²„ì— í™•ì¸ ìš”ì²­í•¨ 
-                // - ì¸ì¦ ì™„ë£Œëœ ìœ ì €ì´ë©´ ì ‘ì†í•˜ê¸° ë²„íŠ¼ í™œì„±í™”
+                // ?´ ?œ ???ê°? ?¸ì¦? ?™„ë£Œëœ ?œ ????¸ì§? ?„œë²„ì— ?™•?¸ ?š”ì²??•¨ 
+                // - ?¸ì¦? ?™„ë£Œëœ ?œ ????´ë©? ? ‘?†?•˜ê¸? ë²„íŠ¼ ?™œ?„±?™”
                 StartCoroutine(RequestAuthToServer(ApiUrl.login, loadData.email, loadData.wallet_address, (UnityWebRequest request) =>
                 {                  
-                    // ì›¹ì„œë²„ë¡œë¶€í„° ë°›ì€ ì‘ë‹µ ë‚´ìš© ì¶œë ¥
+                    // ?›¹?„œë²„ë¡œë¶??„° ë°›ì?? ?‘?‹µ ?‚´?š© ì¶œë ¥
                     Debug.Log(request.downloadHandler.text);
                     var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                     Debug.Log($"response => {response} | response.msg = {response.msg}");
@@ -124,14 +123,14 @@ namespace BluehatGames
                     {
                         if (null != popupCoroutine)
                         {
-                            // ê¸°ì¡´ ì½”ë£¨í‹´ì´ ìˆì—ˆë‹¤ë©´ ì •ì§€ì‹œí‚¤ê³  ìƒˆë¡œìš´ ì½”ë£¨í‹´ì´ ì‹¤í–‰ë˜ë„ë¡ í•¨ 
+                            // ê¸°ì¡´ ì½”ë£¨?‹´?´ ?ˆ?—ˆ?‹¤ë©? ? •ì§??‹œ?‚¤ê³? ?ƒˆë¡œìš´ ì½”ë£¨?‹´?´ ?‹¤?–‰?˜?„ë¡? ?•¨ 
                             StopCoroutine(popupCoroutine);
                         }
 
                         StartCoroutine(ShowAlertPopup(authCompleted));
 
                         SetJoinCompletedSetting();
-                        SaveClientInfo(key_authStatus, AuthStatus._JOIN_COMPLETED);
+                        SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
                         PlayerPrefs.SetString(PlayerPrefsKey.key_accessToken, response.access_token);
                         Debug.Log("Login access_token response => " + PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken));
                         
@@ -144,10 +143,10 @@ namespace BluehatGames
 
 
 
-            // ì ‘ì†í•˜ê¸° ë²„íŠ¼
-            // 1. ê¸°ë³¸ì€ ë¹„í™œì„±í™”
-            // 2. í™œì„±í™” ë˜ëŠ” ì‹œì  ?
-            // - Refresh ë²„íŠ¼ì„ ëˆŒëŸ¬ì„œ ì´ë©”ì¼ ì¸ì¦ëœ ê²Œ í™•ì¸ë˜ì—ˆì„ ê²½ìš°
+            // ? ‘?†?•˜ê¸? ë²„íŠ¼
+            // 1. ê¸°ë³¸??? ë¹„í™œ?„±?™”
+            // 2. ?™œ?„±?™” ?˜?Š” ?‹œ?  ?
+            // - Refresh ë²„íŠ¼?„ ?ˆŒ?Ÿ¬?„œ ?´ë©”ì¼ ?¸ì¦ëœ ê²? ?™•?¸?˜?—ˆ?„ ê²½ìš°
             // - 
             btn_play.onClick.AddListener(() =>
             {
@@ -155,14 +154,14 @@ namespace BluehatGames
             });
 
 
-            // ì²˜ìŒì—ëŠ” í”Œë ˆì´ ë²„íŠ¼, ë¦¬í”„ë ˆì‹œ ë²„íŠ¼ ë¹„í™œì„±í™”
+            // ì²˜ìŒ?—?Š” ?”Œ? ˆ?´ ë²„íŠ¼, ë¦¬í”„? ˆ?‹œ ë²„íŠ¼ ë¹„í™œ?„±?™”
             btn_play.gameObject.SetActive(false);
             btn_refresh.gameObject.SetActive(false);
 
 
-            var clientAuthInfo = GetClientInfo(key_authStatus);
-            // ì¸ì¦ ìƒíƒœì— ë”°ë¼ ë¶„ê¸° 
-            // ì´ë©”ì¼ì„ ë³´ë‚¸ ìƒíƒœì´ë©´ ì´ë©”ì¼ ì¬ì „ì†¡ ë²„íŠ¼ ì…‹íŒ…
+            var clientAuthInfo = GetClientInfo(PlayerPrefsKey.key_authStatus);
+            // ?¸ì¦? ?ƒ?ƒœ?— ?”°?¼ ë¶„ê¸° 
+            // ?´ë©”ì¼?„ ë³´ë‚¸ ?ƒ?ƒœ?´ë©? ?´ë©”ì¼ ?¬? „?†¡ ë²„íŠ¼ ?…‹?Œ…
             if (clientAuthInfo == AuthStatus._EMAIL_AUTHENTICATING)
             {
                 SetEmailAuthenticatingSetting();
@@ -174,8 +173,8 @@ namespace BluehatGames
             }
             else
             {
-                // ì•„ë¬´ëŸ° ì •ë³´ë„ ì—†ìœ¼ë©´ ì´ˆê¸°í™”
-                SaveClientInfo(key_authStatus, AuthStatus._INIT);
+                // ?•„ë¬´ëŸ° ? •ë³´ë„ ?—†?œ¼ë©? ì´ˆê¸°?™”
+                SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._INIT);
             }
         }
 
@@ -208,14 +207,14 @@ namespace BluehatGames
         {
             Debug.Log($"RequestAuthToServer -> URL: {URL}");
             string jsonData = "";
-            // ì´ë©”ì¼ê³¼ ì§€ê°‘ì£¼ì†Œë¥¼ Json í˜•ì‹ìœ¼ë¡œ ë³€í™˜ 
+            // ?´ë©”ì¼ê³? ì§?ê°‘ì£¼?†Œë¥? Json ?˜•?‹?œ¼ë¡? ë³??™˜ 
             if (URL == ApiUrl.emailLoginVerify)
             {
                 jsonData = SetPlayerJoinInfoToJsonData(inputEmail, inputWallet);
-                // TEST; ì´ë©”ì¼ ì¸ì¦ ì™„ë£Œëœ ê²½ìš°ì˜ í”Œë¡œìš°
+                // TEST; ?´ë©”ì¼ ?¸ì¦? ?™„ë£Œëœ ê²½ìš°?˜ ?”Œë¡œìš°
                 if (null != popupCoroutine)
                 {
-                    // ê¸°ì¡´ ì½”ë£¨í‹´ì´ ìˆì—ˆë‹¤ë©´ ì •ì§€ì‹œí‚¤ê³  ìƒˆë¡œìš´ ì½”ë£¨í‹´ì´ ì‹¤í–‰ë˜ë„ë¡ í•¨ 
+                    // ê¸°ì¡´ ì½”ë£¨?‹´?´ ?ˆ?—ˆ?‹¤ë©? ? •ì§??‹œ?‚¤ê³? ?ƒˆë¡œìš´ ì½”ë£¨?‹´?´ ?‹¤?–‰?˜?„ë¡? ?•¨ 
                     StopCoroutine(popupCoroutine);
                 }
 
@@ -231,16 +230,16 @@ namespace BluehatGames
 
             btn_login.GetComponentInChildren<Text>().text = "Resend Email";
 
-            // ì´ë©”ì¼ì„ ë³´ëƒˆë‹¤ëŠ” ê±¸ ì €ì¥í•¨
-            SaveClientInfo(key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);            
+            // ?´ë©”ì¼?„ ë³´ëƒˆ?‹¤?Š” ê±? ????¥?•¨
+            SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);            
 
             byte[] byteEmail = Encoding.UTF8.GetBytes(jsonData);
-            // ì›¹ì„œë²„ë¡œ Post ìš”ì²­ì„ ë³´ëƒ„
+            // ?›¹?„œë²„ë¡œ Post ?š”ì²??„ ë³´ëƒ„
             using (UnityWebRequest request = UnityWebRequest.Post(URL, jsonData))
             {
-                request.uploadHandler = new UploadHandlerRaw(byteEmail); // ì—…ë¡œë“œ í•¸ë“¤ëŸ¬
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // ë‹¤ìš´ë¡œë“œ í•¸ë“¤ëŸ¬
-                                                                                        // í—¤ë”ë¥¼ Jsonìœ¼ë¡œ ì„¤ì •
+                request.uploadHandler = new UploadHandlerRaw(byteEmail); // ?—…ë¡œë“œ ?•¸?“¤?Ÿ¬
+                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); // ?‹¤?š´ë¡œë“œ ?•¸?“¤?Ÿ¬
+                                                                                        // ?—¤?”ë¥? Json?œ¼ë¡? ?„¤? •
                 request.SetRequestHeader("Content-Type", "application/json");
 
                 yield return request.SendWebRequest();
@@ -260,7 +259,7 @@ namespace BluehatGames
 
         string SetPlayerJoinInfoToJsonData(string inputEmail, string inputWallet)
         {
-            // ì„œë²„ë¡œ ë³´ë‚¼ Json ë°ì´í„° ì…‹íŒ…
+            // ?„œë²„ë¡œ ë³´ë‚¼ Json ?°?´?„° ?…‹?Œ…
             PlayerJoinInfo playerInfo = new PlayerJoinInfo();
 
             playerInfo.email = inputEmail;
@@ -272,7 +271,7 @@ namespace BluehatGames
 
         string SetPlayerInfoToJsonData(string inputEmail, string inputWallet)
         {
-            // ì„œë²„ë¡œ ë³´ë‚¼ Json ë°ì´í„° ì…‹íŒ…
+            // ?„œë²„ë¡œ ë³´ë‚¼ Json ?°?´?„° ?…‹?Œ…
             PlayerInfo playerInfo = new PlayerInfo();
 
             playerInfo.email = inputEmail;
@@ -284,14 +283,14 @@ namespace BluehatGames
 
         bool IsValidInputData(string inputEmail, string inputWallet)
         {
-            // 1. ìœ íš¨ ë°ì´í„°ì¸ì§€ ê²€ì‚¬ 
-            // - ì´ë©”ì¼ ì£¼ì†Œê°€ ì•Œë§ì€ í˜•ì‹ì¸ê°€
+            // 1. ?œ ?š¨ ?°?´?„°?¸ì§? ê²??‚¬ 
+            // - ?´ë©”ì¼ ì£¼ì†Œê°? ?•Œë§ì?? ?˜•?‹?¸ê°?
             if (false == IsValidEmail(inputEmail))
             {
                 popupCoroutine = StartCoroutine(ShowAlertPopup(warnEmailMessage));
                 return false;
             }
-            // - ì§€ê°‘ ì£¼ì†Œê°€ ë¹„ì–´ìˆëŠ”ê°€
+            // - ì§?ê°? ì£¼ì†Œê°? ë¹„ì–´?ˆ?Š”ê°?
             if ("" == inputWallet)
             {
                 popupCoroutine = StartCoroutine(ShowAlertPopup(warnWalletMessage));

@@ -24,18 +24,13 @@ public class TitleManager : MonoBehaviour
         btn_reset.onClick.AddListener(() =>
         {
             PlayerPrefs.SetInt(key_authStatus, AuthStatus._INIT);
-            
+            // 만약 로컬에 저장되어 있는 유저 정보가 있다면 삭제한다.
+            SaveSystem.DeleteUserInfoFile();
         });
 
         Debug.Log($"PlayerPrefs.GetInt(key_completedAuth) = {PlayerPrefs.GetInt(key_authStatus)}");
         
         StartCoroutine(ShowInfoText());
-    }
-
-    
-    void Update()
-    {
-        
     }
 
     IEnumerator ShowInfoText()

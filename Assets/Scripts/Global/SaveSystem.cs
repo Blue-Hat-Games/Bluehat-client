@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+
 [System.Serializable]
 public class SaveData
 {
@@ -19,8 +20,9 @@ public class SaveData
 public static class SaveSystem
 {
 	private static string SavePath => Application.persistentDataPath + "/saves/";
+	private static string UserInfoSaveFileName = "userInfo";
 
-	public static void Save(SaveData saveData, string saveFileName)
+	public static void SaveUserInfoFile(SaveData saveData)
 	{
 		if (!Directory.Exists(SavePath))
 		{
@@ -29,23 +31,34 @@ public static class SaveSystem
 
 		string saveJson = JsonUtility.ToJson(saveData);
 
-		string saveFilePath = SavePath + saveFileName + ".json";
+		string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
 		File.WriteAllText(saveFilePath, saveJson);
-		Debug.Log("Save Success: " + saveFilePath);
+		Debug.Log("SaveUserInfoFile Success: " + saveFilePath);
 	}
 
-	public static SaveData Load(string saveFileName)
+	public static SaveData LoadUserInfoFile()
 	{
-		string saveFilePath = SavePath + saveFileName + ".json";
+		string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
 
 		if (!File.Exists(saveFilePath))
 		{
-			Debug.LogError("No such saveFile exists");
+			Debug.Log("No such saveFile exists");
 			return null;
 		}
 
 		string saveFile = File.ReadAllText(saveFilePath);
 		SaveData saveData = JsonUtility.FromJson<SaveData>(saveFile);
 		return saveData;
+	}
+
+	public static void DeleteUserInfoFile()
+	{
+		string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
+		if(!File.Exists(saveFilePath))
+		{
+			Debug.Log("No such saveFile exists");
+			return;
+		}
+		File.Delete(saveFilePath);
 	}
 }
