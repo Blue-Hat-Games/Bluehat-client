@@ -3,11 +3,11 @@ namespace BluehatGames
     public class ApiUrl
     {
         //Login
-        public const string emailLoginVerify = "http://api.bluehat.games/auth";
-        public const string login = "http://api.bluehat.games/users";
+        public const string emailLoginVerify = "https://api.bluehat.games/auth";
+        public const string login = "https://api.bluehat.games/users";
         //Animal
-        public const string postAnimalNew = "http://api.bluehat.games/animal";
-        public const string getAnimalList = "http://api.bluehat.games/animal";
+        public const string postAnimalNew = "https://api.bluehat.games/animal";
+        public const string getAnimalList = "https://api.bluehat.games/animal";
 
         //Get Header
         public const string AuthGetHeader = "Authorization";
