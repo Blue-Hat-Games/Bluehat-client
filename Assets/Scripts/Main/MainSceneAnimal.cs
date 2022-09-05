@@ -10,6 +10,9 @@ public class MainSceneAnimal : MonoBehaviour
     // 너무 가만히 있어서도 안되고 좀 자연스럽게 필드를 돌아다녀야 함
     // 나중에는 플레이어가 동물을 터치하면 뭔가 좀 다른 움직임을 하게 하고 싶긴 함 
 
+    private const string ANIM_PARAMETER_JUMP = "Jump";
+    private const string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
+
     // 제어해야 하는 것
     // 1. 애니메이터 컨트롤러
     // 2. 이동 (속도, 방향)
@@ -24,7 +27,14 @@ public class MainSceneAnimal : MonoBehaviour
     private IEnumerator idleCoroutine;
     private IEnumerator moveCoroutine;
 
-    public float animalMoveSpeed = 10;
+    public float animalMoveSpeed = 0.5f;
+
+
+    private float idleToWalkTransitionValue = 0.2f;
+    private float walkToIdleTransitionValue = 0.08f;
+
+    private Vector2 moveLimit = new Vector2(5, 0);
+    
     void Start()
     {
         animalAnim = this.gameObject.GetComponentInChildren<Animator>();
@@ -61,9 +71,11 @@ public class MainSceneAnimal : MonoBehaviour
 
     IEnumerator SetIdleStateTimer()
     {
-        float randomTimer = Random.RandomRange(5, 15);
+        float randomTimer = Random.RandomRange(3, 10);
+        animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, walkToIdleTransitionValue);
         yield return new WaitForSeconds(randomTimer);
         animalState = AnimalState.Move;
+        yield break;
     }
 
     IEnumerator SetMoveStateTimer()
@@ -78,10 +90,9 @@ public class MainSceneAnimal : MonoBehaviour
         float randomX = Random.Range(0.0f, 1.0f);
         float randomZ = Random.Range(0.0f, 1.0f);
 
-        Debug.Log($"Random Rot = ${randomX}, ${randomZ}");
-
         Vector3 randomRot = new Vector3(randomX, 0, randomZ);
 
+        Vector3 curPos = this.transform.position;
         while(true)
         {
             yield return null;
@@ -89,10 +100,28 @@ public class MainSceneAnimal : MonoBehaviour
             if(timer > randomTimer)
             {
                 animalState = AnimalState.Idle;
+                yield break;
             }
 
-            
+            // 애니메이터 파라미터 설정 
+            animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, idleToWalkTransitionValue);
+
+            // 이동 제한 
+            this.gameObject.transform.localPosition = ClampPosition(this.transform.localPosition);
+
+            this.gameObject.transform.rotation = Quaternion.LookRotation(randomRot - curPos);
             this.gameObject.transform.Translate(randomRot * animalMoveSpeed * Time.deltaTime);
+
         }
     } 
+
+    public Vector3 ClampPosition(Vector3 pos)
+    {
+        return new Vector3 
+        (
+            Mathf.Clamp(pos.x, -moveLimit.x, moveLimit.x),
+            this.transform.position.y,
+            Mathf.Clamp(pos.z, -moveLimit.x, moveLimit.x)
+        );
+    }
 }
