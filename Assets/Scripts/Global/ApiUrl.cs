@@ -2,6 +2,18 @@ namespace BluehatGames
 {
     public class ApiUrl
     {
+        public enum ApiCategory
+        {
+            emailLoginVerify,
+            userLogin,
+            postAnimalNew,
+            getAnimalList
+
+        }
+
+        public string liveServer = "https://api.bluehat.games";
+        public string testServer = "";
+
         //Login
         public const string emailLoginVerify = "https://api.bluehat.games/auth";
         public const string login = "https://api.bluehat.games/users";
@@ -11,6 +23,31 @@ namespace BluehatGames
 
         //Get Header
         public const string AuthGetHeader = "Authorization";
+
+        public string GetLiveServerApiUrl()
+        {
+            string url;
+
+            switch(ApiCategory)
+            {
+                case ApiCategory.emailLoginVerify:
+                    url = $"{liveServer}/{emailLoginVerify}";
+                    break;
+                case ApiCategory.login:
+                    url = $"{liveServer}/{login}";
+                    break;
+                case ApiCategory.postAnimalNew:
+                    url = $"{liveServer}/{postAnimalNew}";
+                    break;
+                case ApiCategory.getAnimalList:
+                    url = $"{liveServer}/{getAnimalList}";
+                    break;
+                default:
+                    
+                break;
+            }
+            return url;
+        }
     }
     public class ResponseLogin
     {
