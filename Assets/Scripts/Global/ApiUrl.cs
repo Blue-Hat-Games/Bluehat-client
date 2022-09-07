@@ -17,12 +17,16 @@ namespace BluehatGames
         //Login
         public const string emailLoginVerify = "https://api.bluehat.games/auth";
         public const string login = "https://api.bluehat.games/users";
+
         //Animal
         public const string postAnimalNew = "https://api.bluehat.games/animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
 
         //Get Header
         public const string AuthGetHeader = "Authorization";
+
+        // 
+        public const string failAddress = "failedAddress";
 
         public string GetLiveServerApiUrl()
         {
@@ -44,7 +48,32 @@ namespace BluehatGames
                     break;
                 default:
                     
-                break;
+                    break;
+            }
+            return url;
+        }
+
+        public string GetTestServerApiUrl()
+        {
+            string url;
+
+            switch(ApiCategory)
+            {
+                case ApiCategory.emailLoginVerify:
+                    url = $"{testServer}/{emailLoginVerify}";
+                    break;
+                case ApiCategory.login:
+                    url = $"{testServer}/{login}";
+                    break;
+                case ApiCategory.postAnimalNew:
+                    url = $"{testServer}/{postAnimalNew}";
+                    break;
+                case ApiCategory.getAnimalList:
+                    url = $"{testServer}/{getAnimalList}";
+                    break;
+                default:
+                    
+                    break;
             }
             return url;
         }
