@@ -8,7 +8,6 @@ namespace BluehatGames
             userLogin,
             postAnimalNew,
             getAnimalList
-
         }
 
         public string liveServer = "https://api.bluehat.games";
@@ -25,19 +24,19 @@ namespace BluehatGames
         //Get Header
         public const string AuthGetHeader = "Authorization";
 
-        // 
+        // 해당되는 값이 없을 때 리턴할까 싶어서 만들어 본 변수인데 또 굳이..? 싶기도? 
         public const string failAddress = "failedAddress";
 
-        public string GetLiveServerApiUrl()
+        public string GetLiveServerApiUrl(ApiCategory apiCategory)
         {
-            string url;
+            string url = "";
 
-            switch(ApiCategory)
+            switch(apiCategory)
             {
                 case ApiCategory.emailLoginVerify:
                     url = $"{liveServer}/{emailLoginVerify}";
                     break;
-                case ApiCategory.login:
+                case ApiCategory.userLogin:
                     url = $"{liveServer}/{login}";
                     break;
                 case ApiCategory.postAnimalNew:
@@ -47,22 +46,22 @@ namespace BluehatGames
                     url = $"{liveServer}/{getAnimalList}";
                     break;
                 default:
-                    
+                        
                     break;
             }
             return url;
         }
 
-        public string GetTestServerApiUrl()
+        public string GetTestServerApiUrl(ApiCategory apiCategory)
         {
-            string url;
+            string url = "";
 
-            switch(ApiCategory)
+            switch(apiCategory)
             {
                 case ApiCategory.emailLoginVerify:
                     url = $"{testServer}/{emailLoginVerify}";
                     break;
-                case ApiCategory.login:
+                case ApiCategory.userLogin:
                     url = $"{testServer}/{login}";
                     break;
                 case ApiCategory.postAnimalNew:
@@ -78,11 +77,13 @@ namespace BluehatGames
             return url;
         }
     }
+    
     public class ResponseLogin
     {
         public string msg;
         public string access_token;
     }
+
     public class ResponseAnimalNew
     {
         public string id;

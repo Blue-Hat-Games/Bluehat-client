@@ -51,12 +51,6 @@ namespace BluehatGames
 
         private Coroutine popupCoroutine;
 
-        // PlayerPref?— ????¥?•  ê²?
-        // 1. ?´ë©”ì¼ ?¸ì¦ì„ ë³´ë‚´?„œ ?™„ë£Œë§Œ ?•˜ë©? ?˜?Š”ì§?
-        // - Login ë²„íŠ¼?„ ?´ë©”ì¼ ?‹¤?‹œ ë³´ë‚´ê¸? ë²„íŠ¼?œ¼ë¡? ë³?ê²? 
-        // 2. ?´ë©”ì¼ ?¸ì¦ì„ ?™„ë£Œí–ˆ?Š”ì§?
-        // - ? ‘?†?•˜ê¸? ë²„íŠ¼?œ¼ë¡? ë³?ê²?
-
         [Header("ForTest")]
         public bool isCompletedAuth;
 
@@ -71,20 +65,28 @@ namespace BluehatGames
 
         void Start()
         {
-            // Áö±İ ¾î¶² °èÁ¤À¸·Î µÇ¾î ÀÖ´ÂÁö µğ¹ö±ë 
+            Debug.Log(Application.persistentDataPath);
+            // ??? ?????? ??? ???
             SaveData loadData = SaveSystem.LoadUserInfoFile();
             if (loadData != null)
             {
                 Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
             }
+            else
+            {
+                Debug.Log("loadData is null");
+            }
 
             Debug.Log($"Client Current Status => {GetClientInfo(PlayerPrefsKey.key_authStatus)}");
-            // ë¡œê·¸?¸ ë²„íŠ¼ onClick
+
+            // login button onClick
             btn_login.onClick.AddListener(() =>
-            {
-                
+            {                
                 if (false == IsValidInputData(inputEmail.text, inputWallet.text))
+                {
+                    Debug.Log("Input Data is INVALIED");
                     return;
+                }
 
                 btn_refresh.gameObject.SetActive(true);
                 StartCoroutine(RequestAuthToServer(ApiUrl.emailLoginVerify, inputEmail.text, inputWallet.text, (UnityWebRequest request) =>
@@ -93,17 +95,18 @@ namespace BluehatGames
 
                     // json text from server response
                     var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
-                    Debug.Log($"response => {response.msg}");
+                    Debug.Log($"response.msg => {response.msg}");
 
                     if (response.msg != "fail")
                     {
                         SaveData user = new SaveData(inputEmail.text, inputWallet.text);
                         SaveSystem.SaveUserInfoFile(user);
+                        Debug.Log($"SaveSystem | Save User Info File ({inputEmail.text}, {inputWallet.text})");
                     }
                 }));
             });
 
-            // ë¦¬í”„? ˆ?‹œ ë²„íŠ¼ onClick 
+            // refresh button onClick
             btn_refresh.onClick.AddListener(() =>
             {
                 SaveData loadData = SaveSystem.LoadUserInfoFile();
@@ -111,19 +114,24 @@ namespace BluehatGames
                 {
                     Debug.Log($"Load Success! -> Email: {loadData.email} | walletAdd: {loadData.wallet_address}");
                 }
+                else
+                {
+                    Debug.Log("Save Data is null");
+                    return;
+                }
 
-                // ÀÌ¸ŞÀÏ ÀÎÁõÇÒ ¶§ ÀÔ·ÂÇÑ °ªÀ» ·ÎÄÃ¿¡ ÀúÀåµÈ °É ºÒ·¯¿Í¼­ ÀÌ¸ŞÀÏ ÀÎÁõ ¿Ï·á ¿©ºÎ¿¡ ´ëÇØ ¼­¹ö¿¡ Ã¼Å©ÇÔ
+                // 
                 StartCoroutine(RequestAuthToServer(ApiUrl.login, loadData.email, loadData.wallet_address, (UnityWebRequest request) =>
                 {                  
                     // ?›¹?„œë²„ë¡œë¶??„° ë°›ì?? ?‘?‹µ ?‚´?š© ì¶œë ¥
-                    Debug.Log(request.downloadHandler.text);
+                    Debug.Log($"request.downloadHandler.text = {request.downloadHandler.text}");
                     var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                     Debug.Log($"response => {response} | response.msg = {response.msg}");
                     if(response.msg == "Register Success" || response.msg == "Login Success")
                     {
                         if (null != popupCoroutine)
                         {
-                            // ê¸°ì¡´ ì½”ë£¨?‹´?´ ?ˆ?—ˆ?‹¤ë©? ? •ì§??‹œ?‚¤ê³? ?ƒˆë¡œìš´ ì½”ë£¨?‹´?´ ?‹¤?–‰?˜?„ë¡? ?•¨ 
+                            // ?? ???
                             StopCoroutine(popupCoroutine);
                         }
 
@@ -143,25 +151,21 @@ namespace BluehatGames
 
 
 
-            // ? ‘?†?•˜ê¸? ë²„íŠ¼
-            // 1. ê¸°ë³¸??? ë¹„í™œ?„±?™”
-            // 2. ?™œ?„±?™” ?˜?Š” ?‹œ?  ?
-            // - Refresh ë²„íŠ¼?„ ?ˆŒ?Ÿ¬?„œ ?´ë©”ì¼ ?¸ì¦ëœ ê²? ?™•?¸?˜?—ˆ?„ ê²½ìš°
-            // - 
+            // play button onClick
             btn_play.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneName._03_Main);
             });
 
 
-            // ì²˜ìŒ?—?Š” ?”Œ? ˆ?´ ë²„íŠ¼, ë¦¬í”„? ˆ?‹œ ë²„íŠ¼ ë¹„í™œ?„±?™”
+            // hide play button, refresh button in first
             btn_play.gameObject.SetActive(false);
             btn_refresh.gameObject.SetActive(false);
 
-
+            // get current client auth info 
             var clientAuthInfo = GetClientInfo(PlayerPrefsKey.key_authStatus);
-            // ?¸ì¦? ?ƒ?ƒœ?— ?”°?¼ ë¶„ê¸° 
-            // ?´ë©”ì¼?„ ë³´ë‚¸ ?ƒ?ƒœ?´ë©? ?´ë©”ì¼ ?¬? „?†¡ ë²„íŠ¼ ?…‹?Œ…
+            
+            // email authenticating
             if (clientAuthInfo == AuthStatus._EMAIL_AUTHENTICATING)
             {
                 SetEmailAuthenticatingSetting();
@@ -201,24 +205,25 @@ namespace BluehatGames
 
         IEnumerator RequestAuthToServer(string URL, string inputEmail, string inputWallet, Action<UnityWebRequest> action)
         {
-            Debug.Log($"RequestAuthToServer -> URL: {URL}");
+            Debug.Log($"RequestAuthToServer | URL: {URL}, inputEmail: {inputEmail}, inputWallet: {inputWallet}");
             string jsonData = "";
-            // ?´ë©”ì¼ê³? ì§?ê°‘ì£¼?†Œë¥? Json ?˜•?‹?œ¼ë¡? ë³??™˜ 
+
+            // 'emailLoginVerify' or 'login'
             if (URL == ApiUrl.emailLoginVerify)
             {
                 jsonData = SetPlayerJoinInfoToJsonData(inputEmail, inputWallet);
-                // TEST; ?´ë©”ì¼ ?¸ì¦? ?™„ë£Œëœ ê²½ìš°?˜ ?”Œë¡œìš°
+                
                 if (null != popupCoroutine)
                 {
-                    // ê¸°ì¡´ ì½”ë£¨?‹´?´ ?ˆ?—ˆ?‹¤ë©? ? •ì§??‹œ?‚¤ê³? ?ƒˆë¡œìš´ ì½”ë£¨?‹´?´ ?‹¤?–‰?˜?„ë¡? ?•¨ 
                     StopCoroutine(popupCoroutine);
                 }
 
+                // alert popup 
                 StartCoroutine(ShowAlertPopup(emailMessage));
             } 
             else if (URL == ApiUrl.login)
             {
-                // ÀÎÁõ Á¤º¸¸¦ ¿äÃ»ÇÏ·Á´Â µ¥ÀÌÅÍ¸¦ JsonÀ¸·Î ¹Ù²Ş 
+                // inputEmail, inputWallet to jsonData
                 jsonData = SetPlayerInfoToJsonData(inputEmail, inputWallet);
 
             }
@@ -227,6 +232,7 @@ namespace BluehatGames
 
             btn_login.GetComponentInChildren<Text>().text = "Resend Email";
 
+            // byteEmail 
             byte[] byteEmail = Encoding.UTF8.GetBytes(jsonData);
             // ?›¹?„œë²„ë¡œ Post ?š”ì²??„ ë³´ëƒ„
             using (UnityWebRequest request = UnityWebRequest.Post(URL, jsonData))
@@ -246,7 +252,8 @@ namespace BluehatGames
                 {
                     Debug.Log("request Success! Action Invoke");
                     action.Invoke(request);
-                    // ÀÌ¸ŞÀÏ Àü¼Û¿¡ ¼º°øÇÑ °æ¿ì¿¡¸¸ ÀÎÁõ»óÅÂ¸¦ º¯°æ
+                    
+                    // URL -> 'emailLoginVerify' or 'login'
                     if(URL == ApiUrl.emailLoginVerify)
                     {
                         SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);  
@@ -274,7 +281,7 @@ namespace BluehatGames
 
         string SetPlayerInfoToJsonData(string inputEmail, string inputWallet)
         {
-            // ?„œë²„ë¡œ ë³´ë‚¼ Json ?°?´?„° ?…‹?Œ…
+            
             PlayerInfo playerInfo = new PlayerInfo();
 
             playerInfo.email = inputEmail;
@@ -286,14 +293,13 @@ namespace BluehatGames
 
         bool IsValidInputData(string inputEmail, string inputWallet)
         {
-            // 1. ?œ ?š¨ ?°?´?„°?¸ì§? ê²??‚¬ 
-            // - ?´ë©”ì¼ ì£¼ì†Œê°? ?•Œë§ì?? ?˜•?‹?¸ê°?
+            // warn email
             if (false == IsValidEmail(inputEmail))
             {
                 popupCoroutine = StartCoroutine(ShowAlertPopup(warnEmailMessage));
                 return false;
             }
-            // - ì§?ê°? ì£¼ì†Œê°? ë¹„ì–´?ˆ?Š”ê°?
+            // input wallet 
             if ("" == inputWallet)
             {
                 popupCoroutine = StartCoroutine(ShowAlertPopup(warnWalletMessage));
@@ -302,6 +308,8 @@ namespace BluehatGames
 
             return true;
         }
+
+        // check valid email
         private bool IsValidEmail(string email)
         {
             bool valid = Regex.IsMatch(email, @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");

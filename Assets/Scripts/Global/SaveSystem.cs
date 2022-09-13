@@ -24,9 +24,10 @@ public static class SaveSystem
 
 	public static void SaveUserInfoFile(SaveData saveData)
 	{
-		if (!Directory.Exists(SavePath))
+		if (false == Directory.Exists(SavePath))
 		{
 			Directory.CreateDirectory(SavePath);
+			Debug.Log($"SaveSystem | Create Directory => {SavePath}");
 		}
 
 		string saveJson = JsonUtility.ToJson(saveData);
