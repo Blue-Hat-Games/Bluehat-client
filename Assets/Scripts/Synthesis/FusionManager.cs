@@ -30,14 +30,12 @@ public class FusionManager : MonoBehaviour
         }
     }
 
-
     public void SetTargetAnimal(int index, GameObject animal)
     {
         if(index == 0)
         {
             Debug.Log($"1 SetTargetAnimal => {index}, animal => {animal.name}");
             targetAnimal_1 = animal;
-            //targetAnimal_1.GetComponent<LODGroup>()
 
             referenceTextures[0] = targetAnimal_1.GetComponentInChildren<Renderer>().material.GetTexture("_MainTex") as Texture2D;
 
