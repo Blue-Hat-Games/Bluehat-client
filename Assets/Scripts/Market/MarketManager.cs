@@ -16,10 +16,15 @@ namespace BluehatGames
     {
         private bool isLoadig = false;
         public int totalCount = 0;
-        public int page = 1;
-        public int limit = 5;
+        private int page = 1;
+        public int limit = 10;
         public string order = "Newest";
         public GameObject marketItemPrefab;
+
+
+        public Button btnNext;
+        public Button btnBefore;
+
 
         void Start()
         {
@@ -27,6 +32,32 @@ namespace BluehatGames
             StartCoroutine(getItemCount());
             StartCoroutine(getItems());
 
+            btnNext.onClick.AddListener(() =>
+            {
+                page = page + 1;
+                StartCoroutine(getItems());
+            });
+
+            btnBefore.onClick.AddListener(() =>
+            {
+                page = page - 1;
+                StartCoroutine(getItems());
+            });
+
+        }
+
+        private Vector2 setCardPostion(int pageIndex)
+        {
+            var screenHeight = Screen.height;
+            var screenWidth = Screen.width;
+            return new Vector2(0, 0);
+        }
+
+        private Vector2 setCardSize(int pageCardLimit)
+        {
+            var screenHeight = Screen.height;
+            var screenWidth = Screen.width;
+            return new Vector2(100, 100);
         }
 
 
@@ -51,11 +82,14 @@ namespace BluehatGames
             }
         }
 
+
         IEnumerator getItems()
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost = "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
+            Debug.Log(order);
+            Debug.Log(limit);
+            string url = localhost + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -72,11 +106,10 @@ namespace BluehatGames
                     {
                         GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
                         itemObj.transform.SetParent(GameObject.Find("Canvas").transform);
-                        itemObj.transform.Find("id").GetComponent<Text>().text = parse_result.items[i].id.ToString();
                         itemObj.transform.Find("animal_name").GetComponent<Text>().text = parse_result.items[i].username;
                         itemObj.transform.Find("price").GetComponent<Text>().text = parse_result.items[i].price.ToString();
                         itemObj.transform.Find("view_count").GetComponent<Text>().text = parse_result.items[i].view_count.ToString();
-                        itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -100 * i);
+                        itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200 + 350 * i, 0);
                     }
                 }
             }
