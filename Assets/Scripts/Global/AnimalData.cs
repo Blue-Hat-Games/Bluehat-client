@@ -18,8 +18,6 @@ public static class AnimalData
 
 		AnimalListForSave animalSaveData = new AnimalListForSave();
 		
-
-		
 		string saveJson = JsonUtility.ToJson(animalSaveData);
 
 		string saveFilePath = SavePath + saveFileName + ".json";
