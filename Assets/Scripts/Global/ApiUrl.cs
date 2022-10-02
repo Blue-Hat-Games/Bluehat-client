@@ -20,7 +20,8 @@ namespace BluehatGames
         //Animal
         public const string postAnimalNew = "https://api.bluehat.games/animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
-
+        public const string getUserAnimal = "https://api.bluehat.games/animal/get-user-animal";
+        
         //Get Header
         public const string AuthGetHeader = "Authorization";
 
