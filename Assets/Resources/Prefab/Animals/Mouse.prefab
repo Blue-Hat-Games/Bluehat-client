@@ -490,7 +490,7 @@ Animator:
   m_GameObject: {fileID: 3881578903248421943}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 43b757d54f0c11d4b8a32e49db487888, type: 3}
-  m_Controller: {fileID: 9100000, guid: 61a3d392e7447ec428edb167a620eb90, type: 2}
+  m_Controller: {fileID: 9100000, guid: 316a0d55be95f4ff5851b3d13e904fe5, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -510,6 +510,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3881578903457055516}
   - component: {fileID: 3881578903457055506}
+  - component: {fileID: 758488808337093258}
   m_Layer: 0
   m_Name: Mouse
   m_TagString: Untagged
@@ -524,7 +525,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3881578903457055519}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -547,3 +548,19 @@ CapsuleCollider:
   m_Height: 1.2968031
   m_Direction: 2
   m_Center: {x: 0, y: 0.54094803, z: 0.06223291}
+--- !u!54 &758488808337093258
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3881578903457055519}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0

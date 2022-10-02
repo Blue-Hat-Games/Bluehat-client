@@ -456,6 +456,7 @@ GameObject:
   m_Component:
   - component: {fileID: 976961671416147827}
   - component: {fileID: 976961671416147837}
+  - component: {fileID: 5539113144140210542}
   m_Layer: 0
   m_Name: Dove
   m_TagString: Untagged
@@ -470,7 +471,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976961671416147826}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -493,6 +494,22 @@ CapsuleCollider:
   m_Height: 1.6797752
   m_Direction: 1
   m_Center: {x: 0, y: 1.0771081, z: 0.07659435}
+--- !u!54 &5539113144140210542
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976961671416147826}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &976961672216387472
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +554,7 @@ Animator:
   m_GameObject: {fileID: 976961672216387472}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 887a65c404f8e5f44a4e70c43989b151, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4b70c2e237757854991fe1471dbbbb74, type: 2}
+  m_Controller: {fileID: 9100000, guid: 11f4cc81513e04a5e98afb5dab34a879, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

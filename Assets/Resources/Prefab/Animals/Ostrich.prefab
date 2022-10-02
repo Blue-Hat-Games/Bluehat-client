@@ -456,6 +456,7 @@ GameObject:
   m_Component:
   - component: {fileID: 124788927993236611}
   - component: {fileID: 124788927993236621}
+  - component: {fileID: 412423038619315824}
   m_Layer: 0
   m_Name: Ostrich
   m_TagString: Untagged
@@ -470,7 +471,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124788927993236608}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -493,6 +494,22 @@ CapsuleCollider:
   m_Height: 2.6833143
   m_Direction: 1
   m_Center: {x: 0.00000011920929, y: 2.002203, z: 0.005227685}
+--- !u!54 &412423038619315824
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124788927993236608}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1 &124788928272432932
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +554,7 @@ Animator:
   m_GameObject: {fileID: 124788928272432932}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: c4317808b1c0b11408ddaa59f1b180d5, type: 3}
-  m_Controller: {fileID: 9100000, guid: d9a35d5bd4dda5c4e93012a180fbe96b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 2240f150b81cd4f97a590c0cd7007ff6, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
