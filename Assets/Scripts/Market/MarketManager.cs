@@ -145,6 +145,7 @@ namespace BluehatGames
                 {
                     var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
                     var parse_result = JsonUtility.FromJson<ItemCardList>(response);
+                    Debug.Log(parse_result.items);
                     for (int i = 0; i < parse_result.items.Length; i++)
                     {
                         GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
