@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 해당 클래스는 AnimalFactory.cs 사용방법 데모를 위한 테스트 클래스
 public class ThumbnailMaker : MonoBehaviour
 {
     public AnimalFactory animalFactory;
@@ -17,14 +18,27 @@ public class ThumbnailMaker : MonoBehaviour
 
     void Start()
     {
+        // TODO: 테스트 파일의 경로이므로 서버로부터 받은 jsonData를 활용하도록 코드 수정 필요
         string jsonData = System.IO.File.ReadAllText("/Users/minjujuu/GitHub/Bluehat-project/Assets/Scripts/animalJsonData.txt");
         List<GameObject> animalObjectList = new List<GameObject>();
 
         // json data를 넘기면 그 데이터를 통해 생성된 동물 오브젝트 리스트를 반환 받을 수 있다
         animalObjectList = animalFactory.ConvertJsonToAnimalObject(jsonData);
+
         StartCoroutine(TakeScreenshot(animalObjectList));
     }
 
+    void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
+    {
+        Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
+        // ReadPixels looks at the active RenderTexture.
+        RenderTexture.active = rTex;
+        tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
+        tex.Apply();
+        action.Invoke(tex);
+    }
+
+    // UI가 있을 경우
     IEnumerator TakeScreenshot(List<GameObject> animalObjectList)
     {
         foreach(GameObject obj in animalObjectList)
@@ -41,19 +55,12 @@ public class ThumbnailMaker : MonoBehaviour
             {
                 uiSet.GetComponent<RawImage>().texture = resultTex;
             });
+
             uiSet.transform.SetParent(scrollViewContent);
             obj.gameObject.SetActive(false);
         }
     }
 
-    void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
-    {
-        Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
-        // ReadPixels looks at the active RenderTexture.
-        RenderTexture.active = rTex;
-        tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
-        tex.Apply();
-        action.Invoke(tex);
-    }
+
 
 }
