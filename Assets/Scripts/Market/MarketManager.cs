@@ -38,16 +38,19 @@ namespace BluehatGames
 
         public Button myAnimalDetailPanelCloseBtn;
 
-
+        public Text coinInfoText;
         public Text myAnimalDetailData;
 
         public Text AnimalDetailData;
+
+        public User user;
 
         void Start()
         {
             Debug.Log("MarketManager");
             StartCoroutine(getItemCount());
             StartCoroutine(getItems());
+            StartCoroutine(getUserInfo());
 
             myAnimalPanel.SetActive(false);
             myAnimalDetailPanel.SetActive(false);
@@ -125,6 +128,33 @@ namespace BluehatGames
             }
         }
 
+
+        IEnumerator getUserInfo()
+        {
+            string host = "https://api.bluehat.games";
+            string localhost = "http://localhost:3000";
+            string url = localhost + "/users";
+            Debug.Log($"Request to Get Item -> URL: {url}");
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            {
+                webRequest.SetRequestHeader("Authorization", "0000");
+                yield return webRequest.SendWebRequest();
+                if (webRequest.isNetworkError)
+                {
+                    Debug.Log($"Error: {webRequest.error}");
+                }
+                else
+                {
+                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                    var response = "{\"user\":" + webRequest.downloadHandler.text + "}";
+                    Debug.Log($"Received: {response}");
+                    var parse_result = JsonUtility.FromJson<UserInfo>(response);
+                    Debug.Log($"User Coin: {parse_result.user.coin}");
+                    user = parse_result.user;
+                    coinInfoText.text = $"{user.coin.ToString()}";
+                }
+            }
+        }
 
         IEnumerator getItems()
         {
@@ -248,6 +278,22 @@ namespace BluehatGames
     public class ItemCardList
     {
         public ItemCard[] items;
+    }
+
+    [Serializable]
+    public class User
+    {
+        public string username;
+        public int coin;
+        public string wallet_address;
+        public string email;
+        public string createdAt;
+    }
+
+    [Serializable]
+    public class UserInfo
+    {
+        public User user;
     }
 
 }
