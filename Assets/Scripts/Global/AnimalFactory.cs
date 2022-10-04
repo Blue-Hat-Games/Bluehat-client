@@ -6,7 +6,6 @@ using System.IO;
 public class AnimalFactory : MonoBehaviour
 {
     public Texture2D formatTexture;
-    private string animalPrefabPath = "Prefab/Animals";
     private string pngSavePath = "";
 
     // �������� ���� �����͸� �޾Ƽ� �ٽ� ������ ����

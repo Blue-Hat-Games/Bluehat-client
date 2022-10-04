@@ -23,25 +23,29 @@ public class MainSceneAnimal : MonoBehaviour
         Move
     }
 
+    private Rigidbody rigidl;
     public AnimalState animalState;
     private IEnumerator idleCoroutine;
     private IEnumerator moveCoroutine;
 
-    public float animalMoveSpeed = 0.5f;
-
+    [SerializeField] private Vector3 direction;
+    [SerializeField] private float animalMoveSpeed = 10;
 
     private float idleToWalkTransitionValue = 0.2f;
     private float walkToIdleTransitionValue = 0.08f;
-
-    private Vector2 moveLimit = new Vector2(5, 0);
     
+
     void Start()
     {
+        rigidl = this.gameObject.GetComponent<Rigidbody>();
         animalAnim = this.gameObject.GetComponentInChildren<Animator>();
         animalState = AnimalState.Idle;
 
         idleCoroutine = null;
         moveCoroutine = null;
+
+        // 회전 값 랜덤 설정 
+        this.transform.eulerAngles = new Vector3(0, Random.Range(0, 360f), 0);
     }
 
     void Update()
@@ -71,7 +75,7 @@ public class MainSceneAnimal : MonoBehaviour
 
     IEnumerator SetIdleStateTimer()
     {
-        float randomTimer = Random.RandomRange(3, 10);
+        float randomTimer = Random.Range(3, 10);
         animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, walkToIdleTransitionValue);
         yield return new WaitForSeconds(randomTimer);
         animalState = AnimalState.Move;
@@ -84,15 +88,18 @@ public class MainSceneAnimal : MonoBehaviour
         // Quaternion randRotate = Random.rotationUniform;
         // this.gameObject.transform.rotation = randRotate;
 
-        float randomTimer = Random.RandomRange(5, 15);
+        float randomTimer = Random.Range(5, 15);
         float timer = 0;
 
         float randomX = Random.Range(0.0f, 1.0f);
         float randomZ = Random.Range(0.0f, 1.0f);
 
-        Vector3 randomRot = new Vector3(randomX, 0, randomZ);
+        Vector3 randomDir = new Vector3(randomX, 0, randomZ);
 
         Vector3 curPos = this.transform.position;
+        // 방향 설정
+        direction.Set(0f, Random.Range(0f, 360f), 0f);
+
         while(true)
         {
             yield return null;
@@ -106,22 +113,24 @@ public class MainSceneAnimal : MonoBehaviour
             // 애니메이터 파라미터 설정 
             animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, idleToWalkTransitionValue);
 
-            // 이동 제한 
-            this.gameObject.transform.localPosition = ClampPosition(this.transform.localPosition);
+            rigidl.MovePosition(transform.position + transform.forward * animalMoveSpeed * Time.deltaTime);
 
-            this.gameObject.transform.rotation = Quaternion.LookRotation(randomRot - curPos);
-            this.gameObject.transform.Translate(randomRot * animalMoveSpeed * Time.deltaTime);
+            Vector3 _rotation = Vector3.Lerp(transform.eulerAngles, direction, 0.01f);
+            rigidl.MoveRotation(Quaternion.Euler(_rotation));
+            // this.gameObject.transform.LookAt(randomDir - curPos);
+            // // this.gameObject.transform.rotation = Quaternion.LookRotation(randomDir - curPos);
+            // this.gameObject.transform.Translate(randomDir * animalMoveSpeed * Time.deltaTime);
 
         }
     } 
 
-    public Vector3 ClampPosition(Vector3 pos)
-    {
-        return new Vector3 
-        (
-            Mathf.Clamp(pos.x, -moveLimit.x, moveLimit.x),
-            this.transform.position.y,
-            Mathf.Clamp(pos.z, -moveLimit.x, moveLimit.x)
-        );
-    }
+    // public Vector3 ClampPosition(Vector3 pos)
+    // {
+    //     return new Vector3 
+    //     (
+    //         Mathf.Clamp(pos.x, -moveLimit.x, moveLimit.x),
+    //         this.transform.position.y,
+    //         Mathf.Clamp(pos.z, -moveLimit.x, moveLimit.x)
+    //     );
+    // }
 }

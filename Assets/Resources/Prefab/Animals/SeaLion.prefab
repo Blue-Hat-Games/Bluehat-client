@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3702653984661215612}
   - component: {fileID: 1108749379}
+  - component: {fileID: 6707897701947380701}
+  - component: {fileID: 3719293511443270205}
   m_Layer: 0
   m_Name: SeaLion
   m_TagString: Untagged
@@ -47,6 +49,44 @@ CapsuleCollider:
   m_Height: 2.1515493
   m_Direction: 1
   m_Center: {x: 0, y: 1.0923581, z: 0.37210882}
+--- !u!54 &6707897701947380701
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470465785419315492}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &3719293511443270205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470465785419315492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &7984856155077060588
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,7 +412,7 @@ Animator:
   m_GameObject: {fileID: 7984856156587552743}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 1a9afdad8db70874e83d9a275a5701ad, type: 3}
-  m_Controller: {fileID: 9100000, guid: 7e9d8753d263ddf4e9cdad46e52ad4da, type: 2}
+  m_Controller: {fileID: 9100000, guid: d4087e183e46d4fb2bea8f57cdc56fab, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

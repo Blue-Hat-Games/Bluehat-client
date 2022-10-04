@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3735165676384586131}
   - component: {fileID: 658364799}
+  - component: {fileID: 5932940906394239808}
+  - component: {fileID: -4407687193172144322}
   m_Layer: 0
   m_Name: Ox
   m_TagString: Untagged
@@ -47,6 +49,44 @@ CapsuleCollider:
   m_Height: 3.1757455
   m_Direction: 2
   m_Center: {x: 0.026905417, y: 1.2680061, z: 0.21972823}
+--- !u!54 &5932940906394239808
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854857120391202015}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &-4407687193172144322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854857120391202015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &3234152136030306944
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +577,7 @@ Animator:
   m_GameObject: {fileID: 3234152136775104100}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f2794254459f31a4281d929b796fa3c6, type: 3}
-  m_Controller: {fileID: 9100000, guid: 2d0d47dc2831e2747baa81f834fed82c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 46f01fd1ef7434768a04c3974a6d54b8, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

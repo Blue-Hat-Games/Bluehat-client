@@ -425,7 +425,7 @@ Animator:
   m_GameObject: {fileID: 1430760887632300785}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 60d7587a03c57f34fb6a100115a3c333, type: 3}
-  m_Controller: {fileID: 9100000, guid: 8bf746844dbe5a3479a5f0134f92e8be, type: 2}
+  m_Controller: {fileID: 9100000, guid: de3638b8fea5a40c7a237b09759194ff, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -471,6 +471,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4781075807650490765}
   - component: {fileID: 261353174}
+  - component: {fileID: 3394571340374328332}
+  - component: {fileID: 3691017482093953952}
   m_Layer: 0
   m_Name: SnowOwl
   m_TagString: Untagged
@@ -508,3 +510,41 @@ CapsuleCollider:
   m_Height: 2.14
   m_Direction: 1
   m_Center: {x: -0.0053811073, y: 0.97717404, z: 0.08198273}
+--- !u!54 &3394571340374328332
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7476178818532739715}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &3691017482093953952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7476178818532739715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0

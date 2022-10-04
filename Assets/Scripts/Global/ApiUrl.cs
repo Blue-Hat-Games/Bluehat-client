@@ -20,8 +20,9 @@ namespace BluehatGames
         //Animal
         public const string postAnimalNew = "https://api.bluehat.games/animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
+        public const string getUserAnimal = "https://api.bluehat.games/animal/get-user-animal";
 
-        //Get Header
+        //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
         // 해당되는 값이 없을 때 리턴할까 싶어서 만들어 본 변수인데 또 굳이..? 싶기도? 

@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9188406195486938545}
   - component: {fileID: 9188406195486938559}
+  - component: {fileID: 1021404441978881770}
+  - component: {fileID: -8948554646148759327}
   m_Layer: 0
   m_Name: Duck
   m_TagString: Untagged
@@ -24,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9188406195486938544}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -47,6 +49,44 @@ CapsuleCollider:
   m_Height: 1.7850227
   m_Direction: 1
   m_Center: {x: 0.00000011920929, y: 0.8940544, z: -0.000000059604645}
+--- !u!54 &1021404441978881770
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9188406195486938544}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &-8948554646148759327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9188406195486938544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &9188406195505056417
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,7 +577,7 @@ Animator:
   m_GameObject: {fileID: 9188406195862372363}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 7434945046b30c243a80cd3555e764c5, type: 3}
-  m_Controller: {fileID: 9100000, guid: 26f0a067e2e0cc246b1e968d833afcb5, type: 2}
+  m_Controller: {fileID: 9100000, guid: 248e7ad3828c64c93b90e36fa94f8abe, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

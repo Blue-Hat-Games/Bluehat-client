@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4501798677807262759}
   - component: {fileID: 1284346704}
+  - component: {fileID: 8092151790863426553}
+  - component: {fileID: -3979371130712121715}
   m_Layer: 0
   m_Name: Reindeer
   m_TagString: Untagged
@@ -47,6 +49,44 @@ CapsuleCollider:
   m_Height: 2.4569998
   m_Direction: 2
   m_Center: {x: -0.011209905, y: 1.3877974, z: 0.27417874}
+--- !u!54 &8092151790863426553
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115574499313453309}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &-3979371130712121715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115574499313453309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &2463159075641919264
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,7 +544,7 @@ Animator:
   m_GameObject: {fileID: 2463159076227423470}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: d0354549e186e21438c41d83131a82f2, type: 3}
-  m_Controller: {fileID: 9100000, guid: a86c5aecc7060d64892024881f7665e4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 40bb1fa42ecd84f768c91b5f62805f52, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
