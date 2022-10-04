@@ -15,7 +15,6 @@ public class GetColorTest : MonoBehaviour
     private Texture2D huskyTex2;
 
     public RawImage resultTex;
-    private string directoryPath = "Assets/Resources/NewTextures/";
     public string fileName = "test";
 
     public Renderer huskyMesh_j;

@@ -8,7 +8,6 @@ public class Joybutton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     public bool Pressed;
     public Animator buttonAnim;
 
-    private string ANIM_PARAMETER_ISPRESSED = "IsPressed";
 
     public void OnPointerDown(PointerEventData eventData)
     {

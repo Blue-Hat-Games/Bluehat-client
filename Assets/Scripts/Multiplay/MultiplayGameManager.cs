@@ -16,7 +16,7 @@ public class MultiplayGameManager : MonoBehaviour
     private string selectedAnimal;
     public void SetPlayerPrefabPath(string animalName) {
         Debug.Log($"setPlayerPrefabPath -> {animalName}");
-        playerPrefabPath = $"Prefab/MultiplayAnimal/{animalName}";
+        playerPrefabPath = $"Prefab/Animals/{animalName}";
     }
 
     private void Awake()
@@ -69,8 +69,16 @@ public class MultiplayGameManager : MonoBehaviour
         randPos.y = 0;
         // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
         GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, randPos, Quaternion.identity);
+        SetMultiplayAnimalObject(playerTemp);
         GameObject camera = GameObject.Instantiate(cameraPrefab);
         camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
+    }
+
+    private void SetMultiplayAnimalObject(GameObject animalPlayer) {
+
+        animalPlayer.AddComponent<MultiplayAnimalController>();
+        animalPlayer.AddComponent<PlayerTrigger>();
+        animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
     }
 
     public void LeaveRoom() {

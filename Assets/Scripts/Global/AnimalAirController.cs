@@ -14,6 +14,7 @@ namespace BluehatGames
 
         public string tempAccessToken = "0000";
         private List<GameObject> animalObjectList;
+        private AnimalDataFormat[]  animalDataArray;
 
         private Scene currentScene;
         private string currentSceneName;
@@ -52,6 +53,10 @@ namespace BluehatGames
                     case SceneName._03_Main:
                         SetMainSceneAnimals(jsonData);
                     break;
+                    case SceneName._04_Synthesis:
+                        SetSynthesisSceneAnimals(jsonData);
+                    break;
+
                 }
             }    
         }
@@ -65,12 +70,23 @@ namespace BluehatGames
             for(int i = 0; i < animalObjectList.Count; i++)
             {
                 GameObject animalObject = animalObjectList[i];
-                float randomX = Random.RandomRange(-20, 20);
-                float randomZ = Random.RandomRange(-20, 20);
+                float randomX = Random.Range(-20, 20);
+                float randomZ = Random.Range(-20, 20);
                 animalObject.transform.position = new Vector3(randomX, 0.1f, randomZ);
                 animalObject.transform.rotation = Quaternion.identity;
                 animalObject.AddComponent<MainSceneAnimal>();
             }
+        }
+
+        private void SetSynthesisSceneAnimals(string jsonData)
+        {
+            animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
+            for(int i = 0; i <  animalDataArray.Length; i++)
+            {
+                Debug.Log($"animal_id = {animalDataArray[i].id}, animal_type = {animalDataArray[i].animalType}");
+            }
+
+            GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalDataArray);
         }
     }
 

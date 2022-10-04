@@ -5,7 +5,6 @@ using Photon.Pun;
 
 public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 {
-    public Transform camera;
     private float camAngle;
     
     // 받은 데이터 기억 변수 (보간처리하기 위해서)
@@ -18,11 +17,11 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
     protected bool jump;
 
-    public float moveSpeed;
-    public float jumpPower;
-    public float rotSpeed;
+    private float moveSpeed = 40;
+    private float jumpPower = 5;
+    private float rotSpeed = 45;
 
-    private Rigidbody rigidbody;
+    private Rigidbody rigid;
     private Animator animator;
  
     private string ANIM_PARAMETER_JUMP = "Jump";
@@ -33,7 +32,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         joystick = FindObjectOfType<Joystick>();
         joybutton = FindObjectOfType<Joybutton>();
 
-        rigidbody = GetComponent<Rigidbody>();
+        rigid = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -48,7 +47,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         // 애니메이터 파라미터 설정 
         animator.SetFloat(ANIM_PARAMETER_MOTIONSPEED, joystick.InputScale);
         // 이동 방향으로 회전  
-        rigidbody.velocity = new Vector3(joystick.Horizontal * moveSpeed, rigidbody.velocity.y, joystick.Vertical * moveSpeed);
+        rigid.velocity = new Vector3(joystick.Horizontal * moveSpeed, rigid.velocity.y, joystick.Vertical * moveSpeed);
         
         var h = joystick.Horizontal;
         var v = joystick.Vertical;
@@ -64,7 +63,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         // Jump에 대한 처리
         if(!jump && joybutton.Pressed) {
             jump = true;
-            rigidbody.velocity = Vector3.up * jumpPower;
+            rigid.velocity = Vector3.up * jumpPower;
             animator.SetTrigger(ANIM_PARAMETER_JUMP);
         }
 

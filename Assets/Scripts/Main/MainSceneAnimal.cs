@@ -45,7 +45,7 @@ public class MainSceneAnimal : MonoBehaviour
         moveCoroutine = null;
 
         // 회전 값 랜덤 설정 
-        this.transform.eulerAngles = new Vector3(0, Random.RandomRange(0, 360f), 0);
+        this.transform.eulerAngles = new Vector3(0, Random.Range(0, 360f), 0);
     }
 
     void Update()
@@ -75,7 +75,7 @@ public class MainSceneAnimal : MonoBehaviour
 
     IEnumerator SetIdleStateTimer()
     {
-        float randomTimer = Random.RandomRange(3, 10);
+        float randomTimer = Random.Range(3, 10);
         animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, walkToIdleTransitionValue);
         yield return new WaitForSeconds(randomTimer);
         animalState = AnimalState.Move;
@@ -88,7 +88,7 @@ public class MainSceneAnimal : MonoBehaviour
         // Quaternion randRotate = Random.rotationUniform;
         // this.gameObject.transform.rotation = randRotate;
 
-        float randomTimer = Random.RandomRange(5, 15);
+        float randomTimer = Random.Range(5, 15);
         float timer = 0;
 
         float randomX = Random.Range(0.0f, 1.0f);

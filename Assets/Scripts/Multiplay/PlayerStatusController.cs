@@ -30,7 +30,6 @@ public class PlayerStatusController : MonoBehaviour
     public float addedAetherEnergyValue = 10;
 
     public float gameTime = 0;
-    private float elapsedTime = 0;
 
     private bool isGameOver = false;
     private bool isStartTimeAttack = false;

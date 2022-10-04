@@ -2688,6 +2688,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1311338278}
   m_CullTransparentMesh: 1
+--- !u!1 &1341115603
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1341115605}
+  - component: {fileID: 1341115604}
+  m_Layer: 0
+  m_Name: AnimalAirController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1341115604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341115603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22c3ee65134914d52922fa29e6a2f6cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalFactory: {fileID: 1739391805}
+  tempAccessToken: 0000
+--- !u!4 &1341115605
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341115603}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1362662989
 GameObject:
   m_ObjectHideFlags: 0
@@ -4257,6 +4303,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695161774}
   m_CullTransparentMesh: 1
+--- !u!1 &1739391804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1739391806}
+  - component: {fileID: 1739391805}
+  m_Layer: 0
+  m_Name: AnimalFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1739391805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739391804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e9e982f3b19f4191992c66996f0cdf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  formatTexture: {fileID: 2800000, guid: a7265b38fe3af5744b52d205d73fe6ea, type: 3}
+--- !u!4 &1739391806
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739391804}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1753108699
 GameObject:
   m_ObjectHideFlags: 0
@@ -4286,15 +4377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ae2b57aa9d223488274c3c6cb6a827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testAnimalList:
-  - Cat
-  - Flamingo
-  - Husky
-  - Rabbit
-  - SnowOwl
-  - Sheep
-  - Dog
-  - Zebra
   animalListView: {fileID: 1908196573}
   animalListContentsView: {fileID: 1517864314}
   animalListContentPrefab: {fileID: 7699148756808848974, guid: ed12ec557ee8ba64ba2207251fd52733, type: 3}
@@ -4302,7 +4384,7 @@ MonoBehaviour:
   btn_goToMain: {fileID: 1951178906}
   panel_colorChange: {fileID: 2086894192}
   btn_colorChange: {fileID: 252468143}
-  btn_changeColor: {fileID: 1048777706}
+  btn_startColorChange: {fileID: 1048777706}
   panel_fusion: {fileID: 1500055284}
   btn_fusion: {fileID: 827941200}
   btn_exitListView: {fileID: 1756416165}
