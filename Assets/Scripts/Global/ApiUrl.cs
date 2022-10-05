@@ -22,6 +22,9 @@ namespace BluehatGames
         public const string getAnimalList = "https://api.bluehat.games/animal";
         public const string getUserAnimal = "https://api.bluehat.games/animal/get-user-animal";
 
+        //Synthesis
+        public const string postChangeColor = "https://api.bluehat.games/animal/change-color";
+
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
@@ -89,5 +92,15 @@ namespace BluehatGames
     {
         public string id;
         public string type;
+    }
+
+    public class ResponseResult
+    {
+        public string msg;
+    }
+
+    public class RequestColorChangeAnimalFormat
+    {
+        public string animalId;
     }
 }

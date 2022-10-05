@@ -11,6 +11,10 @@ namespace BluehatGames {
 public class SynthesisManager : MonoBehaviour
 {
     private AnimalDataFormat[] animalDataArray;
+    public AnimalFactory animalFactory;
+    public Texture2D formatTexture;
+
+    public AnimalAirController animalAirController;
 
     [Header("Common UI")]
     public GameObject animalListView;
@@ -37,7 +41,9 @@ public class SynthesisManager : MonoBehaviour
     public Transform thumbnailSpot;
 
     private GameObject targetAnimal;
-    private string selectedAnimal;
+    private AnimalDataFormat selectedAnimalData;
+    private AnimalDataFormat fusionSelectedAnimalData_1;
+    private AnimalDataFormat fusionSelectedAnimalData_2;
 
     public ColorChangeManager colorChangeManager;
     public FusionManager fusionManager;
@@ -53,6 +59,8 @@ public class SynthesisManager : MonoBehaviour
 
     public float firstAnimalX;
     public float secondAnimalX;
+
+    public GameObject[] animalObjectArray;
     
     // AnimalAirController에서 호출하는 함수
     public void StartMakeThumbnailAnimalList(AnimalDataFormat[] animalDataArray)
@@ -92,11 +100,13 @@ public class SynthesisManager : MonoBehaviour
                 text_NFTs[i].SetActive(false);
             }
 
-            colorChangeManager.ChangeTextureColor();
+            // colorChangeManager.ChangeTextureColor();
             animalListView.SetActive(false);    
 
             // sub aether count
             AetherController.instance.SubAetherCount();
+
+            colorChangeManager.SendColorChangeAPI();
         });
     }
 
@@ -133,6 +143,8 @@ public class SynthesisManager : MonoBehaviour
 
     void Start()
     {
+        colorChangeManager.SetSynthesisManager(this);
+
         panel_result.SetActive(false);
         panel_fusion.SetActive(false);
         animalListView.SetActive(false);
@@ -243,15 +255,17 @@ public class SynthesisManager : MonoBehaviour
         if(buttonIndex == 0)
         {
             focusedButtonIndex = 0;
-            Debug.Log($"1_ 선택된 동물은 {selectedAnimal}");
+            Debug.Log($"1_ 선택된 동물은 {selectedAnimalData}");
         } else
         {
             focusedButtonIndex = 1;
-            Debug.Log($"2_ 선택된 동물은 {selectedAnimal}");
+            Debug.Log($"2_ 선택된 동물은 {selectedAnimalData}");
         }
         animalListView.SetActive(true);
         btn_exitListView.gameObject.SetActive(true);
     }
+
+
 
     // 선택한 동물의 id를 서버로 보내서 합성을 진행해야 하므로 각 UI가 해당 동물의 정보를 가지고 있어야 함
     // 데이터만 저장할 수 있는 클래스를 만들어서 추가해주자
@@ -259,13 +273,21 @@ public class SynthesisManager : MonoBehaviour
     IEnumerator MakeThumbnailAnimalList(AnimalDataFormat[] animalDataArray)
     {
         animalListView.SetActive(true);
+        animalObjectArray = new GameObject[animalDataArray.Length];
         for (int i = 0; i < animalDataArray.Length; i++)
         {
             int index = i;
+            
+            Animal animal = new Animal(animalDataArray[i].name, animalDataArray[i].tier, animalDataArray[i].id, animalDataArray[i].animalType, animalDataArray[i].headItem, animalDataArray[i].pattern, formatTexture);
+            animal.setAnimalColor(animalDataArray[i].color);
+            GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
 
-            var animalPrefab = LoadAnimalPrefab(animalDataArray[i].animalType, thumbnailSpot.position, thumbnailCamera.gameObject);
+            animalObject.transform.position = thumbnailSpot.position;
+            animalObject.transform.rotation = thumbnailSpot.rotation;
+            animalObject.transform.LookAt(thumbnailCamera.transform);
+            animalObjectArray[i] = animalObject;
 
-            ResetAnimalState(animalPrefab);
+            ResetAnimalState(animalObject);
 
             yield return new WaitForEndOfFrame();
             thumbnailCamera.Render();
@@ -286,30 +308,40 @@ public class SynthesisManager : MonoBehaviour
                 {
                     if (targetAnimal)
                     {
-                        GameObject.Destroy(targetAnimal);
+                        targetAnimal.SetActive(false);
                     }
 
+                    selectedAnimalData = animalDataArray[index];
                     
-                    selectedAnimal = animalDataArray[index].animalType;
-                    targetAnimal = LoadAnimalPrefab(selectedAnimal, Vector3.zero, Camera.main.gameObject);
+
+                    // LoadAnimalPrefab 대신에 AnimalFactory에서 오브젝트 가져와야 할 듯 
+                    Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, i => {i}");
+                    targetAnimal = animalObjectArray[index];
+                    targetAnimal.SetActive(true);
+                    // targetAnimal = LoadAnimalPrefab(selectedAnimalData.animalType, Vector3.zero, Camera.main.gameObject);
                     targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
                     targetAnimal.transform.position = new Vector3(-4, -0.5f, targetAnimal.transform.position.z);
 
                     ResetAnimalState(targetAnimal);
+
+                    colorChangeManager.SetCurSelectedAnimal(selectedAnimalData);
                     colorChangeManager.SetTargetAnimal(targetAnimal);
                 } 
                 // ------------------------ 합성 모드이면 ------------------------ 
                 else if(currentMode == FUSION_MODE)
                 {
                     var selectedAnimalName = animalDataArray[index].animalType;
+                    
                     if (focusedButtonIndex == 0)
                     {
+                        fusionSelectedAnimalData_1 = animalDataArray[index];
                         if(selectedAnimal_1)
                         {
-                            GameObject.Destroy(selectedAnimal_1);
+                            selectedAnimal_1.SetActive(false);
                         }
                         
-                        selectedAnimal_1 = LoadAnimalPrefab(selectedAnimalName, Vector3.zero, Camera.main.gameObject);
+                        selectedAnimal_1 = animalObjectArray[index];
+                        selectedAnimal_1.SetActive(true);
                         selectedAnimal_1.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
                         selectedAnimal_1.transform.position = new Vector3(firstAnimalX, selectedAnimal_1.transform.position.y, selectedAnimal_1.transform.position.z);
                         fusionManager.SetTargetAnimal(0, selectedAnimal_1);
@@ -317,11 +349,13 @@ public class SynthesisManager : MonoBehaviour
                     }
                     else if(focusedButtonIndex == 1)
                     {
+                        fusionSelectedAnimalData_2 = animalDataArray[index];
                         if(selectedAnimal_2)
                         {
-                            GameObject.Destroy(selectedAnimal_2);
+                            selectedAnimal_2.SetActive(false);
                         }
-                        selectedAnimal_2 = LoadAnimalPrefab(selectedAnimalName, Vector3.zero, Camera.main.gameObject);
+                        selectedAnimal_2 = animalObjectArray[index];
+                        selectedAnimal_2.SetActive(true);
                         selectedAnimal_2.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
                         selectedAnimal_2.transform.position = new Vector3(secondAnimalX, selectedAnimal_2.transform.position.y, selectedAnimal_2.transform.position.z);
                         fusionManager.SetTargetAnimal(1, selectedAnimal_2);
@@ -336,7 +370,7 @@ public class SynthesisManager : MonoBehaviour
             });
             uiSet.GetComponentInChildren<Text>().text = animalDataArray[i].animalType;
             uiSet.transform.SetParent(animalListContentsView);
-            Destroy(animalPrefab);
+            animalObject.SetActive(false);
         }
         animalListView.SetActive(false);
     }
@@ -363,8 +397,9 @@ public class SynthesisManager : MonoBehaviour
         action.Invoke(tex);
     }
 
-    private void MakeNFTMargetImage() {
-
+    public void SendRequestRefreshAnimalData()
+    {
+        animalAirController.RefreshAnimalData();
     }
 }
 }

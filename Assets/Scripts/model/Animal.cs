@@ -95,6 +95,8 @@ public class Animal
 
     private Texture2D color2Texture(Color32[] color, int width, int height)
     {
+        Debug.Log($"color => {color}");
+        Debug.Log($"width => {width}, height => {height}");
         Texture2D texture = new Texture2D(width, height);
         texture.SetPixels32(color);
         texture.Apply(true);
