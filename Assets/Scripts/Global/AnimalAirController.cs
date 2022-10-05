@@ -126,9 +126,10 @@ namespace BluehatGames
 
         public GameObject GetAnimalObject(string id)
         {
+            GameObject obj = null;  
             if(animalObjectDictionary.ContainsKey(id))
             {
-                GameObject obj = animalObjectDictionary[id];
+                obj = animalObjectDictionary[id];
             }
             return obj;
         }

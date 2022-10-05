@@ -401,5 +401,10 @@ public class SynthesisManager : MonoBehaviour
     {
         animalAirController.RefreshAnimalData();
     }
+
+    public GameObject GetAnimalObject(string id) {
+        return animalAirController.GetAnimalObject(id);
+
+    }
 }
 }

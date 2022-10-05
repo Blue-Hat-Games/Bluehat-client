@@ -167,8 +167,9 @@ namespace BluehatGames {
 
         void SetResultAnimalTexture()
         {
+            synthesisManager.SendRequestRefreshAnimalData();
             // id를 가지고 결과 데이터를 다시 불러와서 동물의 텍스처를 적용해주어야 함 
-            GameObject obj = synthesisManager.SendRequestRefreshAnimalData();
+            GameObject obj = synthesisManager.GetAnimalObject(selectedAnimalData.id);
             
         }
 
