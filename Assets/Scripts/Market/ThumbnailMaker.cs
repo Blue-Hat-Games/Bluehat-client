@@ -20,7 +20,7 @@ public class ThumbnailMaker : MonoBehaviour
     {
         // TODO: 테스트 파일의 경로이므로 서버로부터 받은 jsonData를 활용하도록 코드 수정 필요
         string jsonData = System.IO.File.ReadAllText("/Users/minjujuu/GitHub/Bluehat-project/Assets/Scripts/animalJsonData.txt");
-        List<GameObject> animalObjectList = new List<GameObject>();
+        Dictionary<string, GameObject> animalObjectList = new Dictionary<string, GameObject>();
 
         // json data를 넘기면 그 데이터를 통해 생성된 동물 오브젝트 리스트를 반환 받을 수 있다
         animalObjectList = animalFactory.ConvertJsonToAnimalObject(jsonData);
@@ -39,10 +39,11 @@ public class ThumbnailMaker : MonoBehaviour
     }
 
     // UI가 있을 경우
-    IEnumerator TakeScreenshot(List<GameObject> animalObjectList)
+    IEnumerator TakeScreenshot(Dictionary<string, GameObject> animalObjectDictionary)
     {
-        foreach(GameObject obj in animalObjectList)
+        foreach(KeyValuePair<string, GameObject> pair in animalObjectDictionary)
         {
+            var obj = pair.Value;
             yield return new WaitForEndOfFrame();
             // 썸네일에 동물만 찍히도록 하기 위해 
             obj.gameObject.layer = LayerMask.NameToLayer("Animal");
@@ -59,6 +60,7 @@ public class ThumbnailMaker : MonoBehaviour
             uiSet.transform.SetParent(scrollViewContent);
             obj.gameObject.SetActive(false);
         }
+
     }
 
 

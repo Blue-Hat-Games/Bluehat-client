@@ -26,18 +26,21 @@ public class AnimalFactory : MonoBehaviour
         pngSavePath = $"{Application.dataPath}/RuntimeImages";
     }
 
-    public List<GameObject> ConvertJsonToAnimalObject(string jsonData)
+    public Dictionary<string, GameObject> ConvertJsonToAnimalObject(string jsonData)
     {
         List<GameObject> animalObjects = new List<GameObject>();
+
+        Dictionary<string, GameObject> animalObjectDictionary = new Dictionary<string, GameObject>();
 
         Animal[] animalList = GetAnimalDataFromJson(jsonData);
         foreach (Animal data in animalList)
         {
             GameObject animalObj = GetAnimalGameObject(data);
             animalObjects.Add(animalObj);
+            animalObjectDictionary.Add(data.id, animalObj);
         }
 
-        return animalObjects;
+        return animalObjectDictionary;
     }
 
     private Animal[] GetAnimalDataFromJson(string txt)
@@ -58,13 +61,14 @@ public class AnimalFactory : MonoBehaviour
         return animalList;
     }
 
-    GameObject GetAnimalGameObject(Animal animalData)
+    // synthesis manager 같은 곳에서 하나의 동물을 불러올 때 사용 
+    public GameObject GetAnimalGameObject(Animal animalData)
     {
         Debug.Log($"type = {animalData.animalType}");
         GameObject animalPrefab = animalData.getAnimalPrefab();
 
         GameObject animalObj = GameObject.Instantiate(animalPrefab);
-        animalObj.transform.LookAt(Camera.main.transform);
+        // animalObj.transform.LookAt(Camera.main.transform);
         animalObj.name = $"{animalData.animalType}_{animalData.id}";
 
         Texture2D meshTex = animalData.getAnimalTexture();
