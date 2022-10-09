@@ -9,7 +9,8 @@ using Photon.Realtime;
 using System.Collections;
 
 
-namespace Com.MyCompany.MyGame { 
+namespace Com.MyCompany.MyGame
+{
 
     [RequireComponent(typeof(InputField))]
     public class PlayerNameInputField : MonoBehaviour
@@ -58,8 +59,8 @@ namespace Com.MyCompany.MyGame {
         /// Sets the name of the player, and save it in the PlayerPrefs for future sessions.
         /// </summary>
         /// <param name="value">The name of the Player</param>
-       
-        // InputFieldÀÇ OnValueChange()¿¡¼­ È£ÃâÇÒ ÇÔ¼ö
+
+        // InputFieldì˜ OnValueChange()ì—ì„œ í˜¸ì¶œí•  í•¨ìˆ˜
         public void SetPlayerName(string value)
         {
             // #Important

@@ -5,60 +5,60 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 namespace BluehatGames
 {
-public class TitleManager : MonoBehaviour
-{
-    // Loading... ¿ª ∂ÁøÓ¥Ÿ.
-    // PlayerPrefø°º≠ "CompletedAuth" ∞° true¿Œ ∞…∑Œ ∆«¥‹µ«∏È ∏ﬁ¿Œ »≠∏È¿∏∑Œ, æ∆¥œ∏È ∑Œ±◊¿Œ »≠∏È¿∏∑Œ ∫∏≥ø
-
-    private string key_authStatus = "AuthStatus";
-    public Text infoText;
-    public Button btn_reset;
-
-    [Header("Scene name")]
-    public string loginSceneName;
-    public string mainSceneName;
-    
-    void Start()
+    public class TitleManager : MonoBehaviour
     {
-        // ¿Œ¡ı ¡§∫∏ √ ±‚»≠ 
-        btn_reset.onClick.AddListener(() =>
-        {
-            PlayerPrefs.SetInt(key_authStatus, AuthStatus._INIT);
-            // ∏∏æ‡ ∑Œƒ√ø° ¿˙¿Âµ«æÓ ¿÷¥¬ ¿Ø¿˙ ¡§∫∏∞° ¿÷¥Ÿ∏È ªË¡¶«—¥Ÿ.
-            SaveSystem.DeleteUserInfoFile();
-        });
+        // Loading... ÏùÑ ÎùÑÏö¥Îã§.
+        // PlayerPrefÏóêÏÑú "CompletedAuth" Í∞Ä trueÏù∏ Í±∏Î°ú ÌåêÎã®ÎêòÎ©¥ Î©îÏù∏ ÌôîÎ©¥ÏúºÎ°ú, ÏïÑÎãàÎ©¥ Î°úÍ∑∏Ïù∏ ÌôîÎ©¥ÏúºÎ°ú Î≥¥ÎÉÑ
 
-        Debug.Log($"PlayerPrefs.GetInt(key_completedAuth) = {PlayerPrefs.GetInt(key_authStatus)}");
-        
-        StartCoroutine(ShowInfoText());
-    }
+        private string key_authStatus = "AuthStatus";
+        public Text infoText;
+        public Button btn_reset;
 
-    IEnumerator ShowInfoText()
-    {
-        while (true)
+        [Header("Scene name")]
+        public string loginSceneName;
+        public string mainSceneName;
+
+        void Start()
         {
-            yield return null;
-            yield return new WaitForSeconds(0.3f);
-            infoText.text = "Loading.";
-            yield return new WaitForSeconds(0.3f);
-            infoText.text = "Loading..";
-            yield return new WaitForSeconds(0.3f);
-            infoText.text = "Loading...";
-            
-            if(PlayerPrefs.GetInt(key_authStatus) == AuthStatus._INIT || PlayerPrefs.GetInt(key_authStatus) == AuthStatus._EMAIL_AUTHENTICATING)
+            // Ïù∏Ï¶ù Ï†ïÎ≥¥ Ï¥àÍ∏∞Ìôî 
+            btn_reset.onClick.AddListener(() =>
             {
-                infoText.text = "Please Login..";
-                yield return new WaitForSeconds(2);
-                SceneManager.LoadScene(SceneName._02_Login);
-            } 
-            else
+                PlayerPrefs.SetInt(key_authStatus, AuthStatus._INIT);
+                // ÎßåÏïΩ Î°úÏª¨Ïóê Ï†ÄÏû•ÎêòÏñ¥ ÏûàÎäî Ïú†Ï†Ä Ï†ïÎ≥¥Í∞Ä ÏûàÎã§Î©¥ ÏÇ≠Ï†úÌïúÎã§.
+                SaveSystem.DeleteUserInfoFile();
+            });
+
+            Debug.Log($"PlayerPrefs.GetInt(key_completedAuth) = {PlayerPrefs.GetInt(key_authStatus)}");
+
+            StartCoroutine(ShowInfoText());
+        }
+
+        IEnumerator ShowInfoText()
+        {
+            while (true)
             {
-                infoText.text = "Login Success!";
-                yield return new WaitForSeconds(2);
-                SceneManager.LoadScene(SceneName._03_Main);
+                yield return null;
+                yield return new WaitForSeconds(0.3f);
+                infoText.text = "Loading.";
+                yield return new WaitForSeconds(0.3f);
+                infoText.text = "Loading..";
+                yield return new WaitForSeconds(0.3f);
+                infoText.text = "Loading...";
+
+                if (PlayerPrefs.GetInt(key_authStatus) == AuthStatus._INIT || PlayerPrefs.GetInt(key_authStatus) == AuthStatus._EMAIL_AUTHENTICATING)
+                {
+                    infoText.text = "Please Login..";
+                    yield return new WaitForSeconds(2);
+                    SceneManager.LoadScene(SceneName._02_Login);
+                }
+                else
+                {
+                    infoText.text = "Login Success!";
+                    yield return new WaitForSeconds(2);
+                    SceneManager.LoadScene(SceneName._03_Main);
+                }
             }
         }
-    }
 
-}
+    }
 }

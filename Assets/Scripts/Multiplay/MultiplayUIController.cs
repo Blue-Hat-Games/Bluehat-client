@@ -5,95 +5,112 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-namespace BluehatGames {
-
-public class MultiplayUIController : MonoBehaviour
+namespace BluehatGames
 {
-    public static MultiplayUIController instance = null;
-    private void Awake()
+
+    public class MultiplayUIController : MonoBehaviour
     {
-        if(instance == null) {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        } else if(instance != null) {
-            Destroy(this.gameObject);
-        }
-    }
-
-    // ¸ÖÆ¼ÇÃ·¹ÀÌ¿¡ ÀÌ¿ëµÇ´Â UIµé Ã³¸®
-    public GameObject startPanel;
-    public Button goToMainButton;
-    public Button startPanelExitButton;
-
-    public Slider aetherProgressBar;
-    public TextMeshProUGUI aetherCountText;
-
-    public TextMeshProUGUI gameOverTime;
-
-    public GameObject resultPanel;
-    public TextMeshProUGUI resultObtainedAetherCoin;
-    public TextMeshProUGUI resultMyAetherCoin;
-
-
-
-     void Start()
-    {
-        aetherProgressBar.value = 0;
-        resultPanel.SetActive(false);
-        goToMainButton.onClick.AddListener(() => {
-            MultiplayGameManager.instance.LeaveRoom();
-            
-        });
-
-        startPanelExitButton.onClick.AddListener(() => {
-            startPanel.SetActive(false);
-        });
-    }
-    
-
-    public void SetCurrentAetherCoinCount(int count)
-    {
-        aetherCountText.text = count.ToString();
-    }
-    
-    public void ResetAetherProgressBar() {
-        aetherProgressBar.value = 0;
-    }
-
-    public void SetAetherProgressBar(float value) {
-        StartCoroutine(FadeSliderValue(value));
-    }
-
-    IEnumerator FadeSliderValue(float targetValue) {
-        while(true) {
-            yield return null;
-            if(aetherProgressBar.value < targetValue) {
-                aetherProgressBar.value += 0.01f;     
-            } else {
-                yield break;
+        public static MultiplayUIController instance = null;
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else if (instance != null)
+            {
+                Destroy(this.gameObject);
             }
         }
-    }
 
-    public void UpdateGameTimeText(float gameTime)
-    {
-        if((int)gameTime >=10) {
-            gameOverTime.text = $"00:{(int)gameTime}";
-        } else {
-            gameOverTime.text = $"00:0{(int)gameTime}";
+        // ë©€í‹°í”Œë ˆì´ì— ì´ìš©ë˜ëŠ” UIë“¤ ì²˜ë¦¬
+        public GameObject startPanel;
+        public Button goToMainButton;
+        public Button startPanelExitButton;
+
+        public Slider aetherProgressBar;
+        public TextMeshProUGUI aetherCountText;
+
+        public TextMeshProUGUI gameOverTime;
+
+        public GameObject resultPanel;
+        public TextMeshProUGUI resultObtainedAetherCoin;
+        public TextMeshProUGUI resultMyAetherCoin;
+
+
+
+        void Start()
+        {
+            aetherProgressBar.value = 0;
+            resultPanel.SetActive(false);
+            goToMainButton.onClick.AddListener(() =>
+            {
+                MultiplayGameManager.instance.LeaveRoom();
+
+            });
+
+            startPanelExitButton.onClick.AddListener(() =>
+            {
+                startPanel.SetActive(false);
+            });
         }
-    }
 
-    public void ResetGameTimeText()
-    {
-        gameOverTime.text = "00:00";
-    }
 
-    public void SetMultiplayResultPanel(int obtainedCoin, int myCoin) {
-        resultObtainedAetherCoin.text = obtainedCoin.ToString();
-        resultMyAetherCoin.text = myCoin.ToString();
-        resultPanel.SetActive(true);
-    }
+        public void SetCurrentAetherCoinCount(int count)
+        {
+            aetherCountText.text = count.ToString();
+        }
 
-}
+        public void ResetAetherProgressBar()
+        {
+            aetherProgressBar.value = 0;
+        }
+
+        public void SetAetherProgressBar(float value)
+        {
+            StartCoroutine(FadeSliderValue(value));
+        }
+
+        IEnumerator FadeSliderValue(float targetValue)
+        {
+            while (true)
+            {
+                yield return null;
+                if (aetherProgressBar.value < targetValue)
+                {
+                    aetherProgressBar.value += 0.01f;
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+        }
+
+        public void UpdateGameTimeText(float gameTime)
+        {
+            if ((int)gameTime >= 10)
+            {
+                gameOverTime.text = $"00:{(int)gameTime}";
+            }
+            else
+            {
+                gameOverTime.text = $"00:0{(int)gameTime}";
+            }
+        }
+
+        public void ResetGameTimeText()
+        {
+            gameOverTime.text = "00:00";
+        }
+
+        public void SetMultiplayResultPanel(int obtainedCoin, int myCoin)
+        {
+            resultObtainedAetherCoin.text = obtainedCoin.ToString();
+            resultMyAetherCoin.text = myCoin.ToString();
+            resultPanel.SetActive(true);
+        }
+
+    }
 }

@@ -19,6 +19,10 @@ namespace BluehatGames
         private int page = 1;
         public int limit = 10;
         public string order = "Newest";
+
+        public Transform myAnimalContent;
+
+        [Header("Common UI")]
         public GameObject marketItemPrefab;
 
         public Button myAnimalButton;
@@ -30,7 +34,7 @@ namespace BluehatGames
 
         public Button myAnimalPanelCloseBtn;
 
-        public Image myAnimalSellBtn;
+        public Button myAnimalSellBtn;
 
         public GameObject myAnimalDetailPanel;
 
@@ -38,16 +42,41 @@ namespace BluehatGames
 
         public Button myAnimalDetailPanelCloseBtn;
 
-
+        public Text coinInfoText;
         public Text myAnimalDetailData;
 
-        public Text AnimalDetailData;
+        public Text AnimalDescription;
+
+        public Text AniamlName;
+
+        public Text AnimalPrice;
+
+        public Text AnimalDetailViewCount;
+
+        public Text SellerName;
+
+        public Button animlBuyBtn;
+
+        public User user;
+
+        public GameObject AlertPanel;
+
+        public Button MarketAnimalDoneBtn;
+
+        public GameObject marketMyItemPrefab;
+
+
+
+        public Text BuyResultText;
+        [Header("My Animal Sell")]
+        public InputField inputPrice;
 
         void Start()
         {
             Debug.Log("MarketManager");
             StartCoroutine(getItemCount());
             StartCoroutine(getItems());
+            StartCoroutine(getUserInfo());
 
             myAnimalPanel.SetActive(false);
             myAnimalDetailPanel.SetActive(false);
@@ -86,6 +115,11 @@ namespace BluehatGames
                 myAnimalDetailPanel.SetActive(false);
             });
 
+            myAnimalSellBtn.onClick.AddListener(() =>
+            {
+                Debug.Log("myAnimalSellBtn");
+                StartCoroutine(sellMyAnimalToMarket());
+            });
 
         }
 
@@ -101,6 +135,17 @@ namespace BluehatGames
             var screenHeight = Screen.height;
             var screenWidth = Screen.width;
             return new Vector2(100, 100);
+        }
+        private void OpenAlertPanel(string msg, GameObject prevPanel)
+        {
+            Debug.Log("Alert Panel ");
+            prevPanel.SetActive(false);
+            AlertPanel.SetActive(true);
+            MarketAnimalDoneBtn.onClick.AddListener(() =>
+                {
+                    AlertPanel.SetActive(false);
+                });
+            BuyResultText.text = msg;
         }
 
 
@@ -126,12 +171,37 @@ namespace BluehatGames
         }
 
 
+        IEnumerator getUserInfo()
+        {
+            string host = "https://api.bluehat.games";
+            string localhost = "http://localhost:3000";
+            string url = localhost + "/users";
+            Debug.Log($"Request to Get Item -> URL: {url}");
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            {
+                webRequest.SetRequestHeader("Authorization", "0000");
+                yield return webRequest.SendWebRequest();
+                if (webRequest.isNetworkError)
+                {
+                    Debug.Log($"Error: {webRequest.error}");
+                }
+                else
+                {
+                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                    var response = "{\"user\":" + webRequest.downloadHandler.text + "}";
+                    Debug.Log($"Received: {response}");
+                    var parse_result = JsonUtility.FromJson<UserInfo>(response);
+                    Debug.Log($"User Coin: {parse_result.user.coin}");
+                    user = parse_result.user;
+                    coinInfoText.text = $"{user.coin.ToString()}";
+                }
+            }
+        }
+
         IEnumerator getItems()
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            Debug.Log(order);
-            Debug.Log(limit);
             string url = localhost + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
@@ -145,6 +215,7 @@ namespace BluehatGames
                 {
                     var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
                     var parse_result = JsonUtility.FromJson<ItemCardList>(response);
+                    Debug.Log(parse_result.items);
                     for (int i = 0; i < parse_result.items.Length; i++)
                     {
                         GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
@@ -166,6 +237,7 @@ namespace BluehatGames
         }
 
 
+
         IEnumerator getUserAnimal()
         {
             string host = "https://api.bluehat.games";
@@ -182,18 +254,31 @@ namespace BluehatGames
                 }
                 else
                 {
-                    string[] nameList = new string[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
                     Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                    myAnimalDetailData.text = webRequest.downloadHandler.text;
+                    var animalInfo = JsonUtility.FromJson<UserAnimalList>(webRequest.downloadHandler.text);
+                    for (int i = 0; i < animalInfo.data.Length; i++)
+                    {
+                        GameObject itemObj = GameObject.Instantiate(marketMyItemPrefab);
+                        itemObj.transform.SetParent(myAnimalContent);
+                        itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalInfo.data[i].id.ToString();
+                        itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalInfo.data[i].name;
+                        itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
+                        {
+                            Debug.Log("Click");
+                            myAnimalDetailData.text = itemObj.transform.Find("animal_id").GetComponent<Text>().text;
+                        });
+                    }
                 }
             }
         }
+
+
 
         IEnumerator getAnimalDetail(int id)
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market?id=" + id.ToString();
+            string url = localhost + "/market/detail?id=" + id.ToString();
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -206,10 +291,113 @@ namespace BluehatGames
                 {
                     Debug.Log($"Received: {webRequest.downloadHandler.text}");
                     myAnimalDetailPanel.SetActive(true);
-                    AnimalDetailData.text = webRequest.downloadHandler.text;
+                    var animalInfo = JsonUtility.FromJson<AnimalDetailFromServer>(webRequest.downloadHandler.text).data;
+                    AnimalDescription.text = animalInfo.description;
+                    AniamlName.text = animalInfo.animal_name;
+                    AnimalPrice.text = animalInfo.price.ToString();
+                    AnimalDetailViewCount.text = animalInfo.view_count.ToString() + " Views";
+                    SellerName.text = animalInfo.username;
+                    var buyAnimalId = animalInfo.id;
+                    animlBuyBtn.onClick.AddListener(() =>
+                    {
+                        StartCoroutine(buyAnimal(buyAnimalId));
+                    });
                 }
             }
         }
+
+        IEnumerator sellMyAnimalToMarket()
+        {
+            string host = "https://api.bluehat.games";
+            string localhost = "http://localhost:3000";
+            string url = localhost + "/market/sell";
+            Debug.Log($"Request to Get Item -> URL: {url}");
+            using (UnityWebRequest webRequest = UnityWebRequest.Post(url, ""))
+            {
+                webRequest.SetRequestHeader("Authorization", "0000");
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                var price = inputPrice.text;
+                var animalId = myAnimalDetailData.text;
+                var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + "\"0000\"" + "}";
+                Debug.Log(json);
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+                webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                yield return webRequest.SendWebRequest();
+                if (webRequest.isNetworkError || webRequest.isHttpError)
+                {
+                    Debug.Log($"Error: {webRequest.error}");
+                    OpenAlertPanel("Sell Fail", myAnimalPanel);
+                }
+                else
+                {
+                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                    OpenAlertPanel("Sell Success", myAnimalPanel);
+                }
+            }
+        }
+
+
+        IEnumerator buyAnimal(int id)
+        {
+            string host = "https://api.bluehat.games";
+            string localhost = "http://localhost:3000";
+            string url = localhost + "/market/buy";
+            Debug.Log($"Request to Get Item -> URL: {url}");
+            using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
+            {
+                webRequest.SetRequestHeader("Authorization", "0000");
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                string json = "{\"buy_animal_id\":" + id.ToString() + "}";
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+                Debug.Log(json);
+                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                yield return webRequest.SendWebRequest();
+                if (webRequest.isNetworkError || webRequest.isHttpError)
+                {
+                    Debug.Log($"Error: {webRequest.error}");
+                }
+                else
+                {
+                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
+
+                    var result = JsonUtility.FromJson<AnimalBuyResult>(webRequest.downloadHandler.text);
+                    if (result.msg == "success")
+                    {
+                        OpenAlertPanel("Buy Success", myAnimalDetailPanel);
+                    }
+                    else
+                    {
+                        OpenAlertPanel("Buy Fail", myAnimalDetailPanel);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    [Serializable]
+    public class AnimalDetail
+    {
+        public int id;
+        public int price;
+        public string description;
+        public string updatedAt;
+        public int view_count;
+
+        public string username;
+        public int aniaml_type;
+        public string animal_name;
+        public string animal_color;
+
+    }
+
+    public class AnimalDetailFromServer
+    {
+        public string status;
+        public AnimalDetail data;
     }
 
 
@@ -249,4 +437,43 @@ namespace BluehatGames
         public ItemCard[] items;
     }
 
+    [Serializable]
+    public class User
+    {
+        public string username;
+        public int coin;
+        public string wallet_address;
+        public string email;
+        public string createdAt;
+    }
+
+    [Serializable]
+    public class UserInfo
+    {
+        public User user;
+    }
+    [Serializable]
+    public class AnimalBuyResult
+    {
+        public string status;
+        public string msg;
+    }
+
+    [Serializable]
+    public class AnimalFormatData
+    {
+        public string name;
+        public int tier;
+        public string color;
+        public string id;
+        public string antimalType;
+        public string headItem;
+        public string pattern;
+    }
+
+    [Serializable]
+    public class UserAnimalList
+    {
+        public AnimalFormatData[] data;
+    }
 }

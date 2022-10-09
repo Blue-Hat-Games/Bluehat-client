@@ -4,46 +4,46 @@ using UnityEngine;
 
 public class MainSceneCameraController : MonoBehaviour
 {
-    public GameObject target;       // Å¸°ÙÀÌ µÉ °ÔÀÓ¿ÀºêÁ§Æ®
-    private Vector3 point = Vector3.zero;   // Å¸°ÙÀÇ À§Ä¡(¹Ù¶óº¼ À§Ä¡)
- 
-    private float rotationX = 0.0f;         // XÃà È¸Àü°ª
-    private float rotationY = 0.0f;         // YÃà È¸Àü°ª
-    private float speed = 100.0f;           // È¸Àü¼Óµµ
- 
+    public GameObject target;       // íƒ€ê²Ÿì´ ë  ê²Œì„ì˜¤ë¸Œì íŠ¸
+    private Vector3 point = Vector3.zero;   // íƒ€ê²Ÿì˜ ìœ„ì¹˜(ë°”ë¼ë³¼ ìœ„ì¹˜)
+
+    private float rotationX = 0.0f;         // Xì¶• íšŒì „ê°’
+    private float rotationY = 0.0f;         // Yì¶• íšŒì „ê°’
+    private float speed = 100.0f;           // íšŒì „ì†ë„
+
     void Start()
     {
-        // ¹Ù¶óº¼ À§Ä¡ ¾ò±â
+        // ë°”ë¼ë³¼ ìœ„ì¹˜ ì–»ê¸°
         point = target.transform.position;
-        // ¸¶¿ì½º º¯È­·®À» ¾ò°í, ±× °ª¿¡ µ¨Å¸Å¸ÀÓ°ú ¼Óµµ¸¦ °öÇØ¼­ È¸Àü°ª ±¸ÇÏ±â
-            rotationX = Input.GetAxis("Mouse X") * Time.deltaTime * speed;
-            rotationY = Input.GetAxis("Mouse Y") * Time.deltaTime * speed;
- 
-            // °¢ ÃàÀ¸·Î È¸Àü
-            // YÃàÀº ¸¶¿ì½º¸¦ ³»¸±¶§ Ä«¸Ş¶ó´Â ¿Ã¶ó°¡¾ß ÇÏ¹Ç·Î ¹İ´ë·Î Àû¿ë
-            transform.RotateAround(point, Vector3.right, -rotationY);
-            transform.RotateAround(point, Vector3.up, rotationX);
- 
-            // È¸ÀüÈÄ Å¸°Ù ¹Ù¶óº¸±â
-            transform.LookAt(point);
-            
+        // ë§ˆìš°ìŠ¤ ë³€í™”ëŸ‰ì„ ì–»ê³ , ê·¸ ê°’ì— ë¸íƒ€íƒ€ì„ê³¼ ì†ë„ë¥¼ ê³±í•´ì„œ íšŒì „ê°’ êµ¬í•˜ê¸°
+        rotationX = Input.GetAxis("Mouse X") * Time.deltaTime * speed;
+        rotationY = Input.GetAxis("Mouse Y") * Time.deltaTime * speed;
+
+        // ê° ì¶•ìœ¼ë¡œ íšŒì „
+        // Yì¶•ì€ ë§ˆìš°ìŠ¤ë¥¼ ë‚´ë¦´ë•Œ ì¹´ë©”ë¼ëŠ” ì˜¬ë¼ê°€ì•¼ í•˜ë¯€ë¡œ ë°˜ëŒ€ë¡œ ì ìš©
+        transform.RotateAround(point, Vector3.right, -rotationY);
+        transform.RotateAround(point, Vector3.up, rotationX);
+
+        // íšŒì „í›„ íƒ€ê²Ÿ ë°”ë¼ë³´ê¸°
+        transform.LookAt(point);
+
     }
- 
+
     void Update()
     {
-        // ¸¶¿ì½º°¡ ´­·¯Áö¸é,
+        // ë§ˆìš°ìŠ¤ê°€ ëˆŒëŸ¬ì§€ë©´,
         if (Input.GetMouseButton(0))
         {
-            // ¸¶¿ì½º º¯È­·®À» ¾ò°í, ±× °ª¿¡ µ¨Å¸Å¸ÀÓ°ú ¼Óµµ¸¦ °öÇØ¼­ È¸Àü°ª ±¸ÇÏ±â
+            // ë§ˆìš°ìŠ¤ ë³€í™”ëŸ‰ì„ ì–»ê³ , ê·¸ ê°’ì— ë¸íƒ€íƒ€ì„ê³¼ ì†ë„ë¥¼ ê³±í•´ì„œ íšŒì „ê°’ êµ¬í•˜ê¸°
             rotationX = Input.GetAxis("Mouse X") * Time.deltaTime * speed;
             rotationY = Input.GetAxis("Mouse Y") * Time.deltaTime * speed;
- 
-            // °¢ ÃàÀ¸·Î È¸Àü
-            // YÃàÀº ¸¶¿ì½º¸¦ ³»¸±¶§ Ä«¸Ş¶ó´Â ¿Ã¶ó°¡¾ß ÇÏ¹Ç·Î ¹İ´ë·Î Àû¿ë
+
+            // ê° ì¶•ìœ¼ë¡œ íšŒì „
+            // Yì¶•ì€ ë§ˆìš°ìŠ¤ë¥¼ ë‚´ë¦´ë•Œ ì¹´ë©”ë¼ëŠ” ì˜¬ë¼ê°€ì•¼ í•˜ë¯€ë¡œ ë°˜ëŒ€ë¡œ ì ìš©
             transform.RotateAround(point, Vector3.right, -rotationY);
             transform.RotateAround(point, Vector3.up, rotationX);
- 
-            // È¸ÀüÈÄ Å¸°Ù ¹Ù¶óº¸±â
+
+            // íšŒì „í›„ íƒ€ê²Ÿ ë°”ë¼ë³´ê¸°
             transform.LookAt(point);
         }
     }

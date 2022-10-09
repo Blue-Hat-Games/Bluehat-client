@@ -4,42 +4,42 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public static class AnimalData 
+public static class AnimalData
 {
     private static string SavePath => Application.persistentDataPath + "/saves/";
-	
-	
-	public static void Save(AnimalListForSave saveData, string saveFileName)
-	{
-		if (!Directory.Exists(SavePath))
-		{
-			Directory.CreateDirectory(SavePath);
-		}
-
-		AnimalListForSave animalSaveData = new AnimalListForSave();
-		
-		string saveJson = JsonUtility.ToJson(animalSaveData);
-
-		string saveFilePath = SavePath + saveFileName + ".json";
-		File.WriteAllText(saveFilePath, saveJson);
-		Debug.Log("Save Success: " + saveFilePath);
-	}
 
 
-	public static AnimalListForSave Load(string saveFileName)
-	{
-		string saveFilePath = SavePath + saveFileName + ".json";
+    public static void Save(AnimalListForSave saveData, string saveFileName)
+    {
+        if (!Directory.Exists(SavePath))
+        {
+            Directory.CreateDirectory(SavePath);
+        }
 
-		if (!File.Exists(saveFilePath))
-		{
-			Debug.LogError("No such saveFile exists");
-			return null;
-		}
+        AnimalListForSave animalSaveData = new AnimalListForSave();
 
-		string saveFile = File.ReadAllText(saveFilePath);
-		AnimalListForSave saveData = JsonUtility.FromJson<AnimalListForSave>(saveFile);
-		return saveData;
-	}
+        string saveJson = JsonUtility.ToJson(animalSaveData);
+
+        string saveFilePath = SavePath + saveFileName + ".json";
+        File.WriteAllText(saveFilePath, saveJson);
+        Debug.Log("Save Success: " + saveFilePath);
+    }
+
+
+    public static AnimalListForSave Load(string saveFileName)
+    {
+        string saveFilePath = SavePath + saveFileName + ".json";
+
+        if (!File.Exists(saveFilePath))
+        {
+            Debug.LogError("No such saveFile exists");
+            return null;
+        }
+
+        string saveFile = File.ReadAllText(saveFilePath);
+        AnimalListForSave saveData = JsonUtility.FromJson<AnimalListForSave>(saveFile);
+        return saveData;
+    }
 }
 
 [Serializable]

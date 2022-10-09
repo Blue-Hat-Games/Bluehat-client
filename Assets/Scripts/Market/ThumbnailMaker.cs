@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ÇØ´ç Å¬·¡½º´Â AnimalFactory.cs »ç¿ë¹æ¹ı µ¥¸ğ¸¦ À§ÇÑ Å×½ºÆ® Å¬·¡½º
+// í•´ë‹¹ í´ë˜ìŠ¤ëŠ” AnimalFactory.cs ì‚¬ìš©ë°©ë²• ë°ëª¨ë¥¼ ìœ„í•œ í…ŒìŠ¤íŠ¸ í´ë˜ìŠ¤
 public class ThumbnailMaker : MonoBehaviour
 {
     public AnimalFactory animalFactory;
@@ -18,11 +18,11 @@ public class ThumbnailMaker : MonoBehaviour
 
     void Start()
     {
-        // TODO: Å×½ºÆ® ÆÄÀÏÀÇ °æ·ÎÀÌ¹Ç·Î ¼­¹ö·ÎºÎÅÍ ¹ŞÀº jsonData¸¦ È°¿ëÇÏµµ·Ï ÄÚµå ¼öÁ¤ ÇÊ¿ä
+        // TODO: í…ŒìŠ¤íŠ¸ íŒŒì¼ì˜ ê²½ë¡œì´ë¯€ë¡œ ì„œë²„ë¡œë¶€í„° ë°›ì€ jsonDataë¥¼ í™œìš©í•˜ë„ë¡ ì½”ë“œ ìˆ˜ì • í•„ìš”
         string jsonData = System.IO.File.ReadAllText("/Users/minjujuu/GitHub/Bluehat-project/Assets/Scripts/animalJsonData.txt");
         Dictionary<string, GameObject> animalObjectList = new Dictionary<string, GameObject>();
 
-        // json data¸¦ ³Ñ±â¸é ±× µ¥ÀÌÅÍ¸¦ ÅëÇØ »ı¼ºµÈ µ¿¹° ¿ÀºêÁ§Æ® ¸®½ºÆ®¸¦ ¹İÈ¯ ¹ŞÀ» ¼ö ÀÖ´Ù
+        // json dataë¥¼ ë„˜ê¸°ë©´ ê·¸ ë°ì´í„°ë¥¼ í†µí•´ ìƒì„±ëœ ë™ë¬¼ ì˜¤ë¸Œì íŠ¸ ë¦¬ìŠ¤íŠ¸ë¥¼ ë°˜í™˜ ë°›ì„ ìˆ˜ ìˆë‹¤
         animalObjectList = animalFactory.ConvertJsonToAnimalObject(jsonData);
 
         StartCoroutine(TakeScreenshot(animalObjectList));
@@ -38,19 +38,19 @@ public class ThumbnailMaker : MonoBehaviour
         action.Invoke(tex);
     }
 
-    // UI°¡ ÀÖÀ» °æ¿ì
+    // UIê°€ ìˆì„ ê²½ìš°
     IEnumerator TakeScreenshot(Dictionary<string, GameObject> animalObjectDictionary)
     {
-        foreach(KeyValuePair<string, GameObject> pair in animalObjectDictionary)
+        foreach (KeyValuePair<string, GameObject> pair in animalObjectDictionary)
         {
             var obj = pair.Value;
             yield return new WaitForEndOfFrame();
-            // ½æ³×ÀÏ¿¡ µ¿¹°¸¸ ÂïÈ÷µµ·Ï ÇÏ±â À§ÇØ 
+            // ì¸ë„¤ì¼ì— ë™ë¬¼ë§Œ ì°íˆë„ë¡ í•˜ê¸° ìœ„í•´ 
             obj.gameObject.layer = LayerMask.NameToLayer("Animal");
             obj.transform.position = photoZone.position;
             obj.transform.rotation = photoZone.rotation;
             thumbnailCamera.Render();
-            // UI set »ı¼º
+            // UI set ìƒì„±
             var uiSet = GameObject.Instantiate(nftMarketThumbnailUiPrefab);
             ToTexture2D(renderTexture, (Texture2D resultTex) =>
             {

@@ -3,68 +3,72 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-namespace BluehatGames {
-    
-    /* API ¿¬µ¿ ÇÊ¿ä
-    - Ã³À½¿¡ ¼­¹ö¿¡¼­ ¹Ş¾Æ¿Í¼­ »Ñ·ÁÁÜ
-    - »©°Å³ª ´õÇÒ ¶§ ¼­¹ö API È£ÃâÇØ¼­ ¼­¹ö¿¡ ¹İ¿µµÇµµ·Ï ÇÔ 
-    */
-public class AetherController : MonoBehaviour
+namespace BluehatGames
 {
-    // AetherController ´Â ÇÏ³ª¸¸ ÀÖ´Â °ÍÀÌ È®½ÇÇÏ¹Ç·Î ½Ì±ÛÅæÀ¸·Î ÀÌ¿ë
-    public static AetherController instance = null;
-    private void Awake()
+
+    /* API ì—°ë™ í•„ìš”
+    - ì²˜ìŒì— ì„œë²„ì—ì„œ ë°›ì•„ì™€ì„œ ë¿Œë ¤ì¤Œ
+    - ë¹¼ê±°ë‚˜ ë”í•  ë•Œ ì„œë²„ API í˜¸ì¶œí•´ì„œ ì„œë²„ì— ë°˜ì˜ë˜ë„ë¡ í•¨ 
+    */
+    public class AetherController : MonoBehaviour
     {
-        if(instance == null)
+        // AetherController ëŠ” í•˜ë‚˜ë§Œ ìˆëŠ” ê²ƒì´ í™•ì‹¤í•˜ë¯€ë¡œ ì‹±ê¸€í†¤ìœ¼ë¡œ ì´ìš©
+        public static AetherController instance = null;
+        private void Awake()
         {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else if (instance != this)
+            {
+                Destroy(this.gameObject);
+            }
         }
-        else if(instance != this)
+
+        // 
+        public TextMeshProUGUI aetherCountText;
+        private int aetherCount;
+
+        void Start()
         {
-            Destroy(this.gameObject);
-        }
-    }
-
-    // 
-    public TextMeshProUGUI aetherCountText;
-    private int aetherCount;
-
-    void Start()
-    {
-        // ·ÎÄÃ¿¡ Ä³½ÌÇÏ°í ÀÖ´Â ¿¡Å×¸£ÀÇ °³¼ö¸¦ °¡Á®¿Í¼­ UI¿¡ Ãâ·Â
-        aetherCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
-        Debug.Log($"current aetherCount => {aetherCount}");
-        UpdateText();
-    }
-
-    public int GetAetherCount()
-    {
-        return PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
-    }
-
-    public void AddAetherCount(int coinCount) 
-    {
-        PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, coinCount + GetAetherCount());
-    }
-
-    // ¿¡Å×¸£ °³¼ö Â÷°¨ 
-    // TODO: API ¿¬µ¿ ÇÊ¿ä 
-    public void SubAetherCount() 
-    {
-        aetherCount--;
-        if(aetherCount > 0) {
+            // ë¡œì»¬ì— ìºì‹±í•˜ê³  ìˆëŠ” ì—í…Œë¥´ì˜ ê°œìˆ˜ë¥¼ ê°€ì ¸ì™€ì„œ UIì— ì¶œë ¥
+            aetherCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
+            Debug.Log($"current aetherCount => {aetherCount}");
             UpdateText();
-            PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, aetherCount);
-        } else {
-            Debug.Log("ÄÚÀÎÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
         }
 
-    }
+        public int GetAetherCount()
+        {
+            return PlayerPrefs.GetInt(PlayerPrefsKey.key_aetherCoin);
+        }
 
-    void UpdateText()
-    {
-        aetherCountText.text = aetherCount.ToString();
+        public void AddAetherCount(int coinCount)
+        {
+            PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, coinCount + GetAetherCount());
+        }
+
+        // ì—í…Œë¥´ ê°œìˆ˜ ì°¨ê° 
+        // TODO: API ì—°ë™ í•„ìš” 
+        public void SubAetherCount()
+        {
+            aetherCount--;
+            if (aetherCount > 0)
+            {
+                UpdateText();
+                PlayerPrefs.SetInt(PlayerPrefsKey.key_aetherCoin, aetherCount);
+            }
+            else
+            {
+                Debug.Log("ì½”ì¸ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
+            }
+
+        }
+
+        void UpdateText()
+        {
+            aetherCountText.text = aetherCount.ToString();
+        }
     }
-}
 }

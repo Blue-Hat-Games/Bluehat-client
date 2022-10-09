@@ -25,16 +25,18 @@ public class GetColorTest : MonoBehaviour
 
         yield return request.SendWebRequest();
 
-        if(request.result == UnityWebRequest.Result.ConnectionError ||
+        if (request.result == UnityWebRequest.Result.ConnectionError ||
             request.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log(request.error);
-            } else {
-                Debug.Log(request.downloadHandler.data);
-            }
+        {
+            Debug.Log(request.error);
+        }
+        else
+        {
+            Debug.Log(request.downloadHandler.data);
+        }
     }
 
-    
+
     void Start()
     {
         StartCoroutine(DownLoadGet(URL));
@@ -47,13 +49,13 @@ public class GetColorTest : MonoBehaviour
             {
                 UnityEngine.Color color = sourcePixels[h * huskyTex.width + w];
                 color = new UnityEngine.Color(1, color.g * 0.5f, color.b * 0.5f, 1);
-                huskyTex2.SetPixel(w, h, color);    
-              
-                Debug.Log($"Color = {color.r*255}, ${color.g*255}, ${color.b*255}");
-                int r = (int)color.r*255;
-                int g = (int)color.g*255;
-                int b = (int)color.b*255;
-                
+                huskyTex2.SetPixel(w, h, color);
+
+                Debug.Log($"Color = {color.r * 255}, ${color.g * 255}, ${color.b * 255}");
+                int r = (int)color.r * 255;
+                int g = (int)color.g * 255;
+                int b = (int)color.b * 255;
+
                 // System.Drawing.Color myColor = System.Drawing.Color.FromArgb(r, g, b);
                 // string hex = myColor.R.ToString("X2") + myColor.G.ToString("X2") + myColor.B.ToString("X2");
                 // Debug.Log($"hex : ${hex}");
@@ -75,10 +77,10 @@ public class GetColorTest : MonoBehaviour
         //}
 
     }
-     private void SaveTexture2DToPNGFile(Texture2D texture, string directoryPath, string fileName)
+    private void SaveTexture2DToPNGFile(Texture2D texture, string directoryPath, string fileName)
     {
-        
-        if(false == Directory.Exists(directoryPath))
+
+        if (false == Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);
         }
@@ -87,6 +89,6 @@ public class GetColorTest : MonoBehaviour
 
         string filePath = directoryPath + fileName + ".png";
         File.WriteAllBytes(filePath, texturePNGBytes);
- 
+
     }
 }

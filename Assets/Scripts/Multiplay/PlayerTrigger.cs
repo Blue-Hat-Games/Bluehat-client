@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-// »ç¿ëÀÚ°¡ ObstacleÀÌ¶û ºÎµúÈ÷¸é ÇØ´ç ObstacleÀÌ »ç¶óÁöµµ·Ï ÇÏ°í ½Í´Ù.
-// ObstacleÀº PhotonView°¡ ÀÖ´Â °´Ã¼¿©¾ß ÇÔ
-namespace BluehatGames {
-public class PlayerTrigger : MonoBehaviourPun
+// ì‚¬ìš©ìê°€ Obstacleì´ë‘ ë¶€ë”ªíˆë©´ í•´ë‹¹ Obstacleì´ ì‚¬ë¼ì§€ë„ë¡ í•˜ê³  ì‹¶ë‹¤.
+// Obstacleì€ PhotonViewê°€ ìˆëŠ” ê°ì²´ì—¬ì•¼ í•¨
+namespace BluehatGames
 {
-    void OnTriggerEnter(Collider coll) {
-        if(coll.tag == "Obstacle") {
-            // ¿¡Å×¸£ °ÔÀÌÁö¸¦ ´õÇØÁØ´Ù.
-            PlayerStatusController.instance.AddAetherEnergy();
-            PhotonView pv = coll.gameObject.GetComponent<PhotonView>();
-            if(pv.IsMine)
+    public class PlayerTrigger : MonoBehaviourPun
+    {
+        void OnTriggerEnter(Collider coll)
+        {
+            if (coll.tag == "Obstacle")
             {
-                PhotonNetwork.Destroy(coll.gameObject);
+                // ì—í…Œë¥´ ê²Œì´ì§€ë¥¼ ë”í•´ì¤€ë‹¤.
+                PlayerStatusController.instance.AddAetherEnergy();
+                PhotonView pv = coll.gameObject.GetComponent<PhotonView>();
+                if (pv.IsMine)
+                {
+                    PhotonNetwork.Destroy(coll.gameObject);
+                }
             }
         }
     }
-}
 }

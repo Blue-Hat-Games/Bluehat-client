@@ -22,7 +22,7 @@ public class Int32ColorTest : MonoBehaviour
         Color32[] fixedPix = new Color32[16];
 
         int index = 0;
-        for(int i = 16; i < 47; i += 2)
+        for (int i = 16; i < 47; i += 2)
         {
             Debug.Log($"{i} | pix = {pix[i]}");
             fixedPix[index++] = pix[i];
@@ -37,12 +37,12 @@ public class Int32ColorTest : MonoBehaviour
         for (int h = 0; h < sourceTex.height; h++)
         {
             for (int w = 0; w < sourceTex.width; w++)
-            {              
+            {
                 Color[] sourcePixels = sourceTex.GetPixels();
-                Color color = sourcePixels[h * sourceTex.width + w]; 
+                Color color = sourcePixels[h * sourceTex.width + w];
                 Debug.Log($"{w},{h} | color = {color}");
             }
-        }   
+        }
         Debug.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
         string colorJsonStr = GetColorJsonFromTexture(sourceTex);
@@ -50,41 +50,41 @@ public class Int32ColorTest : MonoBehaviour
 
         Debug.Log("------------------------------");
 
-        // 22.9.18 json stringÀ» ´Ù½Ã ÅØ½ºÃ³·Î º¯È¯ÇÏ´Â Å×½ºÆ®
+        // 22.9.18 json stringì„ ë‹¤ì‹œ í…ìŠ¤ì²˜ë¡œ ë³€í™˜í•˜ëŠ” í…ŒìŠ¤íŠ¸
         Color32[] colorFromJson = JsonHelper.FromJson<Color32>(colorJsonStr);
-        for(int i = 0; i < colorFromJson.Length; i++)
+        for (int i = 0; i < colorFromJson.Length; i++)
         {
             Debug.Log($"{i} | pix = {colorFromJson[i]}");
         }
 
-        // ´Ù½Ã º¹¿øÇÒ ¶§
+        // ë‹¤ì‹œ ë³µì›í•  ë•Œ
         Color32[] restoreTexColors = new Color32[originColor32Length];
         int index = 0;
-        for(int i=0; i<restoreTexColors.Length; i++)
+        for (int i = 0; i < restoreTexColors.Length; i++)
         {
-            // µÎ¹øÂ° ÁÙÀº ´Ù½Ã Ã³À½À¸·Î 
-            if(i == 16)
+            // ë‘ë²ˆì§¸ ì¤„ì€ ë‹¤ì‹œ ì²˜ìŒìœ¼ë¡œ 
+            if (i == 16)
             {
                 index = 0;
             }
-            if(i == 48)
+            if (i == 48)
             {
                 index = 8;
             }
 
             restoreTexColors[i] = colorFromJson[index];
 
-            // µÎÄ­¸¶´Ù »ö ¹Ù²ã¾ß ÇÔ 
-            if(i % 2 != 0)
+            // ë‘ì¹¸ë§ˆë‹¤ ìƒ‰ ë°”ê¿”ì•¼ í•¨ 
+            if (i % 2 != 0)
             {
-                index ++;
+                index++;
             }
         }
 
-   
+
         Texture2D restoreTexture = new Texture2D(sourceTex.width, sourceTex.height);
         Debug.Log($"sourceTex | width = {sourceTex.width}, height = {sourceTex.height}");
-        
+
         Debug.Log($"restoreTexture | width = {restoreTexture.width}, height = {restoreTexture.height}");
         // restoreTexture.color = restoreTexColors;
         // index = 0;
@@ -104,7 +104,8 @@ public class Int32ColorTest : MonoBehaviour
         byte[] bytes = restoreTexture.EncodeToPNG();
         Debug.Log(Application.dataPath);
         var dirPath = Application.dataPath + "/SaveImages/";
-        if(!Directory.Exists(dirPath)) {
+        if (!Directory.Exists(dirPath))
+        {
             Directory.CreateDirectory(dirPath);
         }
         File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
@@ -113,15 +114,15 @@ public class Int32ColorTest : MonoBehaviour
         for (int h = 0; h < restoreTexture.height; h++)
         {
             for (int w = 0; w < restoreTexture.width; w++)
-            {              
+            {
                 Color[] sourcePixels = restoreTexture.GetPixels();
-                Color color = sourcePixels[h * restoreTexture.width + w]; 
+                Color color = sourcePixels[h * restoreTexture.width + w];
                 Debug.Log($"{w},{h} | color = {color}");
             }
-        }   
+        }
         Debug.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-      
+
     }
 
     void Update()

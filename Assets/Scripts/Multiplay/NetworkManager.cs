@@ -4,31 +4,31 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
-// Æ÷ÅæÀ» ÀÌ¿ëÇÏ¿© °ÔÀÓ¼­¹ö±îÁö µé¾î°¡°Ô ÇÏ´Â °ÍÀÌ ¸ñÀû
+// í¬í†¤ì„ ì´ìš©í•˜ì—¬ ê²Œì„ì„œë²„ê¹Œì§€ ë“¤ì–´ê°€ê²Œ í•˜ëŠ” ê²ƒì´ ëª©ì 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     void Start()
     {
         PhotonNetwork.GameVersion = "0.1";
         PhotonNetwork.NickName = "Minjujuu";
-        // ÀÌÈÄ¿¡ µé¾î¿Â ÇÃ·¹ÀÌ¾î¿¡°Ô ÇöÀç ¾À »óÈ²À» ÀÚµ¿À¸·Î Àû¿ë½ÃÄÑÁÜ
-        PhotonNetwork.AutomaticallySyncScene = true; 
+        // ì´í›„ì— ë“¤ì–´ì˜¨ í”Œë ˆì´ì–´ì—ê²Œ í˜„ì¬ ì”¬ ìƒí™©ì„ ìë™ìœ¼ë¡œ ì ìš©ì‹œì¼œì¤Œ
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
         Debug.Log("OnConnectedMaster");
-        // TypedLobby¿¡ µû¶ó ¾î´À ·ë¿¡ µé¾î°¥Áö ´Ş¶óÁü
+        // TypedLobbyì— ë”°ë¼ ì–´ëŠ ë£¸ì— ë“¤ì–´ê°ˆì§€ ë‹¬ë¼ì§
         PhotonNetwork.JoinLobby(TypedLobby.Default);
     }
 
     public override void OnJoinedLobby()
     {
         Debug.Log("OnJoinedLobby");
-        // °ÔÀÓ¼­¹ö·Î µé¾î°¡ÀÚ
+        // ê²Œì„ì„œë²„ë¡œ ë“¤ì–´ê°€ì
         string roomName = "Default Room";
-        // Å×½ºÆ® ¹öÀüÀÇ MAxPlayers´Â 20±îÁö¸¸ °¡´É
+        // í…ŒìŠ¤íŠ¸ ë²„ì „ì˜ MAxPlayersëŠ” 20ê¹Œì§€ë§Œ ê°€ëŠ¥
         RoomOptions ro = new RoomOptions() { MaxPlayers = 4, IsVisible = true, IsOpen = true };
 
         PhotonNetwork.JoinOrCreateRoom(roomName, ro, TypedLobby.Default);
@@ -36,14 +36,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        // °ÔÀÓ¼­¹ö·Î µé¾î¿È. ÀÌ°÷¿¡¼­ Á¢¼ÓÇÏ´Â »ç¿ëÀÚ À§Ä¡½ÃÄÑÁÖ±â
+        // ê²Œì„ì„œë²„ë¡œ ë“¤ì–´ì˜´. ì´ê³³ì—ì„œ ì ‘ì†í•˜ëŠ” ì‚¬ìš©ì ìœ„ì¹˜ì‹œì¼œì£¼ê¸°
         Debug.Log("OnJoinedRoom");
-        // 360µµ Sphere °ø°£¾È¿¡¼­ ·£´ıÀ¸·Î ÇÑ Á¡À» ÂïÀº °Í
-        Vector3 randPos = Random.insideUnitSphere * 10; 
-        // 0,0¿¡¼­ 10m »çÀÌ ±îÁöÀÇ °Å¸® Áß ·£´ıÀ¸·Î ¼³Á¤
+        // 360ë„ Sphere ê³µê°„ì•ˆì—ì„œ ëœë¤ìœ¼ë¡œ í•œ ì ì„ ì°ì€ ê²ƒ
+        Vector3 randPos = Random.insideUnitSphere * 10;
+        // 0,0ì—ì„œ 10m ì‚¬ì´ ê¹Œì§€ì˜ ê±°ë¦¬ ì¤‘ ëœë¤ìœ¼ë¡œ ì„¤ì •
         randPos.y = 0;
-        // Å¬¶óÀÌ¾ğÆ®°¡ »õ·Î ¹æ¿¡ µé¾î¿À¸é ¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®°¡ ÀÚµ¿À¸·Î È¯°æÀ» ¸ÂÃçÁÜ 
-        // - Ã¹¹øÂ° ¸Å°³º¯¼ö°¡ Resources¿¡¼­ ¾î¶² ÇÁ¸®ÆÕÀ» ºÒ·¯¿Ã °ÍÀÎÁö¸¦ ³ªÅ¸³¿ (·ÎÄÃ,¸®¸ğÆ® µÑ´Ù)
+        // í´ë¼ì´ì–¸íŠ¸ê°€ ìƒˆë¡œ ë°©ì— ë“¤ì–´ì˜¤ë©´ ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸ê°€ ìë™ìœ¼ë¡œ í™˜ê²½ì„ ë§ì¶°ì¤Œ 
+        // - ì²«ë²ˆì§¸ ë§¤ê°œë³€ìˆ˜ê°€ Resourcesì—ì„œ ì–´ë–¤ í”„ë¦¬íŒ¹ì„ ë¶ˆëŸ¬ì˜¬ ê²ƒì¸ì§€ë¥¼ ë‚˜íƒ€ëƒ„ (ë¡œì»¬,ë¦¬ëª¨íŠ¸ ë‘˜ë‹¤)
         // PhotonNetwork.Instantiate("Player", randPos, Quaternion.identity);
     }
 
@@ -52,13 +52,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("OnJoinRoomFailed");
     }
 
-    public override void OnLeftRoom() {
+    public override void OnLeftRoom()
+    {
         SceneManager.LoadScene(SceneName._03_Main);
     }
 
-   	public override void OnDisconnected(DisconnectCause cause)
-	{
-		// SetCallbackLabel("OnDisconnected");
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        // SetCallbackLabel("OnDisconnected");
         SceneManager.LoadScene(SceneName._03_Main);
-	}
+    }
 }

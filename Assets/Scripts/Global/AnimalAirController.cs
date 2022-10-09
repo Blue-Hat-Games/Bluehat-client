@@ -7,23 +7,23 @@ using UnityEngine.SceneManagement;
 namespace BluehatGames
 {
 
-    // ¼­¹ö¿¡¼­ µ¿¹° Á¤º¸¸¦ ¹Ş¾Æ¿È
+    // ì„œë²„ì—ì„œ ë™ë¬¼ ì •ë³´ë¥¼ ë°›ì•„ì˜´
     public class AnimalAirController : MonoBehaviour
     {
         public AnimalFactory animalFactory;
 
         public string tempAccessToken = "0000";
         private Dictionary<string, GameObject> animalObjectDictionary;
-        private AnimalDataFormat[]  animalDataArray;
+        private AnimalDataFormat[] animalDataArray;
 
         private Scene currentScene;
         private string currentSceneName;
 
-        
+
         void Start()
         {
             animalObjectDictionary = new Dictionary<string, GameObject>();
-            currentScene = SceneManager.GetActiveScene(); 
+            currentScene = SceneManager.GetActiveScene();
             currentSceneName = currentScene.name;
 
             StartCoroutine(DownLoadGet(ApiUrl.getUserAnimal));
@@ -33,7 +33,7 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: ÀÓ½Ã·Î ¼³Á¤
+            // TODO: ì„ì‹œë¡œ ì„¤ì •
             access_token = tempAccessToken;
 
             Debug.Log($"access token = {access_token}");
@@ -49,33 +49,33 @@ namespace BluehatGames
             {
                 Debug.Log(request.downloadHandler.text);
                 string jsonData = request.downloadHandler.text;
-                switch(currentSceneName)
+                switch (currentSceneName)
                 {
                     case SceneName._03_Main:
                         SetMainSceneAnimals(jsonData);
-                    break;
+                        break;
                     case SceneName._04_Synthesis:
                         SetSynthesisSceneAnimals(jsonData);
-                    break;
+                        break;
 
                 }
-            }    
+            }
         }
-        
+
         private void SetMainSceneAnimals(string jsonData)
-        {            
-            // json data¸¦ ³Ñ±â¸é ±× µ¥ÀÌÅÍ¸¦ ÅëÇØ »ı¼ºµÈ µ¿¹° ¿ÀºêÁ§Æ® ¸®½ºÆ®¸¦ ¹İÈ¯ ¹ŞÀ» ¼ö ÀÖ´Ù
+        {
+            // json dataë¥¼ ë„˜ê¸°ë©´ ê·¸ ë°ì´í„°ë¥¼ í†µí•´ ìƒì„±ëœ ë™ë¬¼ ì˜¤ë¸Œì íŠ¸ ë¦¬ìŠ¤íŠ¸ë¥¼ ë°˜í™˜ ë°›ì„ ìˆ˜ ìˆë‹¤
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
 
-            // ¸ŞÀÎ ¾À¿¡ µ¿¹° ¹èÄ¡
-            foreach(KeyValuePair<string, GameObject> pair in animalObjectDictionary)
+            // ë©”ì¸ ì”¬ì— ë™ë¬¼ ë°°ì¹˜
+            foreach (KeyValuePair<string, GameObject> pair in animalObjectDictionary)
             {
                 GameObject animalObject = pair.Value;
                 float randomX = Random.Range(-20, 20);
                 float randomZ = Random.Range(-20, 20);
                 animalObject.transform.position = new Vector3(randomX, 0.1f, randomZ);
                 animalObject.transform.rotation = Quaternion.identity;
-                
+
                 animalObject.AddComponent<MainSceneAnimal>();
             }
 
@@ -83,9 +83,9 @@ namespace BluehatGames
 
         private void SetSynthesisSceneAnimals(string jsonData)
         {
-            
+
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
-            for(int i = 0; i <  animalDataArray.Length; i++)
+            for (int i = 0; i < animalDataArray.Length; i++)
             {
                 Debug.Log($"animal_id = {animalDataArray[i].id}, animal_type = {animalDataArray[i].animalType}");
             }
@@ -93,7 +93,7 @@ namespace BluehatGames
             GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalDataArray);
         }
 
-        // »ö º¯°æÀÌ³ª ÇÕ¼º ÀÌÈÄ¿¡ ´Ù½Ã µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Í¾ß ÇÔ 
+        // ìƒ‰ ë³€ê²½ì´ë‚˜ í•©ì„± ì´í›„ì— ë‹¤ì‹œ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì™€ì•¼ í•¨ 
         public void RefreshAnimalData()
         {
             StartCoroutine(RefreshData(ApiUrl.getUserAnimal));
@@ -103,7 +103,7 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: ÀÓ½Ã·Î ¼³Á¤
+            // TODO: ì„ì‹œë¡œ ì„¤ì •
             access_token = tempAccessToken;
 
             Debug.Log($"access token = {access_token}");
@@ -119,15 +119,15 @@ namespace BluehatGames
             {
                 Debug.Log(request.downloadHandler.text);
                 string jsonData = request.downloadHandler.text;
-                // animalObjectList¸¦ ´Ù½Ã 
+                // animalObjectListë¥¼ ë‹¤ì‹œ 
                 animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
-            }    
+            }
         }
 
         public GameObject GetAnimalObject(string id)
         {
-            GameObject obj = null;  
-            if(animalObjectDictionary.ContainsKey(id))
+            GameObject obj = null;
+            if (animalObjectDictionary.ContainsKey(id))
             {
                 obj = animalObjectDictionary[id];
             }

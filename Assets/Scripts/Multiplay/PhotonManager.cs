@@ -7,131 +7,134 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-namespace BluehatGames {
-public class PhotonManager : MonoBehaviourPunCallbacks
+namespace BluehatGames
 {
-    private readonly string gameVersion = "v1.0";
-    private byte maxPlayersPerRoom = 8;
-    private bool isConnecting = false;
-
-    [Header("UI")]
-    public InputField nickNameInputField;
-    public Button connectButton;
-    public GameObject controlPanel; // inputField, PlayButton
-    public GameObject progressPanel; // connecting ...
-    void Awake()
+    public class PhotonManager : MonoBehaviourPunCallbacks
     {
-        // ÀÌÈÄ¿¡ µé¾î¿Â ÇÃ·¹ÀÌ¾î¿¡°Ô ÇöÀç ¾À »óÈ²À» ÀÚµ¿À¸·Î Àû¿ë½ÃÄÑÁÜ
-        PhotonNetwork.AutomaticallySyncScene = true;
-    }
+        private readonly string gameVersion = "v1.0";
+        private byte maxPlayersPerRoom = 8;
+        private bool isConnecting = false;
 
-
-    void Start()
-    {
-        controlPanel.SetActive(true);
-        progressPanel.SetActive(false);
-        Debug.Log("00. Æ÷Åæ ¸Å´ÏÀú ½ÃÀÛ");
-
-        // Connect ¹öÆ°À» ´©¸¥ °æ¿ì Á¢¼Ó ½Ãµµ 
-        // - ´Ğ³×ÀÓ ¼³Á¤Àº PlayerNameInputField¿¡¼­ ÇØÁÜ
-        connectButton.onClick.AddListener(() =>
+        [Header("UI")]
+        public InputField nickNameInputField;
+        public Button connectButton;
+        public GameObject controlPanel; // inputField, PlayButton
+        public GameObject progressPanel; // connecting ...
+        void Awake()
         {
-            Connect();
-        });
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("01. Æ÷Åæ ¼­¹ö¿¡ Á¢¼Ó");
-        if (isConnecting)
-        {
-            // Á¸ÀçÇÏ´Â ·ë¿¡ ¿ì¼± Á¶ÀÎÀ» ½ÃµµÇÏ°í, ¾ø´Ù¸é OnJoinRandomFailed() °¡ È£ÃâµÊ
-            PhotonNetwork.JoinRandomRoom();
-        }
-    }
-    public override void OnDisconnected(DisconnectCause cause)
-    {
-        Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
-    }
-
-    // JoinRandomRoom()¿¡ ½ÇÆĞÇÏ¸é È£ÃâµÊ
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("02. ·£´ı ·ë Á¢¼Ó ½ÇÆĞ");
-
-        // ·ë ¼Ó¼º ¼³Á¤
-        RoomOptions ro = new RoomOptions();
-        ro.IsOpen = true;
-        ro.IsVisible = true;
-        ro.MaxPlayers = maxPlayersPerRoom; // 8¸í±îÁö¸¸ ÀÔÀå°¡´ÉÇÏ°Ô ÇÏÀÚ 
-
-        // ¸¸¾à ·£´ı ·ë ÀÔÀå¿¡ ½ÇÆĞÇÏ¸é, ·ëÀÌ ¾ø°Å³ª ·ëÀÌ °¡µæÂù °æ¿ì¶ó¼­ ÀÌ·² ¶© »õ·Î¿î ·ëÀ» »ı¼ºÇÔ
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
-    }
-
-    public override void OnCreatedRoom()
-    {
-        Debug.Log("03. ¹æ »ı¼º ¿Ï·á");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("04. ¹æ ÀÔÀå ¿Ï·á");        
-        if(PhotonNetwork.IsMasterClient)
-        {
-            // ¹æ ÀÔÀåÀ» À§ÇÑ ¾À ·Îµå
-            PhotonNetwork.LoadLevel(SceneName._PhotonNetworkScene);
-            StartCoroutine(RepeatIsConnect());
-        }
-    }
-
-    IEnumerator RepeatIsConnect() {
-        while (PhotonNetwork.LevelLoadingProgress < 1 ){ 
-            Debug.Log($"PhotonNetwork.LevelLoadingProgress => {PhotonNetwork.LevelLoadingProgress}");
-            yield return new WaitForEndOfFrame(); 
+            // ì´í›„ì— ë“¤ì–´ì˜¨ í”Œë ˆì´ì–´ì—ê²Œ í˜„ì¬ ì”¬ ìƒí™©ì„ ìë™ìœ¼ë¡œ ì ìš©ì‹œì¼œì¤Œ
+            PhotonNetwork.AutomaticallySyncScene = true;
         }
 
-        MultiplayGameManager.instance?.SetIsConnectTrue();
-        // while(true) {
-        //     yield return null;
-        //     Debug.Log("RepeatIsConnect....");
-        //     if(MultiplayGameManager.instance) {
-        //         MultiplayGameManager.instance?.SetIsConnectTrue();
-        //         if(MultiplayGameManager.instance.IsConnectTrue()) {
-        //             yield break;
-        //         }    
-        //     }
-            
-                
-        // }
-    }
-    
-    // 1. connection °úÁ¤ ½ÃÀÛ
-    // - ÀÌ¹Ì ¿¬°áµÇ¾ú´Ù¸é, ·£´ı·ë ÀÔÀå ½Ãµµ
-    // - ¿¬°áµÇÁö ¾Ê¾Ò´Ù¸é, Photon cloud network¿¡ ¿¬°áÀ» ½Ãµµ
-    public void Connect()
-    {
-        Debug.Log("------------------------ Connect ------------------");
-        // Âü¿©ÇÏ·Á´Â ÀÇ»ç¸¦ °è¼Ó ÃßÀû. °ÔÀÓ¿¡¼­ µ¹¾Æ¿Ã ¶§ ¿¬°áµÇ¾ú´Ù´Â Äİ¹éÀ» ¹ŞÀ» °ÍÀÌ±â ¶§¹®¿¡ ¾î¶»°Ô ÇØ¾ß ÇÏ´ÂÁö ¾Ë¾Æ¾ß ÇÏ±â ¶§¹®
-        isConnecting = true;
 
-        controlPanel.SetActive(false);
-        progressPanel.SetActive(true);
-
-        // ¿¬°áµÇ¾ú´ÂÁö ¾Æ´ÑÁö È®ÀÎÇØ¼­ Á¶ÀÎÇÏ°Å³ª ¼­¹ö¿¡ ¿¬°áÀ» ½Ãµµ
-        if (PhotonNetwork.IsConnected)
+        void Start()
         {
-            // ·£´ı·ë Á¶ÀÎ ½Ãµµ
-            // - ½ÇÆĞÇÏ¸é OnJoinRandomFailed()°¡ È£ÃâµÇ°í ÇÏ³ªÀÇ ¹æÀ» ´õ ¸¸µê        
-            PhotonNetwork.JoinRandomRoom();
-        }
-        else
-        {
-            // °¡Àå ¸ÕÀú Photon Online Server¿¡ ¿¬°áÇØ¾ß ÇÔ
-            PhotonNetwork.GameVersion = gameVersion;
-            PhotonNetwork.ConnectUsingSettings();
-        }
-    }
+            controlPanel.SetActive(true);
+            progressPanel.SetActive(false);
+            Debug.Log("00. í¬í†¤ ë§¤ë‹ˆì € ì‹œì‘");
 
-}
+            // Connect ë²„íŠ¼ì„ ëˆ„ë¥¸ ê²½ìš° ì ‘ì† ì‹œë„ 
+            // - ë‹‰ë„¤ì„ ì„¤ì •ì€ PlayerNameInputFieldì—ì„œ í•´ì¤Œ
+            connectButton.onClick.AddListener(() =>
+            {
+                Connect();
+            });
+        }
+
+        public override void OnConnectedToMaster()
+        {
+            Debug.Log("01. í¬í†¤ ì„œë²„ì— ì ‘ì†");
+            if (isConnecting)
+            {
+                // ì¡´ì¬í•˜ëŠ” ë£¸ì— ìš°ì„  ì¡°ì¸ì„ ì‹œë„í•˜ê³ , ì—†ë‹¤ë©´ OnJoinRandomFailed() ê°€ í˜¸ì¶œë¨
+                PhotonNetwork.JoinRandomRoom();
+            }
+        }
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
+        }
+
+        // JoinRandomRoom()ì— ì‹¤íŒ¨í•˜ë©´ í˜¸ì¶œë¨
+        public override void OnJoinRandomFailed(short returnCode, string message)
+        {
+            Debug.Log("02. ëœë¤ ë£¸ ì ‘ì† ì‹¤íŒ¨");
+
+            // ë£¸ ì†ì„± ì„¤ì •
+            RoomOptions ro = new RoomOptions();
+            ro.IsOpen = true;
+            ro.IsVisible = true;
+            ro.MaxPlayers = maxPlayersPerRoom; // 8ëª…ê¹Œì§€ë§Œ ì…ì¥ê°€ëŠ¥í•˜ê²Œ í•˜ì 
+
+            // ë§Œì•½ ëœë¤ ë£¸ ì…ì¥ì— ì‹¤íŒ¨í•˜ë©´, ë£¸ì´ ì—†ê±°ë‚˜ ë£¸ì´ ê°€ë“ì°¬ ê²½ìš°ë¼ì„œ ì´ëŸ´ ë• ìƒˆë¡œìš´ ë£¸ì„ ìƒì„±í•¨
+            PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+        }
+
+        public override void OnCreatedRoom()
+        {
+            Debug.Log("03. ë°© ìƒì„± ì™„ë£Œ");
+        }
+
+        public override void OnJoinedRoom()
+        {
+            Debug.Log("04. ë°© ì…ì¥ ì™„ë£Œ");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // ë°© ì…ì¥ì„ ìœ„í•œ ì”¬ ë¡œë“œ
+                PhotonNetwork.LoadLevel(SceneName._PhotonNetworkScene);
+                StartCoroutine(RepeatIsConnect());
+            }
+        }
+
+        IEnumerator RepeatIsConnect()
+        {
+            while (PhotonNetwork.LevelLoadingProgress < 1)
+            {
+                Debug.Log($"PhotonNetwork.LevelLoadingProgress => {PhotonNetwork.LevelLoadingProgress}");
+                yield return new WaitForEndOfFrame();
+            }
+
+            MultiplayGameManager.instance?.SetIsConnectTrue();
+            // while(true) {
+            //     yield return null;
+            //     Debug.Log("RepeatIsConnect....");
+            //     if(MultiplayGameManager.instance) {
+            //         MultiplayGameManager.instance?.SetIsConnectTrue();
+            //         if(MultiplayGameManager.instance.IsConnectTrue()) {
+            //             yield break;
+            //         }    
+            //     }
+
+
+            // }
+        }
+
+        // 1. connection ê³¼ì • ì‹œì‘
+        // - ì´ë¯¸ ì—°ê²°ë˜ì—ˆë‹¤ë©´, ëœë¤ë£¸ ì…ì¥ ì‹œë„
+        // - ì—°ê²°ë˜ì§€ ì•Šì•˜ë‹¤ë©´, Photon cloud networkì— ì—°ê²°ì„ ì‹œë„
+        public void Connect()
+        {
+            Debug.Log("------------------------ Connect ------------------");
+            // ì°¸ì—¬í•˜ë ¤ëŠ” ì˜ì‚¬ë¥¼ ê³„ì† ì¶”ì . ê²Œì„ì—ì„œ ëŒì•„ì˜¬ ë•Œ ì—°ê²°ë˜ì—ˆë‹¤ëŠ” ì½œë°±ì„ ë°›ì„ ê²ƒì´ê¸° ë•Œë¬¸ì— ì–´ë–»ê²Œ í•´ì•¼ í•˜ëŠ”ì§€ ì•Œì•„ì•¼ í•˜ê¸° ë•Œë¬¸
+            isConnecting = true;
+
+            controlPanel.SetActive(false);
+            progressPanel.SetActive(true);
+
+            // ì—°ê²°ë˜ì—ˆëŠ”ì§€ ì•„ë‹Œì§€ í™•ì¸í•´ì„œ ì¡°ì¸í•˜ê±°ë‚˜ ì„œë²„ì— ì—°ê²°ì„ ì‹œë„
+            if (PhotonNetwork.IsConnected)
+            {
+                // ëœë¤ë£¸ ì¡°ì¸ ì‹œë„
+                // - ì‹¤íŒ¨í•˜ë©´ OnJoinRandomFailed()ê°€ í˜¸ì¶œë˜ê³  í•˜ë‚˜ì˜ ë°©ì„ ë” ë§Œë“¦        
+                PhotonNetwork.JoinRandomRoom();
+            }
+            else
+            {
+                // ê°€ì¥ ë¨¼ì € Photon Online Serverì— ì—°ê²°í•´ì•¼ í•¨
+                PhotonNetwork.GameVersion = gameVersion;
+                PhotonNetwork.ConnectUsingSettings();
+            }
+        }
+
+    }
 }

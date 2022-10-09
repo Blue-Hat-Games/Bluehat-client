@@ -1,84 +1,84 @@
-using Photon.Pun; // À¯´ÏÆ¼¿ë Æ÷Åæ ÄÄÆ÷³ÍÆ®µé
-using Photon.Realtime; // Æ÷Åæ ¼­ºñ½º °ü·Ã ¶óÀÌºê·¯¸®
+using Photon.Pun; // ìœ ë‹ˆí‹°ìš© í¬í†¤ ì»´í¬ë„ŒíŠ¸ë“¤
+using Photon.Realtime; // í¬í†¤ ì„œë¹„ìŠ¤ ê´€ë ¨ ë¼ì´ë¸ŒëŸ¬ë¦¬
 using UnityEngine;
 using UnityEngine.UI;
 
-// ¸¶½ºÅÍ(¸ÅÄ¡ ¸ŞÀÌÅ·) ¼­¹ö¿Í ·ë Á¢¼ÓÀ» ´ã´ç
+// ë§ˆìŠ¤í„°(ë§¤ì¹˜ ë©”ì´í‚¹) ì„œë²„ì™€ ë£¸ ì ‘ì†ì„ ë‹´ë‹¹
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    private string gameVersion = "1"; // °ÔÀÓ ¹öÀü
+    private string gameVersion = "1"; // ê²Œì„ ë²„ì „
 
-    public Text connectionInfoText; // ³×Æ®¿öÅ© Á¤º¸¸¦ Ç¥½ÃÇÒ ÅØ½ºÆ®
-    public Button joinButton; // ·ë Á¢¼Ó ¹öÆ°
+    public Text connectionInfoText; // ë„¤íŠ¸ì›Œí¬ ì •ë³´ë¥¼ í‘œì‹œí•  í…ìŠ¤íŠ¸
+    public Button joinButton; // ë£¸ ì ‘ì† ë²„íŠ¼
 
-    // °ÔÀÓ ½ÇÇà°ú µ¿½Ã¿¡ ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ½Ãµµ
+    // ê²Œì„ ì‹¤í–‰ê³¼ ë™ì‹œì— ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì‹œë„
     private void Start()
     {
 
-        //Á¢¼Ó¿¡ ÇÊ¿äÇÑ Á¤º¸ (°ÔÀÓ ¹öÀü) ¼³Á¤
+        //ì ‘ì†ì— í•„ìš”í•œ ì •ë³´ (ê²Œì„ ë²„ì „) ì„¤ì •
         PhotonNetwork.GameVersion = this.gameVersion;
-        //¼³Á¤ÇÑ Á¤º¸·Î ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ½Ãµµ
+        //ì„¤ì •í•œ ì •ë³´ë¡œ ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì‹œë„
         PhotonNetwork.ConnectUsingSettings();
 
 
         this.joinButton.interactable = false;
-        this.connectionInfoText.text = "¸¶½ºÅÍ ¼­¹ö¿¡ Á¢¼ÓÁß...";
+        this.connectionInfoText.text = "ë§ˆìŠ¤í„° ì„œë²„ì— ì ‘ì†ì¤‘...";
     }
 
-    // ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ¼º°ø½Ã ÀÚµ¿ ½ÇÇà
+    // ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì„±ê³µì‹œ ìë™ ì‹¤í–‰
     public override void OnConnectedToMaster()
     {
         this.joinButton.interactable = true;
-        this.connectionInfoText.text = "¿Â¶óÀÎ : ¸¶½ºÅÍ ¼­¹ö¿Í ¿¬°á µÊ";
+        this.connectionInfoText.text = "ì˜¨ë¼ì¸ : ë§ˆìŠ¤í„° ì„œë²„ì™€ ì—°ê²° ë¨";
     }
 
-    // ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ½ÇÆĞ½Ã ÀÚµ¿ ½ÇÇà
+    // ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì‹¤íŒ¨ì‹œ ìë™ ì‹¤í–‰
     public override void OnDisconnected(DisconnectCause cause)
     {
         this.joinButton.interactable = false;
-        this.connectionInfoText.text = "¿ÀÇÁ¶óÀÎ : ¸¶½ºÅÍ ¼­¹ö¿Í ¿¬°áµÇÁö ¾ÊÀ½\n Á¢¼Ó Àç½ÃµµÁß... ";
-        //¼³Á¤ÇÑ Á¤º¸·Î ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ½Ãµµ
+        this.connectionInfoText.text = "ì˜¤í”„ë¼ì¸ : ë§ˆìŠ¤í„° ì„œë²„ì™€ ì—°ê²°ë˜ì§€ ì•ŠìŒ\n ì ‘ì† ì¬ì‹œë„ì¤‘... ";
+        //ì„¤ì •í•œ ì •ë³´ë¡œ ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì‹œë„
         PhotonNetwork.ConnectUsingSettings();
     }
 
-    // ·ë Á¢¼Ó ½Ãµµ
+    // ë£¸ ì ‘ì† ì‹œë„
     public void Connect()
     {
-        // Áßº¹ Á¢¼Ó ¸·±â
+        // ì¤‘ë³µ ì ‘ì† ë§‰ê¸°
         this.joinButton.interactable = false;
 
-        // ¸¶½ºÅÍ ¼­¹ö¿¡ Á¢¼Ó ÁßÀÌ¶ó¸é
+        // ë§ˆìŠ¤í„° ì„œë²„ì— ì ‘ì† ì¤‘ì´ë¼ë©´
         if (PhotonNetwork.IsConnected)
         {
 
-            //·ë¿¡ Á¢¼ÓÇÑ´Ù.
-            this.connectionInfoText.text = "·ë¿¡ Á¢¼Ó....";
+            //ë£¸ì— ì ‘ì†í•œë‹¤.
+            this.connectionInfoText.text = "ë£¸ì— ì ‘ì†....";
             PhotonNetwork.JoinRandomRoom();
         }
         else
         {
-            this.connectionInfoText.text = "¿ÀÇÁ¶óÀÎ : ¸¶½ºÅÍ ¼­¹ö¿Í ¿¬°á ²÷±è \n ´Ù½Ã Á¢¼Ó ½ÃµµÇÕ´Ï´Ù.";
-            //¼³Á¤ÇÑ Á¤º¸·Î ¸¶½ºÅÍ ¼­¹ö Á¢¼Ó ½Ãµµ
+            this.connectionInfoText.text = "ì˜¤í”„ë¼ì¸ : ë§ˆìŠ¤í„° ì„œë²„ì™€ ì—°ê²° ëŠê¹€ \n ë‹¤ì‹œ ì ‘ì† ì‹œë„í•©ë‹ˆë‹¤.";
+            //ì„¤ì •í•œ ì •ë³´ë¡œ ë§ˆìŠ¤í„° ì„œë²„ ì ‘ì† ì‹œë„
             PhotonNetwork.ConnectUsingSettings();
         }
     }
 
-    // (ºó ¹æÀÌ ¾ø¾î)·£´ı ·ë Âü°¡¿¡ ½ÇÆĞÇÑ °æ¿ì ÀÚµ¿ ½ÇÇà
+    // (ë¹ˆ ë°©ì´ ì—†ì–´)ëœë¤ ë£¸ ì°¸ê°€ì— ì‹¤íŒ¨í•œ ê²½ìš° ìë™ ì‹¤í–‰
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        this.connectionInfoText.text = "ºó ¹æ ¾øÀ½, »õ·Î¿î¹æ »ı¼º...";
-        //ÃÖ´ë ÀÎ¿øÀ» 4¸íÀ¸·Î ¼³Á¤ + ¹æÀ» ¸¸µê
-        //¹æÀÌ¸§ , 4¸í ¼³Á¤
+        this.connectionInfoText.text = "ë¹ˆ ë°© ì—†ìŒ, ìƒˆë¡œìš´ë°© ìƒì„±...";
+        //ìµœëŒ€ ì¸ì›ì„ 4ëª…ìœ¼ë¡œ ì„¤ì • + ë°©ì„ ë§Œë“¦
+        //ë°©ì´ë¦„ , 4ëª… ì„¤ì •
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 4 });
 
     }
 
-    // ·ë¿¡ Âü°¡ ¿Ï·áµÈ °æ¿ì ÀÚµ¿ ½ÇÇà
+    // ë£¸ì— ì°¸ê°€ ì™„ë£Œëœ ê²½ìš° ìë™ ì‹¤í–‰
     public override void OnJoinedRoom()
     {
-        this.connectionInfoText.text = "¹æ Âü°¡ ¼º°ø!";
+        this.connectionInfoText.text = "ë°© ì°¸ê°€ ì„±ê³µ!";
 
-        //¸ğµç ·ë Âü°¡ÀÚ°¡ Main ¾ÀÀ» ·ÎµåÇÏ°Ô ÇÔ
+        //ëª¨ë“  ë£¸ ì°¸ê°€ìê°€ Main ì”¬ì„ ë¡œë“œí•˜ê²Œ í•¨
         PhotonNetwork.LoadLevel("Main");
     }
 }
