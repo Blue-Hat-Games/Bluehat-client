@@ -29,31 +29,6 @@ namespace BluehatGames
             StartCoroutine(DownLoadGet(ApiUrl.getUserAnimal));
         }
 
-        private IEnumerator RefreshData(string URL)
-        {
-            UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: 임시로 설정
-            access_token = tempAccessToken;
-
-            Debug.Log($"access token = {access_token}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log(request.error);
-            }
-            else
-            {
-                Debug.Log(request.downloadHandler.text);
-                string jsonData = request.downloadHandler.text;
-                // animalObjectList를 다시 
-                animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
-            }    
-        }
-
         public IEnumerator DownLoadGet(string URL)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
@@ -122,6 +97,31 @@ namespace BluehatGames
         public void RefreshAnimalData()
         {
             StartCoroutine(RefreshData(ApiUrl.getUserAnimal));
+        }
+
+        private IEnumerator RefreshData(string URL)
+        {
+            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            // TODO: 임시로 설정
+            access_token = tempAccessToken;
+
+            Debug.Log($"access token = {access_token}");
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+            }
+            else
+            {
+                Debug.Log(request.downloadHandler.text);
+                string jsonData = request.downloadHandler.text;
+                // animalObjectList를 다시 
+                animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
+            }    
         }
 
         public GameObject GetAnimalObject(string id)

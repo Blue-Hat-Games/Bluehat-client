@@ -315,7 +315,7 @@ public class SynthesisManager : MonoBehaviour
                     
 
                     // LoadAnimalPrefab 대신에 AnimalFactory에서 오브젝트 가져와야 할 듯 
-                    Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, i => {i}");
+                    Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, index => {index}");
                     targetAnimal = animalObjectArray[index];
                     targetAnimal.SetActive(true);
                     // targetAnimal = LoadAnimalPrefab(selectedAnimalData.animalType, Vector3.zero, Camera.main.gameObject);
@@ -324,8 +324,7 @@ public class SynthesisManager : MonoBehaviour
 
                     ResetAnimalState(targetAnimal);
 
-                    colorChangeManager.SetCurSelectedAnimal(selectedAnimalData);
-                    colorChangeManager.SetTargetAnimal(targetAnimal);
+                    colorChangeManager.SetCurSelectedAnimal(selectedAnimalData, targetAnimal);
                 } 
                 // ------------------------ 합성 모드이면 ------------------------ 
                 else if(currentMode == FUSION_MODE)
