@@ -4386,6 +4386,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95ae2b57aa9d223488274c3c6cb6a827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animalFactory: {fileID: 1739391805}
+  formatTexture: {fileID: 2800000, guid: 4f7115dfb11cdb54d9ec17aa8ac6a01b, type: 3}
+  animalAirController: {fileID: 0}
   animalListView: {fileID: 1908196573}
   animalListContentsView: {fileID: 1517864314}
   animalListContentPrefab: {fileID: 7699148756808848974, guid: ed12ec557ee8ba64ba2207251fd52733, type: 3}
@@ -4408,6 +4411,7 @@ MonoBehaviour:
   fusionManager: {fileID: 1448141380}
   firstAnimalX: -5
   secondAnimalX: -3
+  animalObjectArray: []
 --- !u!4 &1753108701
 Transform:
   m_ObjectHideFlags: 0
