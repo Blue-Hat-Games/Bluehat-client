@@ -32,7 +32,7 @@ public class FusionManager : MonoBehaviour
 
     public void SetTargetAnimal(int index, GameObject animal)
     {
-        if(index == 0)
+        if (index == 0)
         {
             Debug.Log($"1 SetTargetAnimal => {index}, animal => {animal.name}");
             targetAnimal_1 = animal;
@@ -63,13 +63,13 @@ public class FusionManager : MonoBehaviour
                 Texture2D randomTexture = referenceTextures[randomIdx];
                 Debug.Log($"selected randomTexture = {randomTexture.name}");
                 Color[] sourcePixels = randomTexture.GetPixels();
-                Color color = sourcePixels[h * formatTexture.width + w];                
-                resultTex.SetPixel(w, h, color);                 
+                Color color = sourcePixels[h * formatTexture.width + w];
+                resultTex.SetPixel(w, h, color);
             }
         }
         resultTex.Apply();
 
-        if(randomAnimal == 0)
+        if (randomAnimal == 0)
         {
             var obj = GameObject.Instantiate(targetAnimal_1);
             obj.name = "resultAnimal";
@@ -77,7 +77,7 @@ public class FusionManager : MonoBehaviour
             Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
             for (int i = 0; i < renderers.Length; i++)
             {
-                renderers[i].material.SetTexture("_MainTex", resultTex); 
+                renderers[i].material.SetTexture("_MainTex", resultTex);
             }
             obj.transform.position = new Vector3(-2, -0.5f, obj.transform.position.z);
             obj.GetComponentInChildren<Animator>().speed = 0.3f;
@@ -99,7 +99,8 @@ public class FusionManager : MonoBehaviour
         }
     }
 
-    public GameObject GetResultAnimal() {
+    public GameObject GetResultAnimal()
+    {
         return resultAnimal;
     }
     public void ClearAnimals()

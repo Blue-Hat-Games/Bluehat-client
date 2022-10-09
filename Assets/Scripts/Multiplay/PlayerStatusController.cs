@@ -3,121 +3,135 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-/** ¸ÖÆ¼ÇÃ·¹ÀÌ¿¡¼­ ÇÃ·¹ÀÌ¾îÀÇ »óÅÂ
-- ¿¡Å×¸£ ¿¡³ÊÁö
-- ¿¡Å×¸£ È¹µæ °³¼ö
+/** ë©€í‹°í”Œë ˆì´ì—ì„œ í”Œë ˆì´ì–´ì˜ ìƒíƒœ
+- ì—í…Œë¥´ ì—ë„ˆì§€
+- ì—í…Œë¥´ íšë“ ê°œìˆ˜
 */
-namespace BluehatGames {
-
-public class PlayerStatusController : MonoBehaviour
+namespace BluehatGames
 {
-    public static PlayerStatusController instance = null;
-    
-    private void Awake()
+
+    public class PlayerStatusController : MonoBehaviour
     {
-        if(instance == null) {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        } else if(instance != null) {
-            Destroy(this.gameObject);
-        }
-    }
+        public static PlayerStatusController instance = null;
 
-    private int aetherCount = 0;
-    private float aetherEnergy = 0;
-    
-    public int energyToExchangeAether = 50;
-    public float addedAetherEnergyValue = 10;
-
-    public float gameTime = 0;
-
-    private bool isGameOver = false;
-    private bool isStartTimeAttack = false;
-
-    private void Start() {
-        MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
-    }
-
-
-    void Update() {
-
-        if(false == isStartTimeAttack)
-            return;
-        
-        gameTime -= Time.deltaTime;
-
-        if(gameTime < 0) 
+        private void Awake()
         {
-           GameOver();
-        } 
-        else 
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else if (instance != null)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+
+        private int aetherCount = 0;
+        private float aetherEnergy = 0;
+
+        public int energyToExchangeAether = 50;
+        public float addedAetherEnergyValue = 10;
+
+        public float gameTime = 0;
+
+        private bool isGameOver = false;
+        private bool isStartTimeAttack = false;
+
+        private void Start()
         {
-            MultiplayUIController.instance.UpdateGameTimeText(gameTime);          
-        }      
-    }
-
-    public void SetStartTimeAttack() {
-        isStartTimeAttack = true;
-    }
-
-    private void GameOver()
-    {
-        // Update¿¡¼­ ¿©·¯ ¹ø È£ÃâµÉ ¼ö ÀÖ´Â °æ¿ì¸¦ ¹æÁöÇÏ±â À§ÇÔ
-        if(isGameOver) return;
-
-        MultiplayUIController.instance.ResetGameTimeText();
-        
-        isGameOver = true;
-        // ÀÌ¹ø ÆÇ¿¡¼­ È¹µæÇÑ ÄÚÀÎ
-        int myCoin = GetMultiplyAetherCount();
-        // AetherController¸¦ ÅëÇØ È¹µæ Á¤º¸ ÀúÀå
-        AetherController.instance.AddAetherCount(myCoin);
-        // UI¿¡ ¹İ¿µ
-        MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), myCoin + GetMultiplyAetherCount());
-    }
-
-    // ¸ÖÆ¼ÇÃ·¹ÀÌ µµÁß¿¡ ¾ò´Â Aether Count¿¡ ´ëÇÑ Ã³¸®
-    public int GetMultiplyAetherCount()
-    {
-        return aetherCount;
-    }
-
-    private void AddMultiplayAetherCount() {
-        aetherCount++;
-        MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
-    }
-
-    // Aether Energy´Â ¸ÖÆ¼ÇÃ·¹ÀÌ¿¡¼­ ÇÃ·¹ÀÌ¾î »óÅÂ Á¤º¸ÀÌ¹Ç·Î ¿©±â¿¡¼­ °ü¸®ÇÔ
-    public float GetAetherEnergy()
-    {
-        return aetherEnergy;
-    }
-
-    public void AddAetherEnergy() {
-        
-        aetherEnergy += addedAetherEnergyValue;
-        float adjustedEnergyValue = aetherEnergy/energyToExchangeAether;
- 
-        // ±³È¯ °¡´ÉÇÑ ¸¸Å­ ¿¡³ÊÁö¸¦ ´Ù ¸ğ¾ÒÀ¸¸é ¿¡³ÊÁö ÃÊ±âÈ­, ¿¡Å×¸£ È¹µæ
-        if(aetherEnergy >= energyToExchangeAether) {
-            aetherEnergy = 0;
-            // UI ¼³Á¤
-            MultiplayUIController.instance.ResetAetherProgressBar();
-            AddMultiplayAetherCount();
-        } else {
-            // UI ¼³Á¤
-            MultiplayUIController.instance.SetAetherProgressBar(adjustedEnergyValue);
+            MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
         }
-    }
-    
-    public void SubAetherEnergy(float value) {
-        
-        aetherEnergy -= value;
-        if(aetherEnergy < 0) {
-            // ¿¡³ÊÁö¾çÀº 0º¸´Ù ÀÛ¾ÆÁú ¼ö´Â ¾øµµ·Ï ÇÑ´Ù.
-            aetherEnergy = 0;
-        }
-    }
 
-}
+
+        void Update()
+        {
+
+            if (false == isStartTimeAttack)
+                return;
+
+            gameTime -= Time.deltaTime;
+
+            if (gameTime < 0)
+            {
+                GameOver();
+            }
+            else
+            {
+                MultiplayUIController.instance.UpdateGameTimeText(gameTime);
+            }
+        }
+
+        public void SetStartTimeAttack()
+        {
+            isStartTimeAttack = true;
+        }
+
+        private void GameOver()
+        {
+            // Updateì—ì„œ ì—¬ëŸ¬ ë²ˆ í˜¸ì¶œë  ìˆ˜ ìˆëŠ” ê²½ìš°ë¥¼ ë°©ì§€í•˜ê¸° ìœ„í•¨
+            if (isGameOver) return;
+
+            MultiplayUIController.instance.ResetGameTimeText();
+
+            isGameOver = true;
+            // ì´ë²ˆ íŒì—ì„œ íšë“í•œ ì½”ì¸
+            int myCoin = GetMultiplyAetherCount();
+            // AetherControllerë¥¼ í†µí•´ íšë“ ì •ë³´ ì €ì¥
+            AetherController.instance.AddAetherCount(myCoin);
+            // UIì— ë°˜ì˜
+            MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), myCoin + GetMultiplyAetherCount());
+        }
+
+        // ë©€í‹°í”Œë ˆì´ ë„ì¤‘ì— ì–»ëŠ” Aether Countì— ëŒ€í•œ ì²˜ë¦¬
+        public int GetMultiplyAetherCount()
+        {
+            return aetherCount;
+        }
+
+        private void AddMultiplayAetherCount()
+        {
+            aetherCount++;
+            MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
+        }
+
+        // Aether EnergyëŠ” ë©€í‹°í”Œë ˆì´ì—ì„œ í”Œë ˆì´ì–´ ìƒíƒœ ì •ë³´ì´ë¯€ë¡œ ì—¬ê¸°ì—ì„œ ê´€ë¦¬í•¨
+        public float GetAetherEnergy()
+        {
+            return aetherEnergy;
+        }
+
+        public void AddAetherEnergy()
+        {
+
+            aetherEnergy += addedAetherEnergyValue;
+            float adjustedEnergyValue = aetherEnergy / energyToExchangeAether;
+
+            // êµí™˜ ê°€ëŠ¥í•œ ë§Œí¼ ì—ë„ˆì§€ë¥¼ ë‹¤ ëª¨ì•˜ìœ¼ë©´ ì—ë„ˆì§€ ì´ˆê¸°í™”, ì—í…Œë¥´ íšë“
+            if (aetherEnergy >= energyToExchangeAether)
+            {
+                aetherEnergy = 0;
+                // UI ì„¤ì •
+                MultiplayUIController.instance.ResetAetherProgressBar();
+                AddMultiplayAetherCount();
+            }
+            else
+            {
+                // UI ì„¤ì •
+                MultiplayUIController.instance.SetAetherProgressBar(adjustedEnergyValue);
+            }
+        }
+
+        public void SubAetherEnergy(float value)
+        {
+
+            aetherEnergy -= value;
+            if (aetherEnergy < 0)
+            {
+                // ì—ë„ˆì§€ì–‘ì€ 0ë³´ë‹¤ ì‘ì•„ì§ˆ ìˆ˜ëŠ” ì—†ë„ë¡ í•œë‹¤.
+                aetherEnergy = 0;
+            }
+        }
+
+    }
 }

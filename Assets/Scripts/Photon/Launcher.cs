@@ -83,7 +83,7 @@ namespace Com.MyCompany.MyGame
         {
             // 만약에 첫번째 플레이어라면 'Room for 1' 씬을 로드함
             // - we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-            
+
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
             {
                 Debug.Log("We load the 'Room for 1' ");

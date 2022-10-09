@@ -11,12 +11,13 @@ public class Joybutton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // press animationÀÌ °è¼Ó µÎ ¹ø Àç»ıµÇ´Â ¹®Á¦ ÀÖÀ½ 
+        // press animationì´ ê³„ì† ë‘ ë²ˆ ì¬ìƒë˜ëŠ” ë¬¸ì œ ìˆìŒ 
         // buttonAnim.SetTrigger(ANIM_PARAMETER_ISPRESSED);
         Pressed = true;
     }
 
-    public void OnPointerUp(PointerEventData eventData) {
+    public void OnPointerUp(PointerEventData eventData)
+    {
         Pressed = false;
     }
 

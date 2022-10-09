@@ -3,70 +3,70 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-// »ç¿ëÀÚ°¡ ¹ß»ç ¹öÆ°À» ´©¸£¸é ÃÑÀ» ¹ß»çÇÏ°í ½Í´Ù.
-public class PlayerFire : MonoBehaviourPun // Pun »ó¼ÓÇØ¼­ Network °´Ã¼°¡ µÊ 
+// ì‚¬ìš©ìê°€ ë°œì‚¬ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì´ì„ ë°œì‚¬í•˜ê³  ì‹¶ë‹¤.
+public class PlayerFire : MonoBehaviourPun // Pun ìƒì†í•´ì„œ Network ê°ì²´ê°€ ë¨ 
 {
     Camera cam;
     void Start()
     {
-        // CHECK: Network Manager¿¡¼­ ²¨¹ö¸®´Â °Ô ³ªÀ» ¼öµµ ÀÖÀ½!
+        // CHECK: Network Managerì—ì„œ êº¼ë²„ë¦¬ëŠ” ê²Œ ë‚˜ì„ ìˆ˜ë„ ìˆìŒ!
 
-        // ³ª ÀÚ½ÅÀÏ °æ¿ì¿¡¸¸ Ã³¸®µÇµµ·Ï ÇÏÀÚ 
+        // ë‚˜ ìì‹ ì¼ ê²½ìš°ì—ë§Œ ì²˜ë¦¬ë˜ë„ë¡ í•˜ì 
         if (photonView.IsMine)
         {
-            // ¿ø·¡ ÀÖ´ø ·Îºñ?¿ë ¸ŞÀÎ Ä«¸Ş¶ó ²¨¹ö¸®±â
+            // ì›ë˜ ìˆë˜ ë¡œë¹„?ìš© ë©”ì¸ ì¹´ë©”ë¼ êº¼ë²„ë¦¬ê¸°
             Camera.main.gameObject.SetActive(false);
-            // ³ª¸¦ Á¦¿ÜÇÑ ´Ù¸¥ Å¬¶óÀÌ¾ğÆ®ÀÇ Ä«¸Ş¶ó¸¦ ²ô±â À§ÇØ TransformÀÌ ¾Æ´Ñ Camera¸¦ °¡Á®¿È
+            // ë‚˜ë¥¼ ì œì™¸í•œ ë‹¤ë¥¸ í´ë¼ì´ì–¸íŠ¸ì˜ ì¹´ë©”ë¼ë¥¼ ë„ê¸° ìœ„í•´ Transformì´ ì•„ë‹Œ Cameraë¥¼ ê°€ì ¸ì˜´
             cam = GetComponentInChildren<Camera>();
             cam.tag = "MainCamera";
-            // ÇöÀç ÇÃ·¹ÀÌ¾î°¡ ÀÚ½ÅÀÌ¶ó¸é layer¸¦ Player·Î 
+            // í˜„ì¬ í”Œë ˆì´ì–´ê°€ ìì‹ ì´ë¼ë©´ layerë¥¼ Playerë¡œ 
             gameObject.layer = LayerMask.NameToLayer("Player");
             gameObject.name = "Player";
         }
         else
         {
-            // ±×·¸Áö ¾ÊÀ¸¸é layer¸¦ enemy·Î ÁöÁ¤ÇÏÀÚ
+            // ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ layerë¥¼ enemyë¡œ ì§€ì •í•˜ì
             gameObject.layer = LayerMask.NameToLayer("Enemy");
             cam = GetComponentInChildren<Camera>();
-            // enemyÀÇ Ä«¸Ş¶ó°¡ È°¼ºÈ­µÇ¾îÀÖÀ» ÇÊ¿ä°¡ ¾ø±â ¶§¹®¿¡ 
+            // enemyì˜ ì¹´ë©”ë¼ê°€ í™œì„±í™”ë˜ì–´ìˆì„ í•„ìš”ê°€ ì—†ê¸° ë•Œë¬¸ì— 
             cam.enabled = false;
             gameObject.name = "Enemy";
-        }           
+        }
     }
 
     void Update()
     {
-        // ³ª ÀÚ½ÅÀÌ ¾Æ´Ï¶ó¸é ÀÔ·Â ¹«½Ã
-        if(photonView.IsMine == false)
+        // ë‚˜ ìì‹ ì´ ì•„ë‹ˆë¼ë©´ ì…ë ¥ ë¬´ì‹œ
+        if (photonView.IsMine == false)
         {
             return;
         }
-           
-        if(Input.GetButtonDown("Fire1"))
+
+        if (Input.GetButtonDown("Fire1"))
         {
             Ray ray = new Ray(cam.transform.position, cam.transform.forward);
             RaycastHit hitInfo;
-            int layerMask = 1 << gameObject.layer; 
-            if(Physics.Raycast(ray, out hitInfo, 1000, ~layerMask)) // ÇÃ·¹ÀÌ¾î¸¸ »©°í
+            int layerMask = 1 << gameObject.layer;
+            if (Physics.Raycast(ray, out hitInfo, 1000, ~layerMask)) // í”Œë ˆì´ì–´ë§Œ ë¹¼ê³ 
             {
-                // ¾ø¾ÖÀÚ!
+                // ì—†ì• ì!
                 //Destroy(hitInfo.transform.gameObject);
-                // ±×³É DestroyÇÏ¸é ³×Æ®¿öÅ© »óÅÂ¿¡¼­´Â »ç¶óÁöÁö ¾ÊÀ½
-                // PhotonNetwork.Destory()·Î ¾ø¾Ö¾ß ÇÏ´Âµ¥ ´Ü, PhotonView°¡ ÀÖ´Â °´Ã¼¸¸ ¾ø¾Ù ¼ö ÀÖÀ½
+                // ê·¸ëƒ¥ Destroyí•˜ë©´ ë„¤íŠ¸ì›Œí¬ ìƒíƒœì—ì„œëŠ” ì‚¬ë¼ì§€ì§€ ì•ŠìŒ
+                // PhotonNetwork.Destory()ë¡œ ì—†ì• ì•¼ í•˜ëŠ”ë° ë‹¨, PhotonViewê°€ ìˆëŠ” ê°ì²´ë§Œ ì—†ì•¨ ìˆ˜ ìˆìŒ
                 PhotonView pv = hitInfo.transform.GetComponent<PhotonView>();
-                if(pv)
+                if (pv)
                 {
-                    // RPC¿¡ µî·ÏµÈ Damage¶ó´Â ÇÔ¼ö¸¦ ÀÌ ¹æ¾È¿¡ ÀÖ´Â ¸ğµÎ¿¡°Ô Àü¼Û
-                    pv.RPC(nameof(Damage), RpcTarget.All); 
+                    // RPCì— ë“±ë¡ëœ Damageë¼ëŠ” í•¨ìˆ˜ë¥¼ ì´ ë°©ì•ˆì— ìˆëŠ” ëª¨ë‘ì—ê²Œ ì „ì†¡
+                    pv.RPC(nameof(Damage), RpcTarget.All);
                 }
             }
-        }        
+        }
     }
 
-    [PunRPC] // ÀÌ ¹ØÀÇ ÇÔ¼ö´Â RPCÇÔ¼ö°¡ µÇ°í, ¿ø°İ¿¡¼­ È£ÃâÇÒ ¼ö ÀÖ´Â »óÅÂ°¡ µÊ
-    public void Damage() 
+    [PunRPC] // ì´ ë°‘ì˜ í•¨ìˆ˜ëŠ” RPCí•¨ìˆ˜ê°€ ë˜ê³ , ì›ê²©ì—ì„œ í˜¸ì¶œí•  ìˆ˜ ìˆëŠ” ìƒíƒœê°€ ë¨
+    public void Damage()
     {
-        // ÀÚ±â°¡ ½º½º·Î¸¦ »èÁ¦ 
+        // ìê¸°ê°€ ìŠ¤ìŠ¤ë¡œë¥¼ ì‚­ì œ 
         PhotonNetwork.Destroy(this.gameObject);
     }
 

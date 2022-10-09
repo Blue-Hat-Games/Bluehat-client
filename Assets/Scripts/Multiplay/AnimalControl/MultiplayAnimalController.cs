@@ -6,8 +6,8 @@ using Photon.Pun;
 public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 {
     private float camAngle;
-    
-    // ¹ŞÀº µ¥ÀÌÅÍ ±â¾ï º¯¼ö (º¸°£Ã³¸®ÇÏ±â À§ÇØ¼­)
+
+    // ë°›ì€ ë°ì´í„° ê¸°ì–µ ë³€ìˆ˜ (ë³´ê°„ì²˜ë¦¬í•˜ê¸° ìœ„í•´ì„œ)
     Vector3 remotePos = Vector3.zero;
     Quaternion remoteRot = Quaternion.identity;
     Quaternion remoteCamRot = Quaternion.identity;
@@ -23,10 +23,10 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
     private Rigidbody rigid;
     private Animator animator;
- 
+
     private string ANIM_PARAMETER_JUMP = "Jump";
     private string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
-    
+
     void Start()
     {
         joystick = FindObjectOfType<Joystick>();
@@ -38,64 +38,68 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
     void Update()
     {
-        // ¸®¸ğÆ® Ä³¸¯ÅÍ Ã³¸®
-        if(photonView.IsMine == false) {
+        // ë¦¬ëª¨íŠ¸ ìºë¦­í„° ì²˜ë¦¬
+        if (photonView.IsMine == false)
+        {
             ControlRemotePlayer();
             return;
         }
 
-        // ¾Ö´Ï¸ŞÀÌÅÍ ÆÄ¶ó¹ÌÅÍ ¼³Á¤ 
+        // ì• ë‹ˆë©”ì´í„° íŒŒë¼ë¯¸í„° ì„¤ì • 
         animator.SetFloat(ANIM_PARAMETER_MOTIONSPEED, joystick.InputScale);
-        // ÀÌµ¿ ¹æÇâÀ¸·Î È¸Àü  
+        // ì´ë™ ë°©í–¥ìœ¼ë¡œ íšŒì „  
         rigid.velocity = new Vector3(joystick.Horizontal * moveSpeed, rigid.velocity.y, joystick.Vertical * moveSpeed);
-        
+
         var h = joystick.Horizontal;
         var v = joystick.Vertical;
 
         Vector3 dir = new Vector3(h, 0, v);
 
-        if(!(h == 0 && v == 0))
+        if (!(h == 0 && v == 0))
         {
-            // ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î È¸Àü
+            // ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ íšŒì „
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * rotSpeed);
         }
 
-        // Jump¿¡ ´ëÇÑ Ã³¸®
-        if(!jump && joybutton.Pressed) {
+        // Jumpì— ëŒ€í•œ ì²˜ë¦¬
+        if (!jump && joybutton.Pressed)
+        {
             jump = true;
             rigid.velocity = Vector3.up * jumpPower;
             animator.SetTrigger(ANIM_PARAMETER_JUMP);
         }
 
-        if(jump && !joybutton.Pressed) {
+        if (jump && !joybutton.Pressed)
+        {
             jump = false;
         }
     }
 
-    private void ControlRemotePlayer() {
+    private void ControlRemotePlayer()
+    {
 
         transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
         //camera.rotation = Quaternion.Lerp(camera.rotation, remoteCamRot, 10 * Time.deltaTime);
     }
 
-    // IPunObservable »ó¼Ó ½Ã ²À ±¸ÇöÇØ¾ß ÇÏ´Â °Í
-    // - µ¥ÀÌÅÍ¸¦ ³×Æ®¿öÅ© »ç¿ëÀÚ °£¿¡ º¸³»°í ¹Ş°í ÇÏ°Ô ÇÏ´Â Äİ¹é ÇÔ¼ö
+    // IPunObservable ìƒì† ì‹œ ê¼­ êµ¬í˜„í•´ì•¼ í•˜ëŠ” ê²ƒ
+    // - ë°ì´í„°ë¥¼ ë„¤íŠ¸ì›Œí¬ ì‚¬ìš©ì ê°„ì— ë³´ë‚´ê³  ë°›ê³  í•˜ê²Œ í•˜ëŠ” ì½œë°± í•¨ìˆ˜
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        // ³»°¡ µ¥ÀÌÅÍ¸¦ º¸³»´Â ÁßÀÌ¶ó¸é
-        if(stream.IsWriting) // ³»²¨º¸³»´Â °Å
+        // ë‚´ê°€ ë°ì´í„°ë¥¼ ë³´ë‚´ëŠ” ì¤‘ì´ë¼ë©´
+        if (stream.IsWriting) // ë‚´êº¼ë³´ë‚´ëŠ” ê±°
         {
-            // ÀÌ ¹æ¾È¿¡ ÀÖ´Â ¸ğµç »ç¿ëÀÚ¿¡°Ô ºê·ÎµåÄ³½ºÆ® 
-            // - ³» Æ÷Áö¼Ç °ªÀ» º¸³»º¸ÀÚ
+            // ì´ ë°©ì•ˆì— ìˆëŠ” ëª¨ë“  ì‚¬ìš©ìì—ê²Œ ë¸Œë¡œë“œìºìŠ¤íŠ¸ 
+            // - ë‚´ í¬ì§€ì…˜ ê°’ì„ ë³´ë‚´ë³´ì
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             //stream.SendNext(camera.rotation);
         }
-        // ³»°¡ µ¥ÀÌÅÍ¸¦ ¹Ş´Â ÁßÀÌ¶ó¸é 
-        else // ¿ø°İ¿¡ ÀÖ´Â ³ª 
+        // ë‚´ê°€ ë°ì´í„°ë¥¼ ë°›ëŠ” ì¤‘ì´ë¼ë©´ 
+        else // ì›ê²©ì— ìˆëŠ” ë‚˜ 
         {
-            // ¼ø¼­´ë·Î º¸³»¸é ¼ø¼­´ë·Î µé¾î¿È. ±Ùµ¥ Å¸ÀÔÄ³½ºÆÃ ÇØÁÖ¾î¾ß ÇÔ
+            // ìˆœì„œëŒ€ë¡œ ë³´ë‚´ë©´ ìˆœì„œëŒ€ë¡œ ë“¤ì–´ì˜´. ê·¼ë° íƒ€ì…ìºìŠ¤íŒ… í•´ì£¼ì–´ì•¼ í•¨
             remotePos = (Vector3)stream.ReceiveNext();
             remoteRot = (Quaternion)stream.ReceiveNext();
             //remoteCamRot = (Quaternion)stream.ReceiveNext();

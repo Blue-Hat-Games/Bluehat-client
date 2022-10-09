@@ -2,37 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-// ¸¶¿ì½º ÀÔ·Â¿¡ µû¶ó Ä«¸Ş¶ó´Â »óÇÏ·Î¸¸ È¸Àü
-// ÁÂ¿ì´Â ¸öÃ¼ È¸ÀüÇÏ°í ½Í´Ù
-// »ç¿ëÀÚ ÀÔ·Â¿¡ µû¶ó ÀÌµ¿ÇÏ°í ½Í´Ù
-// ³×Æ®¿öÅ© ÇÃ·¹ÀÌ¾î °£ÀÇ µ¥ÀÌÅÍ µ¿±âÈ­ Ã³¸®¸¦ ÇÏ°í ½Í´Ù.
+// ë§ˆìš°ìŠ¤ ì…ë ¥ì— ë”°ë¼ ì¹´ë©”ë¼ëŠ” ìƒí•˜ë¡œë§Œ íšŒì „
+// ì¢Œìš°ëŠ” ëª¸ì²´ íšŒì „í•˜ê³  ì‹¶ë‹¤
+// ì‚¬ìš©ì ì…ë ¥ì— ë”°ë¼ ì´ë™í•˜ê³  ì‹¶ë‹¤
+// ë„¤íŠ¸ì›Œí¬ í”Œë ˆì´ì–´ ê°„ì˜ ë°ì´í„° ë™ê¸°í™” ì²˜ë¦¬ë¥¼ í•˜ê³  ì‹¶ë‹¤.
 public class PlayerMove : MonoBehaviourPun, IPunObservable
 {
     public Transform playerCamera;
 
-    // ÇÊ¿ä¼Ó¼º
+    // í•„ìš”ì†ì„±
     public float speed = 5;
     public float jumpPower = 10;
     public float gravity = -20;
     public float rotSpeed = 10;
     float yVelocity = 0;
-    float camAngle; // »óÇÏ·Î¸¸
-    float bodyAngle; // ÁÂ¿ì·Î¸¸ euleranglesÀÇ y¸¸
+    float camAngle; // ìƒí•˜ë¡œë§Œ
+    float bodyAngle; // ì¢Œìš°ë¡œë§Œ euleranglesì˜ yë§Œ
 
     CharacterController cc;
 
-    // ¹ŞÀº µ¥ÀÌÅÍ ±â¾ï º¯¼ö (º¸°£Ã³¸®ÇÏ±â À§ÇØ¼­)
+    // ë°›ì€ ë°ì´í„° ê¸°ì–µ ë³€ìˆ˜ (ë³´ê°„ì²˜ë¦¬í•˜ê¸° ìœ„í•´ì„œ)
     Vector3 remotePos = Vector3.zero;
     Quaternion remoteRot = Quaternion.identity;
     Quaternion remoteCamRot = Quaternion.identity;
     void Start()
     {
-        cc = GetComponent<CharacterController>();        
+        cc = GetComponent<CharacterController>();
     }
 
     void Update()
     {
-        // ³ª ÀÚ½ÅÀÌ ¾Æ´Ï¶ó¸é ÀÔ·Â ¹«½Ã
+        // ë‚˜ ìì‹ ì´ ì•„ë‹ˆë¼ë©´ ì…ë ¥ ë¬´ì‹œ
         if (false == photonView.IsMine)
         {
             transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
@@ -40,12 +40,12 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
             playerCamera.rotation = Quaternion.Lerp(playerCamera.rotation, remoteCamRot, 10 * Time.deltaTime);
             return;
         }
-    
-        // ¸¶¿ì½º ÀÔ·Â¿¡ µû¶ó Ä«¸Ş¶ó´Â »óÇÏ·Î¸¸ È¸Àü
+
+        // ë§ˆìš°ìŠ¤ ì…ë ¥ì— ë”°ë¼ ì¹´ë©”ë¼ëŠ” ìƒí•˜ë¡œë§Œ íšŒì „
         RotateplayerCamera();
-        // ÁÂ¿ì´Â ¸öÃ¼ È¸ÀüÇÏ°í ½Í´Ù
+        // ì¢Œìš°ëŠ” ëª¸ì²´ íšŒì „í•˜ê³  ì‹¶ë‹¤
         RotateBody();
-        // »ç¿ëÀÚ ÀÔ·Â¿¡ µû¶ó ÀÌµ¿ÇÏ°í ½Í´Ù
+        // ì‚¬ìš©ì ì…ë ¥ì— ë”°ë¼ ì´ë™í•˜ê³  ì‹¶ë‹¤
         Move();
     }
 
@@ -55,9 +55,9 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
         camAngle += value * rotSpeed * Time.deltaTime;
         camAngle = Mathf.Clamp(camAngle, -60, 60);
 
-        // playerCamera´Â ÇÃ·¹ÀÌ¾îÀÇ ÀÚ½ÄÀÌ¹Ç·Î ·ÎÄÃ ±âÁØ¿¡¼­ µ¹·Á¾ß ÇÔ 
+        // playerCameraëŠ” í”Œë ˆì´ì–´ì˜ ìì‹ì´ë¯€ë¡œ ë¡œì»¬ ê¸°ì¤€ì—ì„œ ëŒë ¤ì•¼ í•¨ 
         playerCamera.localEulerAngles = new Vector3(-camAngle, 0, 0);
-        
+
     }
 
     private void RotateBody()
@@ -65,55 +65,55 @@ public class PlayerMove : MonoBehaviourPun, IPunObservable
         float value = Input.GetAxis("Mouse X");
         bodyAngle += value * rotSpeed * Time.deltaTime;
 
-        // ÁÂ¿ì´Â ÇÃ·¹ÀÌ¾î ÀüÃ¼¸¦ È¸Àü 
+        // ì¢Œìš°ëŠ” í”Œë ˆì´ì–´ ì „ì²´ë¥¼ íšŒì „ 
         transform.eulerAngles = new Vector3(0, bodyAngle, 0);
     }
 
     private void Move()
     {
-        // 1. »ç¿ëÀÚ ÀÔ·Â¿¡ µû¶ó 
+        // 1. ì‚¬ìš©ì ì…ë ¥ì— ë”°ë¼ 
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
-        // 2. ¹æÇâÀÌ ÇÊ¿ä
-        Vector3 dir = new Vector3(h, 0, v) * speed; // speed¸¦ °öÇØ¼­ º¤ÅÍÀÇ ±æÀÌ±îÁö
-        // -> Ä«¸Ş¶ó°¡ ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ¹æÇâ ÀüÈ¯ 
+        // 2. ë°©í–¥ì´ í•„ìš”
+        Vector3 dir = new Vector3(h, 0, v) * speed; // speedë¥¼ ê³±í•´ì„œ ë²¡í„°ì˜ ê¸¸ì´ê¹Œì§€
+        // -> ì¹´ë©”ë¼ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ë°©í–¥ ì „í™˜ 
         dir = playerCamera.TransformDirection(dir);
 
-        // ¹Ù´Ú¿¡ ÀÖÀ¸¸é ¼öÁ÷ ¼Óµµ¸¦ 0À¸·Î ÇÏÀÚ (¼öÁ÷Ç×·Â)
-        if(cc.isGrounded)
+        // ë°”ë‹¥ì— ìˆìœ¼ë©´ ìˆ˜ì§ ì†ë„ë¥¼ 0ìœ¼ë¡œ í•˜ì (ìˆ˜ì§í•­ë ¥)
+        if (cc.isGrounded)
         {
             yVelocity = 0;
         }
-        // Á¡ÇÁ
-        if(Input.GetButtonDown("Jump"))
+        // ì í”„
+        if (Input.GetButtonDown("Jump"))
         {
             yVelocity = jumpPower;
         }
-        // Áß·ÂÀ» Àû¿ëÇÏ°í ½Í´Ù. v = v0 + at
+        // ì¤‘ë ¥ì„ ì ìš©í•˜ê³  ì‹¶ë‹¤. v = v0 + at
         yVelocity += gravity * Time.deltaTime;
-        dir.y = yVelocity;         
-        // 3. ÀÌµ¿ÇÏ°í ½Í´Ù p = p0 + vt
+        dir.y = yVelocity;
+        // 3. ì´ë™í•˜ê³  ì‹¶ë‹¤ p = p0 + vt
         cc.Move(dir * Time.deltaTime);
     }
 
-    // IPunObservable »ó¼Ó ½Ã ²À ±¸ÇöÇØ¾ß ÇÏ´Â °Í
-    // - µ¥ÀÌÅÍ¸¦ ³×Æ®¿öÅ© »ç¿ëÀÚ °£¿¡ º¸³»°í ¹Ş°í ÇÏ°Ô ÇÏ´Â Äİ¹é ÇÔ¼ö
+    // IPunObservable ìƒì† ì‹œ ê¼­ êµ¬í˜„í•´ì•¼ í•˜ëŠ” ê²ƒ
+    // - ë°ì´í„°ë¥¼ ë„¤íŠ¸ì›Œí¬ ì‚¬ìš©ì ê°„ì— ë³´ë‚´ê³  ë°›ê³  í•˜ê²Œ í•˜ëŠ” ì½œë°± í•¨ìˆ˜
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        // ³»°¡ µ¥ÀÌÅÍ¸¦ º¸³»´Â ÁßÀÌ¶ó¸é
-        if(stream.IsWriting) // ³»²¨º¸³»´Â °Å
+        // ë‚´ê°€ ë°ì´í„°ë¥¼ ë³´ë‚´ëŠ” ì¤‘ì´ë¼ë©´
+        if (stream.IsWriting) // ë‚´êº¼ë³´ë‚´ëŠ” ê±°
         {
-            // ÀÌ ¹æ¾È¿¡ ÀÖ´Â ¸ğµç »ç¿ëÀÚ¿¡°Ô ºê·ÎµåÄ³½ºÆ® 
-            // - ³» Æ÷Áö¼Ç °ªÀ» º¸³»º¸ÀÚ
+            // ì´ ë°©ì•ˆì— ìˆëŠ” ëª¨ë“  ì‚¬ìš©ìì—ê²Œ ë¸Œë¡œë“œìºìŠ¤íŠ¸ 
+            // - ë‚´ í¬ì§€ì…˜ ê°’ì„ ë³´ë‚´ë³´ì
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(playerCamera.rotation);
         }
-        // ³»°¡ µ¥ÀÌÅÍ¸¦ ¹Ş´Â ÁßÀÌ¶ó¸é 
-        else // ¿ø°İ¿¡ ÀÖ´Â ³ª 
+        // ë‚´ê°€ ë°ì´í„°ë¥¼ ë°›ëŠ” ì¤‘ì´ë¼ë©´ 
+        else // ì›ê²©ì— ìˆëŠ” ë‚˜ 
         {
-            // ¼ø¼­´ë·Î º¸³»¸é ¼ø¼­´ë·Î µé¾î¿È. ±Ùµ¥ Å¸ÀÔÄ³½ºÆÃ ÇØÁÖ¾î¾ß ÇÔ
-            // - ¿©±â¼­ ¹Ù·Î Àû¿ëÇÏ¸é ¶Ò¶Ò ²÷±è
+            // ìˆœì„œëŒ€ë¡œ ë³´ë‚´ë©´ ìˆœì„œëŒ€ë¡œ ë“¤ì–´ì˜´. ê·¼ë° íƒ€ì…ìºìŠ¤íŒ… í•´ì£¼ì–´ì•¼ í•¨
+            // - ì—¬ê¸°ì„œ ë°”ë¡œ ì ìš©í•˜ë©´ ëšëš ëŠê¹€
             //transform.position = (Vector3)stream.ReceiveNext();
             //transform.rotation = (Quaternion)stream.ReceiveNext();
             //playerCamera.rotation = (Quaternion)stream.ReceiveNext(); 

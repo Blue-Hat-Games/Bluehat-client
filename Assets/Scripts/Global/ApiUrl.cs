@@ -28,14 +28,14 @@ namespace BluehatGames
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
-        // ÇØ´çµÇ´Â °ªÀÌ ¾øÀ» ¶§ ¸®ÅÏÇÒ±î ½Í¾î¼­ ¸¸µé¾î º» º¯¼öÀÎµ¥ ¶Ç ±»ÀÌ..? ½Í±âµµ? 
+        // í•´ë‹¹ë˜ëŠ” ê°’ì´ ì—†ì„ ë•Œ ë¦¬í„´í• ê¹Œ ì‹¶ì–´ì„œ ë§Œë“¤ì–´ ë³¸ ë³€ìˆ˜ì¸ë° ë˜ êµ³ì´..? ì‹¶ê¸°ë„? 
         public const string failAddress = "failedAddress";
 
         public string GetLiveServerApiUrl(ApiCategory apiCategory)
         {
             string url = "";
 
-            switch(apiCategory)
+            switch (apiCategory)
             {
                 case ApiCategory.emailLoginVerify:
                     url = $"{liveServer}/{emailLoginVerify}";
@@ -50,7 +50,7 @@ namespace BluehatGames
                     url = $"{liveServer}/{getAnimalList}";
                     break;
                 default:
-                        
+
                     break;
             }
             return url;
@@ -60,7 +60,7 @@ namespace BluehatGames
         {
             string url = "";
 
-            switch(apiCategory)
+            switch (apiCategory)
             {
                 case ApiCategory.emailLoginVerify:
                     url = $"{testServer}/{emailLoginVerify}";
@@ -75,13 +75,13 @@ namespace BluehatGames
                     url = $"{testServer}/{getAnimalList}";
                     break;
                 default:
-                    
+
                     break;
             }
             return url;
         }
     }
-    
+
     public class ResponseLogin
     {
         public string msg;

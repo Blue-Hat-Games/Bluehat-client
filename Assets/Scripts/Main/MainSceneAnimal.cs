@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class MainSceneAnimal : MonoBehaviour
 {
-    // ¿Ã Ω∫≈©∏≥∆Æ¥¬ ∏ﬁ¿Œæ¿ø° πËƒ°µ… µøπ∞ø°∞‘ ∫Ÿ¿ª ∞Õ
+    // Ïù¥ Ïä§ÌÅ¨Î¶ΩÌä∏Îäî Î©îÏù∏Ïî¨Ïóê Î∞∞ÏπòÎê† ÎèôÎ¨ºÏóêÍ≤å Î∂ôÏùÑ Í≤É
 
-    // ∏ﬁ¿Œ æ¿¿« µøπ∞µÈ¿∫ ¿˚¥Á»˜ ¿¸Ω√øÎ¿∏∑Œ «√∑π¿ÃæÓø°∞‘ ∫∏ø©¡ˆ∏È µ«¥¬µ•
-    // ≥ π´ ∞°∏∏»˜ ¿÷æÓº≠µµ æ»µ«∞Ì ¡ª ¿⁄ø¨Ω∫∑¥∞‘ « µÂ∏¶ µπæ∆¥Ÿ≥‡æﬂ «‘
-    // ≥™¡ﬂø°¥¬ «√∑π¿ÃæÓ∞° µøπ∞¿ª ≈Õƒ°«œ∏È π∫∞° ¡ª ¥Ÿ∏• øÚ¡˜¿”¿ª «œ∞‘ «œ∞Ì ΩÕ±‰ «‘ 
+    // Î©îÏù∏ Ïî¨Ïùò ÎèôÎ¨ºÎì§ÏùÄ Ï†ÅÎãπÌûà Ï†ÑÏãúÏö©ÏúºÎ°ú ÌîåÎ†àÏù¥Ïñ¥ÏóêÍ≤å Î≥¥Ïó¨ÏßÄÎ©¥ ÎêòÎäîÎç∞
+    // ÎÑàÎ¨¥ Í∞ÄÎßåÌûà ÏûàÏñ¥ÏÑúÎèÑ ÏïàÎêòÍ≥† Ï¢Ä ÏûêÏó∞Ïä§ÎüΩÍ≤å ÌïÑÎìúÎ•º ÎèåÏïÑÎã§ÎÖÄÏïº Ìï®
+    // ÎÇòÏ§ëÏóêÎäî ÌîåÎ†àÏù¥Ïñ¥Í∞Ä ÎèôÎ¨ºÏùÑ ÌÑ∞ÏπòÌïòÎ©¥ Î≠îÍ∞Ä Ï¢Ä Îã§Î•∏ ÏõÄÏßÅÏûÑÏùÑ ÌïòÍ≤å ÌïòÍ≥† Ïã∂Í∏¥ Ìï® 
 
     private const string ANIM_PARAMETER_JUMP = "Jump";
     private const string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
 
-    // ¡¶æÓ«ÿæﬂ «œ¥¬ ∞Õ
-    // 1. æ÷¥œ∏ﬁ¿Ã≈Õ ƒ¡∆Æ∑—∑Ø
-    // 2. ¿Ãµø (º”µµ, πÊ«‚)
+    // Ï†úÏñ¥Ìï¥Ïïº ÌïòÎäî Í≤É
+    // 1. Ïï†ÎãàÎ©îÏù¥ÌÑ∞ Ïª®Ìä∏Î°§Îü¨
+    // 2. Ïù¥Îèô (ÏÜçÎèÑ, Î∞©Ìñ•)
     private Animator animalAnim;
     public enum AnimalState
     {
@@ -33,7 +33,7 @@ public class MainSceneAnimal : MonoBehaviour
 
     private float idleToWalkTransitionValue = 0.2f;
     private float walkToIdleTransitionValue = 0.08f;
-    
+
 
     void Start()
     {
@@ -44,31 +44,31 @@ public class MainSceneAnimal : MonoBehaviour
         idleCoroutine = null;
         moveCoroutine = null;
 
-        // »∏¿¸ ∞™ ∑£¥˝ º≥¡§ 
+        // ÌöåÏ†Ñ Í∞í ÎûúÎç§ ÏÑ§Ï†ï 
         this.transform.eulerAngles = new Vector3(0, Random.Range(0, 360f), 0);
     }
 
     void Update()
     {
-        switch(animalState)
+        switch (animalState)
         {
             case AnimalState.Idle:
                 moveCoroutine = null;
-                if(idleCoroutine == null)
+                if (idleCoroutine == null)
                 {
-                    // ∞°∏∏»˜ º≠¿÷¥Ÿ∞° ∑£¥˝ Ω√∞£ ¿Ã»ƒø° Move∑Œ ∫Ø∞Ê
+                    // Í∞ÄÎßåÌûà ÏÑúÏûàÎã§Í∞Ä ÎûúÎç§ ÏãúÍ∞Ñ Ïù¥ÌõÑÏóê MoveÎ°ú Î≥ÄÍ≤Ω
                     idleCoroutine = SetIdleStateTimer();
                     StartCoroutine(idleCoroutine);
                 }
-            break;
+                break;
             case AnimalState.Move:
                 idleCoroutine = null;
-                if(moveCoroutine == null)
+                if (moveCoroutine == null)
                 {
                     moveCoroutine = SetMoveStateTimer();
                     StartCoroutine(moveCoroutine);
                 }
-            break;
+                break;
         }
     }
 
@@ -84,7 +84,7 @@ public class MainSceneAnimal : MonoBehaviour
 
     IEnumerator SetMoveStateTimer()
     {
-        // ∑£¥˝¿« πÊ«‚¿∏∑Œ ∑£¥˝«— ∏∏≈≠ ¿Ãµø
+        // ÎûúÎç§Ïùò Î∞©Ìñ•ÏúºÎ°ú ÎûúÎç§Ìïú ÎßåÌÅº Ïù¥Îèô
         // Quaternion randRotate = Random.rotationUniform;
         // this.gameObject.transform.rotation = randRotate;
 
@@ -97,20 +97,20 @@ public class MainSceneAnimal : MonoBehaviour
         Vector3 randomDir = new Vector3(randomX, 0, randomZ);
 
         Vector3 curPos = this.transform.position;
-        // πÊ«‚ º≥¡§
+        // Î∞©Ìñ• ÏÑ§Ï†ï
         direction.Set(0f, Random.Range(0f, 360f), 0f);
 
-        while(true)
+        while (true)
         {
             yield return null;
             timer += Time.deltaTime;
-            if(timer > randomTimer)
+            if (timer > randomTimer)
             {
                 animalState = AnimalState.Idle;
                 yield break;
             }
 
-            // æ÷¥œ∏ﬁ¿Ã≈Õ ∆ƒ∂ÛπÃ≈Õ º≥¡§ 
+            // Ïï†ÎãàÎ©îÏù¥ÌÑ∞ ÌååÎùºÎØ∏ÌÑ∞ ÏÑ§Ï†ï 
             animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, idleToWalkTransitionValue);
 
             rigidl.MovePosition(transform.position + transform.forward * animalMoveSpeed * Time.deltaTime);
@@ -122,7 +122,7 @@ public class MainSceneAnimal : MonoBehaviour
             // this.gameObject.transform.Translate(randomDir * animalMoveSpeed * Time.deltaTime);
 
         }
-    } 
+    }
 
     // public Vector3 ClampPosition(Vector3 pos)
     // {

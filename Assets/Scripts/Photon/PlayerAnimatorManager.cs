@@ -15,7 +15,7 @@ namespace Com.MyCompany.MyGame
 
         #endregion
 
-        
+
         #region MonoBehaviour Callbacks
 
         private Animator animator;
@@ -33,10 +33,10 @@ namespace Com.MyCompany.MyGame
         // Update is called once per frame
         void Update()
         {
-            /* PhotonNetwork.IsConnected == true °¡ ÀÖ¾î¾ß ÇÒ±î¿ä? ¿¹. :) 
-             * °³¹ß ´Ü°è¿¡¼­ ÀÌ ÇÁ¸®ÆÕÀ» ¿¬°á ¾øÀÌ Å×½ºÆ® ÇÏ°í ½ÍÀ» ¼öµµ ÀÖ±â ¶§¹®ÀÔ´Ï´Ù. 
-             * ¿¹¸¦ µé¾î ´õ¹Ì ½Å¿¡¼­ ³×Æ®¿öÅ· ÀÚÃ¼ ±â´É¿¡ °ü·ÃµÇÁö ¾ÊÀº °ÍÀ» »ý¼ºÇÏ°í ÄÚµå¸¦ °ËÁõ ÇÏ±â À§ÇØ¼­ ÀÔ´Ï´Ù. 
-             * ÀÌ Ãß°¡ÀûÀÎ Ç¥Çö½ÄÀ» ÅëÇØ¼­ ¿¬°áµÇÁö ¾Ê¾Ò¾îµµ ÀÔ·ÂÀ» Çã¿ëÇÏµµ·Ï ÇÒ °Í ÀÔ´Ï´Ù. ¸Å¿ì °£´ÜÇÑ Æ®¸¯ÀÌ°í °³¹ß ±â°£µ¿¾È¿¡ ÀÛ¾÷Èå¸§À» ÁÁ°Ô ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+            /* PhotonNetwork.IsConnected == true ê°€ ìžˆì–´ì•¼ í• ê¹Œìš”? ì˜ˆ. :) 
+             * ê°œë°œ ë‹¨ê³„ì—ì„œ ì´ í”„ë¦¬íŒ¹ì„ ì—°ê²° ì—†ì´ í…ŒìŠ¤íŠ¸ í•˜ê³  ì‹¶ì„ ìˆ˜ë„ ìžˆê¸° ë•Œë¬¸ìž…ë‹ˆë‹¤. 
+             * ì˜ˆë¥¼ ë“¤ì–´ ë”ë¯¸ ì‹ ì—ì„œ ë„¤íŠ¸ì›Œí‚¹ ìžì²´ ê¸°ëŠ¥ì— ê´€ë ¨ë˜ì§€ ì•Šì€ ê²ƒì„ ìƒì„±í•˜ê³  ì½”ë“œë¥¼ ê²€ì¦ í•˜ê¸° ìœ„í•´ì„œ ìž…ë‹ˆë‹¤. 
+             * ì´ ì¶”ê°€ì ì¸ í‘œí˜„ì‹ì„ í†µí•´ì„œ ì—°ê²°ë˜ì§€ ì•Šì•˜ì–´ë„ ìž…ë ¥ì„ í—ˆìš©í•˜ë„ë¡ í•  ê²ƒ ìž…ë‹ˆë‹¤. ë§¤ìš° ê°„ë‹¨í•œ íŠ¸ë¦­ì´ê³  ê°œë°œ ê¸°ê°„ë™ì•ˆì— ìž‘ì—…íë¦„ì„ ì¢‹ê²Œ í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.
              * */
             if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
             {
@@ -65,9 +65,9 @@ namespace Com.MyCompany.MyGame
             {
                 v = 0;
             }
-            /*µÎ ÀÔ·Â°ªÀ» Á¦°öÇÏ°í ÀÖ´Ù´Â °ÍÀ» ¾Ë¾Æ Ã«À» °Í ÀÔ´Ï´Ù.
-             * ¿Ö ±×·²±î¿ä? Ç×»ó ¾çÀÇ Àý´ë °ªÀÌ°í easingÀ» Ãß°¡ÇÏ±â ¶§¹® ÀÔ´Ï´Ù. 
-             * Àý¹¦ÇÑ Æ®¸¯ÀÔ´Ï´Ù. Mathf.Abs() µµ ¿ª½Ã »ç¿ëÇÒ ¼ö ÀÖÀ¸¸ç Àß µ¿ÀÛ ÇÕ´Ï´Ù.
+            /*ë‘ ìž…ë ¥ê°’ì„ ì œê³±í•˜ê³  ìžˆë‹¤ëŠ” ê²ƒì„ ì•Œì•„ ì±˜ì„ ê²ƒ ìž…ë‹ˆë‹¤.
+             * ì™œ ê·¸ëŸ´ê¹Œìš”? í•­ìƒ ì–‘ì˜ ì ˆëŒ€ ê°’ì´ê³  easingì„ ì¶”ê°€í•˜ê¸° ë•Œë¬¸ ìž…ë‹ˆë‹¤. 
+             * ì ˆë¬˜í•œ íŠ¸ë¦­ìž…ë‹ˆë‹¤. Mathf.Abs() ë„ ì—­ì‹œ ì‚¬ìš©í•  ìˆ˜ ìžˆìœ¼ë©° ìž˜ ë™ìž‘ í•©ë‹ˆë‹¤.
              * */
             animator.SetFloat("Speed", h * h + v * v);
             animator.SetFloat("Direction", h, directionDampTime, Time.deltaTime);

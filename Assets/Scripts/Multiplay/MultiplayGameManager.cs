@@ -5,87 +5,94 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-namespace BluehatGames{
-public class MultiplayGameManager : MonoBehaviour
+namespace BluehatGames
 {
-    public static MultiplayGameManager instance = null;
-    private bool isConnect = false;
-    
-    public string playerPrefabPath;
-    public GameObject cameraPrefab;
-    private string selectedAnimal;
-    public void SetPlayerPrefabPath(string animalName) {
-        Debug.Log($"setPlayerPrefabPath -> {animalName}");
-        playerPrefabPath = $"Prefab/Animals/{animalName}";
-    }
-
-    private void Awake()
+    public class MultiplayGameManager : MonoBehaviour
     {
-        if(instance == null)
+        public static MultiplayGameManager instance = null;
+        private bool isConnect = false;
+
+        public string playerPrefabPath;
+        public GameObject cameraPrefab;
+        private string selectedAnimal;
+        public void SetPlayerPrefabPath(string animalName)
         {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            Debug.Log($"setPlayerPrefabPath -> {animalName}");
+            playerPrefabPath = $"Prefab/Animals/{animalName}";
         }
-        else if(instance != this)
+
+        private void Awake()
         {
-            Destroy(this.gameObject);
+            if (instance == null)
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else if (instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+
         }
-        
+
+        public void GameOver()
+        {
+
+        }
+
+        void Start()
+        {
+            string animalName = PlayerPrefs.GetString(PlayerPrefsKey.key_multiplayAnimal);
+            SetPlayerPrefabPath(animalName);
+
+            StartCoroutine(CreatePlayer());
+        }
+
+        public bool IsConnectTrue()
+        {
+            Debug.Log("IsConnectTrue");
+            return isConnect;
+        }
+
+        public void SetIsConnectTrue()
+        {
+            Debug.Log("SetIsConnectTrue");
+            this.isConnect = true;
+        }
+
+        IEnumerator CreatePlayer()
+        {
+            Debug.Log("MultiplayGameManager => CreatePlayer()");
+            // isConnect = true
+            // yield return new WaitUntil(() => isConnect);
+            // TODO: ë¡œë”©ì´ ë‹¤ ë˜ê³ ë‚˜ì„œ ë˜ì–´ì•¼ í•˜ëŠ”ë°, ê´€ë ¨ í¬í†¤ í•¨ìˆ˜ë¥¼ ëª»ì°¾ì•„ì„œ ì¼ë‹¨ 3ì´ˆ ì •ë„ ì§€ì—° í›„ Create ë˜ë„ë¡ í•¨
+            yield return new WaitForSeconds(3); // TEST 
+            PlayerStatusController.instance.SetStartTimeAttack();
+            // 360ë„ Sphere ê³µê°„ì•ˆì—ì„œ ëœë¤ìœ¼ë¡œ í•œ ì ì„ ì°ì€ ê²ƒ
+            Vector3 randPos = Random.insideUnitSphere * 10;
+            // 0,0ì—ì„œ 10m ì‚¬ì´ ê¹Œì§€ì˜ ê±°ë¦¬ ì¤‘ ëœë¤ìœ¼ë¡œ ì„¤ì •
+            randPos.y = 0;
+            // í´ë¼ì´ì–¸íŠ¸ê°€ ìƒˆë¡œ ë°©ì— ë“¤ì–´ì˜¤ë©´ ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸ê°€ ìë™ìœ¼ë¡œ í™˜ê²½ì„ ë§ì¶°ì¤Œ 
+            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, randPos, Quaternion.identity);
+            SetMultiplayAnimalObject(playerTemp);
+            GameObject camera = GameObject.Instantiate(cameraPrefab);
+            camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
+        }
+
+        private void SetMultiplayAnimalObject(GameObject animalPlayer)
+        {
+
+            animalPlayer.AddComponent<MultiplayAnimalController>();
+            animalPlayer.AddComponent<PlayerTrigger>();
+            animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
+        }
+
+        public void LeaveRoom()
+        {
+            // PhotonNetwork.LeaveRoom();
+            PhotonNetwork.Disconnect();
+        }
+
+
     }
-
-    public void GameOver() {
-
-    }
-
-    void Start()
-    {
-        string animalName = PlayerPrefs.GetString(PlayerPrefsKey.key_multiplayAnimal);
-        SetPlayerPrefabPath(animalName);
-
-        StartCoroutine(CreatePlayer());
-    }
-
-    public bool IsConnectTrue() {
-        Debug.Log("IsConnectTrue");
-        return isConnect;
-    }
-
-    public void SetIsConnectTrue() {
-        Debug.Log("SetIsConnectTrue");
-        this.isConnect = true;
-    }
-    
-    IEnumerator CreatePlayer()
-    {
-        Debug.Log("MultiplayGameManager => CreatePlayer()");
-        // isConnect = true
-        // yield return new WaitUntil(() => isConnect);
-        // TODO: ·ÎµùÀÌ ´Ù µÇ°í³ª¼­ µÇ¾î¾ß ÇÏ´Âµ¥, °ü·Ã Æ÷Åæ ÇÔ¼ö¸¦ ¸øÃ£¾Æ¼­ ÀÏ´Ü 3ÃÊ Á¤µµ Áö¿¬ ÈÄ Create µÇµµ·Ï ÇÔ
-        yield return new WaitForSeconds(3); // TEST 
-        PlayerStatusController.instance.SetStartTimeAttack();
-        // 360µµ Sphere °ø°£¾È¿¡¼­ ·£´ıÀ¸·Î ÇÑ Á¡À» ÂïÀº °Í
-        Vector3 randPos = Random.insideUnitSphere * 10;
-        // 0,0¿¡¼­ 10m »çÀÌ ±îÁöÀÇ °Å¸® Áß ·£´ıÀ¸·Î ¼³Á¤
-        randPos.y = 0;
-        // Å¬¶óÀÌ¾ğÆ®°¡ »õ·Î ¹æ¿¡ µé¾î¿À¸é ¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®°¡ ÀÚµ¿À¸·Î È¯°æÀ» ¸ÂÃçÁÜ 
-        GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, randPos, Quaternion.identity);
-        SetMultiplayAnimalObject(playerTemp);
-        GameObject camera = GameObject.Instantiate(cameraPrefab);
-        camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
-    }
-
-    private void SetMultiplayAnimalObject(GameObject animalPlayer) {
-
-        animalPlayer.AddComponent<MultiplayAnimalController>();
-        animalPlayer.AddComponent<PlayerTrigger>();
-        animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
-    }
-
-    public void LeaveRoom() {
-        // PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
-    }
-
-
-}
 }

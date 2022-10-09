@@ -24,10 +24,11 @@ namespace BluehatGames
         void Start()
         {
             debugPanel.SetActive(false);
-            toggle_debugManager.onValueChanged.AddListener((onoff) => {
-                debugPanel.SetActive(onoff);                
+            toggle_debugManager.onValueChanged.AddListener((onoff) =>
+            {
+                debugPanel.SetActive(onoff);
             });
-            
+
             btn_status_init.onClick.AddListener(() =>
             {
                 Debug.Log("[DebugManager] Current Status - INIT");

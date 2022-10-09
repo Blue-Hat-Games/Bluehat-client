@@ -18,7 +18,7 @@ namespace Com.MyCompany.MyGame
 
         #region Photon Callbacks
 
-        // ·ÎÄÃ ÇÃ·¹ÀÌ¾î°¡ ·ëÀ» ¶°³¯ ¶§ È£ÃâµÇ°í, 'Launcher' ¾ÀÀ» ·ÎµåÇÔ 
+        // ë¡œì»¬ í”Œë ˆì´ì–´ê°€ ë£¸ì„ ë– ë‚  ë•Œ í˜¸ì¶œë˜ê³ , 'Launcher' ì”¬ì„ ë¡œë“œí•¨ 
         public override void OnLeftRoom()
         {
             SceneManager.LoadScene(0);
@@ -31,12 +31,12 @@ namespace Com.MyCompany.MyGame
         public GameObject playerPrefab;
         public static GameManager Instance;
 
-        /* ÀÌ ¸Ş¼Òµå´Â ¸í½ÃÀûÀ¸·Î ÇÃ·¹ÀÌ¾î¸¦ Photon Network ·ë¿¡¼­ ³ª°¡µµ·Ï ÇÏ¸ç 
-         * Ãß»óÈ­¸¦ À§ÇØ¼­ public ¸Ş¼Òµå·Î wrap ÇÏ¿´½À´Ï´Ù. 
-         * ´ÙÀ½ ´Ü°è¿¡¼­´Â µ¥ÀÌÅÍ ÀúÀå ¶Ç´Â È®ÀÎ ´Ü°è Ãß°¡µî ´õ ¸¹Àº ±â´É Ãß°¡¸¦ ¿øÇÒ °Í ÀÔ´Ï´Ù.
+        /* ì´ ë©”ì†Œë“œëŠ” ëª…ì‹œì ìœ¼ë¡œ í”Œë ˆì´ì–´ë¥¼ Photon Network ë£¸ì—ì„œ ë‚˜ê°€ë„ë¡ í•˜ë©° 
+         * ì¶”ìƒí™”ë¥¼ ìœ„í•´ì„œ public ë©”ì†Œë“œë¡œ wrap í•˜ì˜€ìŠµë‹ˆë‹¤. 
+         * ë‹¤ìŒ ë‹¨ê³„ì—ì„œëŠ” ë°ì´í„° ì €ì¥ ë˜ëŠ” í™•ì¸ ë‹¨ê³„ ì¶”ê°€ë“± ë” ë§ì€ ê¸°ëŠ¥ ì¶”ê°€ë¥¼ ì›í•  ê²ƒ ì…ë‹ˆë‹¤.
          * */
-        
-        // 'Leave Button' ¿ÂÅ¬¸¯ ¸Ş¼­µå
+
+        // 'Leave Button' ì˜¨í´ë¦­ ë©”ì„œë“œ
         public void LeaveRoom()
         {
             PhotonNetwork.LeaveRoom();
@@ -54,7 +54,7 @@ namespace Com.MyCompany.MyGame
             }
             else
             {
-                // ·ÎÄÃ ÇÃ·¹ÀÌ¾î ÀÎ½ºÅÏ½º°¡ ¾øÀ¸¸é,
+                // ë¡œì»¬ í”Œë ˆì´ì–´ ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìœ¼ë©´,
                 if (PlayerManager.LocalPlayerInstance == null)
                 {
                     Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
@@ -76,12 +76,12 @@ namespace Com.MyCompany.MyGame
 
         void LoadArena()
         {
-            /* PhotonNetwork.LoadLevel() Àº ¸¶½ºÅÍ Å¬¶óÀÌ¾ğÆ®ÀÎ °æ¿ì¿¡¸¸ È£Ãâ µÇ¾î¾ß ÇÕ´Ï´Ù. 
-             * µû¶ó¼­ PhotonNetwork.isMasterClient ¸¦ ÀÌ¿ëÇÏ¿© ¸¶½ºÅÍ Å¬¶óÀÌ¾îÀÎÆ®ÀÎÁö¸¦ Ã¼Å© ÇÕ´Ï´Ù. 
-             * ÀÌ°ÍÀ» Ã¼Å©ÇÏ´Â °ÍÀº È£ÃâÀÚÀÇ Ã¥ÀÓÀÌ µÉ °Í ÀÌ¸ç ÀÌ ¼½¼ÇÀÇ ´ÙÀ½ ÆÄÆ®¿¡¼­ ´Ù·ê °Í ÀÔ´Ï´Ù.
-             * PhotonNetwork.LoadLevel() À» ÀÌ¿ëÇÏ¿© ¿øÇÏ´Â ·¹º§À» ·Îµå ÇÕ´Ï´Ù. 
-             * ÀÌ °ÔÀÓ¿¡¼­´Â PhotonNetwork.automaticallySyncScene À» »ç¿ëÇÏµµ·Ï ÇØ³õ¾Ò±â ¶§¹®¿¡ 
-             * ·ë ¾ÈÀÇ ¸ğµç Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ®¿¡ ´ëÇØ ÀÌ ·¹º§ ·Îµå¸¦ À¯´ÏÆ¼°¡ Á÷Á¢ ÇÏ´Â °ÍÀÌ ¾Æ´Ñ Photon ÀÌ ÇÏµµ·Ï ÇÏ¿´½À´Ï´Ù.
+            /* PhotonNetwork.LoadLevel() ì€ ë§ˆìŠ¤í„° í´ë¼ì´ì–¸íŠ¸ì¸ ê²½ìš°ì—ë§Œ í˜¸ì¶œ ë˜ì–´ì•¼ í•©ë‹ˆë‹¤. 
+             * ë”°ë¼ì„œ PhotonNetwork.isMasterClient ë¥¼ ì´ìš©í•˜ì—¬ ë§ˆìŠ¤í„° í´ë¼ì´ì–´ì¸íŠ¸ì¸ì§€ë¥¼ ì²´í¬ í•©ë‹ˆë‹¤. 
+             * ì´ê²ƒì„ ì²´í¬í•˜ëŠ” ê²ƒì€ í˜¸ì¶œìì˜ ì±…ì„ì´ ë  ê²ƒ ì´ë©° ì´ ì„¹ì…˜ì˜ ë‹¤ìŒ íŒŒíŠ¸ì—ì„œ ë‹¤ë£° ê²ƒ ì…ë‹ˆë‹¤.
+             * PhotonNetwork.LoadLevel() ì„ ì´ìš©í•˜ì—¬ ì›í•˜ëŠ” ë ˆë²¨ì„ ë¡œë“œ í•©ë‹ˆë‹¤. 
+             * ì´ ê²Œì„ì—ì„œëŠ” PhotonNetwork.automaticallySyncScene ì„ ì‚¬ìš©í•˜ë„ë¡ í•´ë†“ì•˜ê¸° ë•Œë¬¸ì— 
+             * ë£¸ ì•ˆì˜ ëª¨ë“  ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ì— ëŒ€í•´ ì´ ë ˆë²¨ ë¡œë“œë¥¼ ìœ ë‹ˆí‹°ê°€ ì§ì ‘ í•˜ëŠ” ê²ƒì´ ì•„ë‹Œ Photon ì´ í•˜ë„ë¡ í•˜ì˜€ìŠµë‹ˆë‹¤.
             */
             if (!PhotonNetwork.IsMasterClient)
             {
@@ -116,7 +116,7 @@ namespace Com.MyCompany.MyGame
         {
             Debug.LogFormat("OnPlayerLeftRoom() {0}", other.NickName); // seen when other disconnects
 
-            // PhotonNetwork.isMasterClient ¸¦ ÀÌ¿ëÇÏ¿© ¸¶½ºÅÍÀÎ °æ¿ì¿¡¸¸ LoadArena() ¸¦ È£Ãâ ÇÒ °Í ÀÔ´Ï´Ù
+            // PhotonNetwork.isMasterClient ë¥¼ ì´ìš©í•˜ì—¬ ë§ˆìŠ¤í„°ì¸ ê²½ìš°ì—ë§Œ LoadArena() ë¥¼ í˜¸ì¶œ í•  ê²ƒ ì…ë‹ˆë‹¤
             if (PhotonNetwork.IsMasterClient)
             {
                 Debug.LogFormat("OnPlayerLeftRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom

@@ -8,7 +8,6 @@ public class AnimalFactory : MonoBehaviour
     public Texture2D formatTexture;
     private string pngSavePath = "";
 
-    // �������� ���� �����͸� �޾Ƽ� �ٽ� ������ ����
     [System.Serializable]
     public class AnimalDataFromServer
     {

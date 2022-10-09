@@ -41,8 +41,8 @@ namespace BluehatGames
                 SceneManager.LoadScene(SceneName._05_Multiplay);
             });
 
-            btn_nftMarket.onClick.AddListener(() => {
-                // web ø≠±‚
+            btn_nftMarket.onClick.AddListener(() =>
+            {
             });
 
             // btn_exit.onClick.AddListener(() => {
@@ -63,11 +63,11 @@ namespace BluehatGames
         public IEnumerator GetFirstAnimalFromServer(string URL)
         {
 
-            // ?õπ?ÑúÎ≤ÑÎ°ú Post ?öîÏ≤??ùÑ Î≥¥ÎÉÑ
+
             using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
             {
 
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer(); 
+                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
 
                 // Access Token
                 string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
@@ -85,7 +85,6 @@ namespace BluehatGames
                 // success
                 else
                 {
-                    // ?õπ?ÑúÎ≤ÑÎ°úÎ∂??Ñ∞ Î∞õÏ?? ?ùë?ãµ ?Ç¥?ö© Ï∂úÎ†•
                     string responseText = request.downloadHandler.text;
                     string responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
 
@@ -104,7 +103,8 @@ namespace BluehatGames
             }
         }
 
-        private void LoadAnimalPrefab(string animalName) {
+        private void LoadAnimalPrefab(string animalName)
+        {
             var path = $"Prefab/Animals/{animalName}";
             GameObject obj = Resources.Load(path) as GameObject;
             GameObject animal = Instantiate(obj, Vector3.zero, Quaternion.identity);

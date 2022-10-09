@@ -14,19 +14,20 @@ public class PlayerCam : MonoBehaviour
         joystick = FindObjectOfType<Joystick>();
     }
 
-    public void SetCameraTarget(GameObject animal) {
+    public void SetCameraTarget(GameObject animal)
+    {
         targetTr = animal.transform;
-        
+
         Debug.Log($"target setting completed => {animal.name}");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if( null == targetTr || null == joystick )
+        if (null == targetTr || null == joystick)
             return;
-        
-        
+
+
         var lookAxisRot = Quaternion.LookRotation(targetTr.forward);
         var projRot = Vector3.ProjectOnPlane(lookAxisRot.eulerAngles, Vector3.right);
 
