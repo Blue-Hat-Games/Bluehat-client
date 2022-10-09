@@ -460,7 +460,7 @@ namespace BluehatGames
     }
 
     [Serializable]
-    public class AnimalDataFormat
+    public class AnimalFormatData
     {
         public string name;
         public int tier;
@@ -474,6 +474,6 @@ namespace BluehatGames
     [Serializable]
     public class UserAnimalList
     {
-        public AnimalDataFormat[] data;
+        public AnimalFormatData[] data;
     }
 }
