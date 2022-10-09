@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+namespace BluehatGames
+{
 
 public class Animal
 {
-
-    public Texture2D formatTexture;
     private string animalPrefabPath = "Prefab/Animals";
 
     public string name;
@@ -16,16 +16,20 @@ public class Animal
     public string animalType;
     public string headItem;
     public string pattern;
+    
+    private int formatTextureWidth = 16;
+    private int formatTextureHeight = 4;
+    private int formateTextuerPixelsLength = 64;
 
-    public Animal(string name, int tier, string id, string animalType, string headItem, string pattern, Texture2D formatTexture)
+    public Animal(AnimalDataFormat animalData)
     {
-        this.name = name;
-        this.tier = tier;
-        this.id = id;
-        this.animalType = animalType;
-        this.headItem = headItem;
-        this.pattern = pattern;
-        this.formatTexture = formatTexture;
+        this.name = animalData.name;
+        this.tier = animalData.tier;
+        this.id = animalData.id;
+        this.animalType = animalData.animalType;
+        this.headItem = animalData.headItem;
+        this.pattern = animalData.pattern;
+        setAnimalColor(animalData.color);
     }
 
 
@@ -38,7 +42,7 @@ public class Animal
     // Get Aniaml Color Texture
     public Texture2D getAnimalTexture()
     {
-        Texture2D texture = color2Texture(this.color, formatTexture.width, formatTexture.height);
+        Texture2D texture = color2Texture(this.color, formatTextureWidth, formatTextureHeight);
         return texture;
     }
 
@@ -65,8 +69,7 @@ public class Animal
     private Color32[] jsonColor2Color32(string jsonColor)
     {
         string colorJsonStr = "{\"data\":" + jsonColor + "}";
-        Color32[] pix = formatTexture.GetPixels32();
-        int originColor32Length = pix.Length;
+        int originColor32Length = formateTextuerPixelsLength;
         Color32[] colorFromJson = JsonHelper.FromJson<Color32>(colorJsonStr);
         Color32[] restoreTexColors = new Color32[originColor32Length];
 
@@ -95,11 +98,12 @@ public class Animal
 
     private Texture2D color2Texture(Color32[] color, int width, int height)
     {
-        Debug.Log($"color => {color}");
-        Debug.Log($"width => {width}, height => {height}");
+        // Debug.Log($"color => {color}");
+        // Debug.Log($"width => {width}, height => {height}");
         Texture2D texture = new Texture2D(width, height);
         texture.SetPixels32(color);
         texture.Apply(true);
         return texture;
     }
+}
 }

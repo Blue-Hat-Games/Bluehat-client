@@ -27,6 +27,8 @@ namespace BluehatGames
 
         public AnimalDataFormat selectedAnimalData;
 
+        private GameObject resultAnimal;
+
         public void SetSynthesisManager(SynthesisManager instance)
         {
             synthesisManager = instance;
@@ -36,16 +38,32 @@ namespace BluehatGames
         {
             if (Input.GetMouseButton(0))
             {
-                if (selectedAnimalObject == null)
+                if (selectedAnimalObject != null)
                 {
-                    return;
-                }
-                selectedAnimalObject
+                    selectedAnimalObject
                     .transform
                     .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
+                }
+                
+                if( resultAnimal != null)
+                {
+                    resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
+                }
             }
         }
 
+        public void ClearResultAnimal()
+        {
+            if(resultAnimal)
+            {
+                resultAnimal.SetActive(false);
+            }
+            if(selectedAnimalObject)
+            {
+                selectedAnimalObject.SetActive(false);
+            }
+        }
+        
         public void SetCurSelectedAnimal(AnimalDataFormat animalData, GameObject animalObject)
         {
             selectedAnimalData = animalData;
@@ -63,11 +81,11 @@ namespace BluehatGames
         {
             // Access Token
             string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            Debug.Log($"access_token = {access_token}");
 
             // TODO: 테스트이면 0000 으로 
             if (isTest) access_token = "0000";
 
+            Debug.Log($"access_token = {access_token}");
             using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
             {
                 webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
@@ -98,21 +116,23 @@ namespace BluehatGames
                     Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
 
                     // refresh data
-                    synthesisManager.SendRequestRefreshAnimalData();
+                    synthesisManager.SendRequestRefreshAnimalDataOnColorChange(selectedAnimalData.id);
                 }
             }
         }
 
-
-        void SetResultAnimalTexture()
+        public void OnRefreshAnimalDataAfterColorChange()
         {
-
+            Debug.Log($"ColorChangeManager: OnRefreshAnimalDataAfterColorChange - selectedAnimalData.id = {selectedAnimalData.id}");
             // id를 가지고 결과 데이터를 다시 불러와서 동물의 텍스처를 적용해주어야 함 
             GameObject obj = synthesisManager.GetAnimalObject(selectedAnimalData.id);
-
+            obj.SetActive(true);
+            resultAnimal = obj;
+            obj.transform.position = new Vector3(-2, -1, obj.transform.position.z);
+            obj.transform.LookAt(Camera.main.transform);
         }
 
-
+        // 지금 안쓰는 듯?
         public void ChangeTextureColor()
         {
             Renderer animalMesh = selectedAnimalObject.GetComponentInChildren<Renderer>();

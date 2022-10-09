@@ -6,12 +6,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using System.Linq;
 namespace BluehatGames
 {
     public class SynthesisManager : MonoBehaviour
     {
-        private AnimalDataFormat[] animalDataArray;
+        public ObjectPool contentUiPool;
         public AnimalFactory animalFactory;
         public Texture2D formatTexture;
 
@@ -57,20 +57,95 @@ namespace BluehatGames
         private float adjustAnimaionSpeed = 0.2f;
 
         private GameObject[] contentUis;
+        private Dictionary<string, GameObject> contentUiDictionary;
 
         public float firstAnimalX;
         public float secondAnimalX;
 
         public GameObject[] animalObjectArray;
 
-        // AnimalAirController에서 호출하는 함수
-        public void StartMakeThumbnailAnimalList(AnimalDataFormat[] animalDataArray)
-        {
-            contentUis = new GameObject[animalDataArray.Length];
-            StartCoroutine(MakeThumbnailAnimalList(animalDataArray));
+        private int calledCount = 0;
+        private bool isCreating = false;
 
-            SetColorChangeButtonOnClick();
-            SetFusionButtonOnClick();
+        private int poolSize = 30; // 얼만큼일지 모르지만 이만큼은 만들어놓자
+
+        void Start()
+        {
+            colorChangeManager.SetSynthesisManager(this);
+            contentUiDictionary = new Dictionary<string, GameObject>();
+
+            panel_result.SetActive(false);
+            panel_fusion.SetActive(false);
+            animalListView.SetActive(false);
+            panel_colorChange.SetActive(false);
+
+            btn_goToMain.onClick.AddListener(() =>
+            {
+                if (currentMode == SELECT_MENU_MODE)
+                {
+                    SceneManager.LoadScene(SceneName._03_Main);
+                }
+                else if (currentMode == COLOR_CHANGE_MODE)
+                {
+                    currentMode = SELECT_MENU_MODE;
+                    panel_colorChange.SetActive(false);
+                    colorChangeManager.ClearResultAnimal();
+                }
+                else if (currentMode == FUSION_MODE)
+                {
+                    currentMode = SELECT_MENU_MODE;
+                    panel_fusion.SetActive(false);
+                }
+
+                animalListView.SetActive(false);
+                panel_result.SetActive(false);
+                ClearAnimals();
+                fusionManager.ClearAnimals();
+            });
+
+            btn_exitListView.onClick.AddListener(() =>
+            {
+                animalListView.SetActive(false);
+            });
+
+            InitContentViewUIObjectPool();
+        }
+
+        public void ResetAnimalListView()
+        {
+            for(int i = 0; i < animalListContentsView.childCount; i++)
+            {
+                contentUiPool.RetrunPoolObject(animalListContentsView.GetChild(i).gameObject);
+            }
+        }
+
+        private void InitContentViewUIObjectPool()
+        {
+            contentUiPool.Init(poolSize, animalListContentPrefab, animalListContentsView);
+        }
+        
+        // AnimalAirController에서 호출하는 함수
+        public void StartMakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary, AnimalDataFormat[] animalDataArray, bool isRefresh)
+        {
+            if(isCreating == true)
+            {
+                return;
+            }
+            isCreating = true;
+
+            calledCount++;
+            Debug.Log($"called Count = {calledCount}");
+            // contentUis = new GameObject[animalDataArray.Length];
+            
+            Debug.Log($"animalDataArray.Length = {animalDataArray.Length}");
+            // for(int i = 0; i < animalDataArray.Length; i++)
+            // {
+            //     contentUis[i] = contentUiPool.GetObject();
+            // }
+
+            ResetAnimalListView();
+            StartCoroutine(MakeThumbnailAnimalList(animalObjectDictionary, animalDataArray, isRefresh));
+
         }
 
         private void SetColorChangeButtonOnClick()
@@ -83,9 +158,10 @@ namespace BluehatGames
                 panel_colorChange.SetActive(true);
                 btn_exitListView.gameObject.SetActive(false); // 색 변경에서는 exit button 사용 안함
 
-                for (int i = 0; i < contentUis.Length; i++)
+                for (int i = 0; i < contentUiDictionary.Count; i++)
                 {
-                    contentUis[i].GetComponent<RawImage>().color = new Color(1, 1, 1);
+                    GameObject contentUi = contentUiDictionary.Values.ToList()[i];
+                    contentUi.GetComponent<RawImage>().color = new Color(1, 1, 1);
                 }
 
                 ClearAnimals();
@@ -121,10 +197,12 @@ namespace BluehatGames
                 btn_startFusion.gameObject.SetActive(false);
 
                 animalListView.SetActive(false);
-                for (int i = 0; i < contentUis.Length; i++)
+                for (int i = 0; i < contentUiDictionary.Count; i++)
                 {
-                    contentUis[i].GetComponent<RawImage>().color = new Color(1, 1, 1);
+                    GameObject contentUi = contentUiDictionary.Values.ToList()[i];
+                    contentUi.GetComponent<RawImage>().color = new Color(1, 1, 1);
                 }
+                
             });
 
             btn_startFusion.onClick.AddListener(() =>
@@ -142,47 +220,11 @@ namespace BluehatGames
             });
         }
 
-        void Start()
-        {
-            colorChangeManager.SetSynthesisManager(this);
-
-            panel_result.SetActive(false);
-            panel_fusion.SetActive(false);
-            animalListView.SetActive(false);
-            panel_colorChange.SetActive(false);
-
-            btn_goToMain.onClick.AddListener(() =>
-            {
-                if (currentMode == SELECT_MENU_MODE)
-                {
-                    SceneManager.LoadScene(SceneName._03_Main);
-                }
-                else if (currentMode == COLOR_CHANGE_MODE)
-                {
-                    currentMode = SELECT_MENU_MODE;
-                    panel_colorChange.SetActive(false);
-                }
-                else if (currentMode == FUSION_MODE)
-                {
-                    currentMode = SELECT_MENU_MODE;
-                    panel_fusion.SetActive(false);
-                }
-
-                animalListView.SetActive(false);
-                panel_result.SetActive(false);
-                ClearAnimals();
-                fusionManager.ClearAnimals();
-            });
-
-            btn_exitListView.onClick.AddListener(() =>
-            {
-                animalListView.SetActive(false);
-            });
-        }
 
         void ResetAnimalState(GameObject animal)
         {
             animal.GetComponent<Rigidbody>().useGravity = false;
+            animal.GetComponent<Rigidbody>().isKinematic = true;
             animal.GetComponent<CapsuleCollider>().enabled = false;
         }
 
@@ -191,7 +233,7 @@ namespace BluehatGames
             yield return new WaitForEndOfFrame();
 
             GameObject resultAnimal = fusionManager.GetResultAnimal();
-            // 사진 찍기용 
+            // 사진 찍기용
             GameObject duplicatedAnimal = GameObject.Instantiate(resultAnimal);
             ResetAnimalState(resultAnimal);
             ResetAnimalState(duplicatedAnimal);
@@ -268,114 +310,183 @@ namespace BluehatGames
             btn_exitListView.gameObject.SetActive(true);
         }
 
-
-
-        // 선택한 동물의 id를 서버로 보내서 합성을 진행해야 하므로 각 UI가 해당 동물의 정보를 가지고 있어야 함
-        // 데이터만 저장할 수 있는 클래스를 만들어서 추가해주자
-
-        IEnumerator MakeThumbnailAnimalList(AnimalDataFormat[] animalDataArray)
+        public void RefreshAnimalThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData)
         {
-            animalListView.SetActive(true);
-            animalObjectArray = new GameObject[animalDataArray.Length];
-            for (int i = 0; i < animalDataArray.Length; i++)
+            StartCoroutine(UpdateThumbnail(updatedAnimalObject, animalData));
+        }
+
+        IEnumerator UpdateThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData)
+        {
+            updatedAnimalObject.transform.position = thumbnailSpot.position;
+            updatedAnimalObject.transform.rotation = thumbnailSpot.rotation;
+            updatedAnimalObject.transform.LookAt(thumbnailCamera.transform);
+
+            ResetAnimalState(updatedAnimalObject);
+            thumbnailCamera.Render();
+
+            var uiSet = contentUiDictionary[animalData.id];
+
+            yield return new WaitForEndOfFrame();
+            ToTexture2D(renderTexture, (Texture2D resultTex) =>
             {
-                int index = i;
-
-                Animal animal = new Animal(animalDataArray[i].name, animalDataArray[i].tier, animalDataArray[i].id, animalDataArray[i].animalType, animalDataArray[i].headItem, animalDataArray[i].pattern, formatTexture);
-                animal.setAnimalColor(animalDataArray[i].color);
-                GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
-
-                animalObject.transform.position = thumbnailSpot.position;
-                animalObject.transform.rotation = thumbnailSpot.rotation;
-                animalObject.transform.LookAt(thumbnailCamera.transform);
-                animalObjectArray[i] = animalObject;
-
-                ResetAnimalState(animalObject);
-
-                yield return new WaitForEndOfFrame();
-                thumbnailCamera.Render();
-
-                var uiSet = GameObject.Instantiate(animalListContentPrefab);
-                contentUis[index] = uiSet;
-
-                ToTexture2D(renderTexture, (Texture2D resultTex) =>
-                {
-                    uiSet.GetComponent<RawImage>().texture = resultTex;
-                });
-
+                uiSet.GetComponent<RawImage>().texture = resultTex;
                 uiSet.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     animalListView.SetActive(false);
                     uiSet.GetComponent<RawImage>().color = new Color(0.4f, 0.4f, 0.4f);
-                    // ------------------------ 색변경 모드이면 ------------------------ 
-                    if (currentMode == COLOR_CHANGE_MODE)
+                    if (targetAnimal)
                     {
-                        if (targetAnimal)
-                        {
-                            targetAnimal.SetActive(false);
-                        }
-
-                        selectedAnimalData = animalDataArray[index];
-
-
-                        // LoadAnimalPrefab 대신에 AnimalFactory에서 오브젝트 가져와야 할 듯 
-                        Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, index => {index}");
-                        targetAnimal = animalObjectArray[index];
-                        targetAnimal.SetActive(true);
-                        // targetAnimal = LoadAnimalPrefab(selectedAnimalData.animalType, Vector3.zero, Camera.main.gameObject);
-                        targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-                        targetAnimal.transform.position = new Vector3(-4, -0.5f, targetAnimal.transform.position.z);
-
-                        ResetAnimalState(targetAnimal);
-
-                        colorChangeManager.SetCurSelectedAnimal(selectedAnimalData, targetAnimal);
+                        targetAnimal.SetActive(false);
                     }
-                    // ------------------------ 합성 모드이면 ------------------------ 
-                    else if (currentMode == FUSION_MODE)
-                    {
-                        var selectedAnimalName = animalDataArray[index].animalType;
 
-                        if (focusedButtonIndex == 0)
-                        {
-                            fusionSelectedAnimalData_1 = animalDataArray[index];
-                            if (selectedAnimal_1)
-                            {
-                                selectedAnimal_1.SetActive(false);
-                            }
+                    selectedAnimalData = animalData;
 
-                            selectedAnimal_1 = animalObjectArray[index];
-                            selectedAnimal_1.SetActive(true);
-                            selectedAnimal_1.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-                            selectedAnimal_1.transform.position = new Vector3(firstAnimalX, selectedAnimal_1.transform.position.y, selectedAnimal_1.transform.position.z);
-                            fusionManager.SetTargetAnimal(0, selectedAnimal_1);
-                            ResetAnimalState(selectedAnimal_1);
-                        }
-                        else if (focusedButtonIndex == 1)
-                        {
-                            fusionSelectedAnimalData_2 = animalDataArray[index];
-                            if (selectedAnimal_2)
-                            {
-                                selectedAnimal_2.SetActive(false);
-                            }
-                            selectedAnimal_2 = animalObjectArray[index];
-                            selectedAnimal_2.SetActive(true);
-                            selectedAnimal_2.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-                            selectedAnimal_2.transform.position = new Vector3(secondAnimalX, selectedAnimal_2.transform.position.y, selectedAnimal_2.transform.position.z);
-                            fusionManager.SetTargetAnimal(1, selectedAnimal_2);
-                            ResetAnimalState(selectedAnimal_2);
-                        }
+                    targetAnimal = updatedAnimalObject;
+                    targetAnimal.SetActive(true);
+                    targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
+                    targetAnimal.transform.position = new Vector3(-4, -0.5f, targetAnimal.transform.position.z);
 
-                        if (selectedAnimal_1 != null && selectedAnimal_2 != null)
-                        {
-                            btn_startFusion.gameObject.SetActive(true);
-                        }
-                    }
+                    ResetAnimalState(targetAnimal);
+
+                    colorChangeManager.SetCurSelectedAnimal(selectedAnimalData, targetAnimal);        
                 });
-                uiSet.GetComponentInChildren<Text>().text = animalDataArray[i].animalType;
-                uiSet.transform.SetParent(animalListContentsView);
-                animalObject.SetActive(false);
+            });
+
+            colorChangeManager.OnRefreshAnimalDataAfterColorChange();
+        }
+
+        // dictionary version
+        IEnumerator MakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary, AnimalDataFormat[] animalDataArray, bool isRefresh)
+        {
+            animalListView.SetActive(true);
+            animalObjectArray = new GameObject[animalDataArray.Length];
+
+
+            int index = 0;
+            for (int i = 0; i < animalObjectDictionary.Count; i++)
+            {
+                int curIdx = index;
+                GameObject animalObject = animalObjectDictionary.Values.ToList()[curIdx];
+                Debug.Log($"Dictionary Count = {animalObjectDictionary.Count}, this animal = {animalObject.name}");
+                contentUiDictionary.Add(animalDataArray[i].id, contentUiPool.GetObject());
+
+                // if(pair.Value == null)
+                // {
+                //     Debug.Log($"pair.Key = {pair.Key} value is null");
+                // }
+                animalObject.transform.position = thumbnailSpot.position;
+                animalObject.transform.rotation = thumbnailSpot.rotation;
+                animalObject.transform.LookAt(thumbnailCamera.transform);
+                animalObjectArray[curIdx] = animalObject;
+                animalObject.name = animalObject.name + calledCount;
+                ResetAnimalState(animalObject);
+
+                thumbnailCamera.Render();
+                var uiSet = contentUiDictionary[animalDataArray[i].id];
+                uiSet.name = $"{animalDataArray[curIdx].animalType}_{animalDataArray[curIdx].id}";
+
+                yield return new WaitForEndOfFrame();
+
+                if(animalObjectArray[curIdx]) {
+                    animalObjectArray[curIdx].SetActive(false);
+                }
+
+                ToTexture2D(renderTexture, (Texture2D resultTex) =>
+                {
+                    uiSet.GetComponent<RawImage>().texture = resultTex;
+                    uiSet.GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        animalListView.SetActive(false);
+                        uiSet.GetComponent<RawImage>().color = new Color(0.4f, 0.4f, 0.4f);
+                        // ------------------------ 색변경 모드이면 ------------------------
+                        if (currentMode == COLOR_CHANGE_MODE)
+                        {
+                            if (targetAnimal)
+                            {
+                                targetAnimal.SetActive(false);
+                            }
+
+                            Debug.Log($"index = {curIdx}, animalDataArray.Length = {animalDataArray.Length}");
+                            selectedAnimalData = animalDataArray[curIdx];
+
+
+                            // LoadAnimalPrefab 대신에 AnimalFactory에서 오브젝트 가져와야 할 듯
+                            Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, index => {curIdx}");
+                            targetAnimal = animalObjectArray[curIdx];
+                            targetAnimal.SetActive(true);
+                            // targetAnimal = LoadAnimalPrefab(selectedAnimalData.animalType, Vector3.zero, Camera.main.gameObject);
+                            targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
+                            targetAnimal.transform.position = new Vector3(-4, -0.5f, targetAnimal.transform.position.z);
+
+                            ResetAnimalState(targetAnimal);
+
+                            colorChangeManager.SetCurSelectedAnimal(selectedAnimalData, targetAnimal);
+                        }
+                        // ------------------------ 합성 모드이면 ------------------------
+                        else if (currentMode == FUSION_MODE)
+                        {
+                            var selectedAnimalName = animalDataArray[curIdx].animalType;
+
+                            if (focusedButtonIndex == 0)
+                            {
+                                fusionSelectedAnimalData_1 = animalDataArray[curIdx];
+                                if (selectedAnimal_1)
+                                {
+                                    selectedAnimal_1.SetActive(false);
+                                }
+
+                                selectedAnimal_1 = animalObjectArray[curIdx];
+                                selectedAnimal_1.SetActive(true);
+                                selectedAnimal_1.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
+                                selectedAnimal_1.transform.position = new Vector3(firstAnimalX, selectedAnimal_1.transform.position.y, selectedAnimal_1.transform.position.z);
+                                fusionManager.SetTargetAnimal(0, selectedAnimal_1);
+                                ResetAnimalState(selectedAnimal_1);
+                            }
+                            else if (focusedButtonIndex == 1)
+                            {
+                                fusionSelectedAnimalData_2 = animalDataArray[curIdx];
+                                if (selectedAnimal_2)
+                                {
+                                    selectedAnimal_2.SetActive(false);
+                                }
+                                selectedAnimal_2 = animalObjectArray[curIdx];
+                                selectedAnimal_2.SetActive(true);
+                                selectedAnimal_2.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
+                                selectedAnimal_2.transform.position = new Vector3(secondAnimalX, selectedAnimal_2.transform.position.y, selectedAnimal_2.transform.position.z);
+                                fusionManager.SetTargetAnimal(1, selectedAnimal_2);
+                                ResetAnimalState(selectedAnimal_2);
+                            }
+
+                            if (selectedAnimal_1 != null && selectedAnimal_2 != null)
+                            {
+                                btn_startFusion.gameObject.SetActive(true);
+                            }
+                        }
+                    });
+                    uiSet.GetComponentInChildren<Text>().text = animalDataArray[curIdx].animalType;
+                    uiSet.transform.SetParent(animalListContentsView);
+
+
+                });
+
+                
+                
+                index++;
+
             }
+
             animalListView.SetActive(false);
+
+            if(isRefresh)
+            {
+                colorChangeManager.OnRefreshAnimalDataAfterColorChange();
+            }
+
+            isCreating = false;
+
+            SetColorChangeButtonOnClick();
+            SetFusionButtonOnClick();
+
         }
 
         private GameObject LoadAnimalPrefab(string animalName, Vector3 position, GameObject lookAtTarget)
@@ -400,15 +511,17 @@ namespace BluehatGames
             action.Invoke(tex);
         }
 
-        public void SendRequestRefreshAnimalData()
+        public void SendRequestRefreshAnimalDataOnColorChange(string animalId)
         {
-            animalAirController.RefreshAnimalData();
+            animalAirController.RefreshAnimalDataColorChange(animalId);
         }
 
         public GameObject GetAnimalObject(string id)
         {
-            return animalAirController.GetAnimalObject(id);
+            GameObject animalObj = animalAirController.GetAnimalObject(id);
+            ResetAnimalState(animalObj);
 
+            return animalObj;
         }
     }
 }
