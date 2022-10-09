@@ -43,6 +43,7 @@ namespace BluehatGames
 
             btn_nftMarket.onClick.AddListener(() =>
             {
+                SceneManager.LoadScene(SceneName._06_Market);
             });
 
             // btn_exit.onClick.AddListener(() => {
