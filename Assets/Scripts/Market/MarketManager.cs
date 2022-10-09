@@ -154,7 +154,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market/counts";
+            string url = host + "/market/counts";
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -175,7 +175,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/users";
+            string url = host + "/users";
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -202,7 +202,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
+            string url = host + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -242,7 +242,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/animal/get-user-animal";
+            string url = host + "/animal/get-user-animal";
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -278,7 +278,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market/detail?id=" + id.ToString();
+            string url = host + "/market/detail?id=" + id.ToString();
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
             {
@@ -310,7 +310,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market/sell";
+            string url = host + "/market/sell";
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = UnityWebRequest.Post(url, ""))
             {
@@ -342,7 +342,7 @@ namespace BluehatGames
         {
             string host = "https://api.bluehat.games";
             string localhost = "http://localhost:3000";
-            string url = localhost + "/market/buy";
+            string url = host + "/market/buy";
             Debug.Log($"Request to Get Item -> URL: {url}");
             using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
             {
