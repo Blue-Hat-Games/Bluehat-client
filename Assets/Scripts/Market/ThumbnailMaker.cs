@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace BluehatGames {
 // 해당 클래스는 AnimalFactory.cs 사용방법 데모를 위한 테스트 클래스
 public class ThumbnailMaker : MonoBehaviour
 {
@@ -65,4 +66,5 @@ public class ThumbnailMaker : MonoBehaviour
 
 
 
+}
 }

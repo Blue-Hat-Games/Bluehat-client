@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+namespace BluehatGames {
+
 public class AnimalFactory : MonoBehaviour
 {
-    public Texture2D formatTexture;
     private string pngSavePath = "";
 
     [System.Serializable]
@@ -42,28 +43,32 @@ public class AnimalFactory : MonoBehaviour
         return animalObjectDictionary;
     }
 
+
     private Animal[] GetAnimalDataFromJson(string txt)
     {
-        var animalData = JsonHelper.FromJson<AnimalDataFromServer>(txt);
+        var animalData = JsonHelper.FromJson<AnimalDataFormat>(txt);
         Debug.Log($"animalData = {animalData.Length}");
         Animal[] animalList = new Animal[animalData.Length];
 
         for (int i = 0; i < animalData.Length; i++)
         {
-            Animal animal = new Animal(animalData[i].name, animalData[i].tier, animalData[i].id, animalData[i].animalType, animalData[i].headItem, animalData[i].pattern, formatTexture);
-            string color = animalData[i].color;
-            color = color.Replace("\\", string.Empty);
-            animal.setAnimalColor(color);
+            Animal animal = new Animal(animalData[i]);
             animalList[i] = animal;
         }
 
         return animalList;
     }
 
+    public void ChangeTextureAnimalObject(GameObject animalObj, Animal animalData)
+    {
+        Texture2D meshTex = animalData.getAnimalTexture();
+        animalObj.GetComponentInChildren<Renderer>().material.SetTexture("_MainTex", meshTex);
+    }
+
     // synthesis manager 같은 곳에서 하나의 동물을 불러올 때 사용 
     public GameObject GetAnimalGameObject(Animal animalData)
     {
-        Debug.Log($"type = {animalData.animalType}");
+        // Debug.Log($"type = {animalData.animalType}");
         GameObject animalPrefab = animalData.getAnimalPrefab();
 
         GameObject animalObj = GameObject.Instantiate(animalPrefab);
@@ -76,4 +81,5 @@ public class AnimalFactory : MonoBehaviour
         return animalObj;
     }
 
+}
 }

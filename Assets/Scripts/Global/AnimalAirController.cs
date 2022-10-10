@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 namespace BluehatGames
 {
@@ -14,6 +16,7 @@ namespace BluehatGames
 
         public string tempAccessToken = "0000";
         private Dictionary<string, GameObject> animalObjectDictionary;
+        private AnimalDataFormat[] prevAnimalDataArray;
         private AnimalDataFormat[] animalDataArray;
 
         private Scene currentScene;
@@ -55,7 +58,7 @@ namespace BluehatGames
                         SetMainSceneAnimals(jsonData);
                         break;
                     case SceneName._04_Synthesis:
-                        SetSynthesisSceneAnimals(jsonData);
+                        SetSynthesisSceneAnimals(jsonData, false);
                         break;
 
                 }
@@ -71,8 +74,8 @@ namespace BluehatGames
             foreach (KeyValuePair<string, GameObject> pair in animalObjectDictionary)
             {
                 GameObject animalObject = pair.Value;
-                float randomX = Random.Range(-20, 20);
-                float randomZ = Random.Range(-20, 20);
+                float randomX = UnityEngine.Random.Range(-20, 20);
+                float randomZ = UnityEngine.Random.Range(-20, 20);
                 animalObject.transform.position = new Vector3(randomX, 0.1f, randomZ);
                 animalObject.transform.rotation = Quaternion.identity;
 
@@ -81,26 +84,26 @@ namespace BluehatGames
 
         }
 
-        private void SetSynthesisSceneAnimals(string jsonData)
+        private void SetSynthesisSceneAnimals(string jsonData, bool isRefresh)
         {
-
+            animalObjectDictionary.Clear();
+            animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
+            // isRefresh가 true이면 여기에서 이전 jsonData랑 비교해서 달라진 오브젝트만 dictionary 교체해주자
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
-            for (int i = 0; i < animalDataArray.Length; i++)
-            {
-                Debug.Log($"animal_id = {animalDataArray[i].id}, animal_type = {animalDataArray[i].animalType}");
-            }
-
-            GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalDataArray);
+       
+            GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray, isRefresh);
         }
 
-        // 색 변경이나 합성 이후에 다시 데이터를 불러와야 함 
-        public void RefreshAnimalData()
+       
+        // 색 변경 이후 다시 데이터를 불러와야 함 
+        public void RefreshAnimalDataColorChange(string animalId)
         {
-            StartCoroutine(RefreshData(ApiUrl.getUserAnimal));
+            StartCoroutine(UpdateDataOnColorChange(ApiUrl.getUserAnimal, animalId));
         }
 
-        private IEnumerator RefreshData(string URL)
-        {
+        private IEnumerator UpdateDataOnColorChange(string URL, string animalId)
+        {   
+            Debug.Log("----------------- UpdateDataOnColorChange -----------------");
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
             // TODO: 임시로 설정
@@ -119,10 +122,62 @@ namespace BluehatGames
             {
                 Debug.Log(request.downloadHandler.text);
                 string jsonData = request.downloadHandler.text;
-                // animalObjectList를 다시 
-                animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
+                SetUpdatedAnimalOnColorChange(animalId, jsonData);
             }
         }
+
+        // 색 변경 이후 업데이트 된 동물에 한해 딕셔너리 데이터를 교체해주자
+        private void SetUpdatedAnimalOnColorChange(string animalId, string jsonData)
+        {
+            // 딕셔너리 데이터 교체 후 썸네일 다시 만들어주는 것까지 해야 함
+            animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
+            AnimalDataFormat updatedAnimalData;
+            // 업데이트 된 동물의 정보 찾기
+            for(int i = 0; i < animalDataArray.Length; i++)
+            {
+                if(animalDataArray[i].id == animalId)
+                {
+                    updatedAnimalData = animalDataArray[i]; 
+
+                    // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
+                    GameObject animalObj = animalObjectDictionary[updatedAnimalData.id];
+                    Animal animal = new Animal(updatedAnimalData);
+                    // animal의 텍스처 변경
+                    animalFactory.ChangeTextureAnimalObject(animalObj, animal);
+
+                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
+                }
+            }
+        }
+
+        // private IEnumerator RefreshDataOnSynthesis(string URL, Action action)
+        // {
+        //     Debug.Log("----------------- RefreshDataOnSynthesis -----------------");
+        //     UnityWebRequest request = UnityWebRequest.Get(URL);
+        //     var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+        //     // TODO: 임시로 설정
+        //     access_token = tempAccessToken;
+
+        //     Debug.Log($"access token = {access_token}");
+        //     request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+        //     yield return request.SendWebRequest();
+
+        //     if (request.result == UnityWebRequest.Result.ConnectionError ||
+        //         request.result == UnityWebRequest.Result.ProtocolError)
+        //     {
+        //         Debug.Log(request.error);
+        //     }
+        //     else
+        //     {
+        //         Debug.Log(request.downloadHandler.text);
+        //         string jsonData = request.downloadHandler.text;
+        //         // 기존 동물들 삭제 
+        //         // DestroyOldAnimalObject();
+        //         // animalObjectList를 다시 
+        //         // SetSynthesisSceneAnimals(jsonData, true);
+        //         action.Invoke();
+        //     }
+        // }
 
         public GameObject GetAnimalObject(string id)
         {
