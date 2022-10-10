@@ -7,4 +7,5 @@ public class SceneName
     public const string _05_Multiplay = "5.Multiplay";
     public const string _PhotonNetworkScene = "PhotonNetworkScene";
     public const string _08_Loading = "99.Loading";
+    public const string _06_Market = "6.Market";
 }
