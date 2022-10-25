@@ -87,20 +87,22 @@ namespace BluehatGames
                 }
                 else if (currentMode == COLOR_CHANGE_MODE)
                 {
-                    currentMode = SELECT_MENU_MODE;
+                    // 결과창일 때 누르면 다시 색변경모드로 가도록
                     panel_colorChange.SetActive(false);
+                    // 색변경 모드일 때 누르면 메인으로 가도록 
                     colorChangeManager.ClearResultAnimal();
+                    currentMode = SELECT_MENU_MODE;
                 }
                 else if (currentMode == FUSION_MODE)
                 {
                     currentMode = SELECT_MENU_MODE;
                     panel_fusion.SetActive(false);
+                    fusionManager.ClearAnimals();
                 }
 
                 animalListView.SetActive(false);
                 panel_result.SetActive(false);
                 ClearAnimals();
-                fusionManager.ClearAnimals();
             });
 
             btn_exitListView.onClick.AddListener(() =>
@@ -277,15 +279,15 @@ namespace BluehatGames
         {
             if (targetAnimal)
             {
-                Destroy(targetAnimal);
+                targetAnimal.SetActive(false);
             }
             if (selectedAnimal_1)
             {
-                Destroy(selectedAnimal_1);
+                selectedAnimal_1.SetActive(false);
             }
             if (selectedAnimal_2)
             {
-                Destroy(selectedAnimal_2);
+                selectedAnimal_2.SetActive(false);
             }
         }
 
@@ -361,7 +363,6 @@ namespace BluehatGames
             animalListView.SetActive(true);
             animalObjectArray = new GameObject[animalDataArray.Length];
 
-
             int index = 0;
             for (int i = 0; i < animalObjectDictionary.Count; i++)
             {
@@ -378,10 +379,11 @@ namespace BluehatGames
                 animalObject.transform.rotation = thumbnailSpot.rotation;
                 animalObject.transform.LookAt(thumbnailCamera.transform);
                 animalObjectArray[curIdx] = animalObject;
-                animalObject.name = animalObject.name + calledCount;
+                animalObject.name = $"{animalObject.name}_{calledCount}";
                 ResetAnimalState(animalObject);
 
                 thumbnailCamera.Render();
+
                 var uiSet = contentUiDictionary[animalDataArray[i].id];
                 uiSet.name = $"{animalDataArray[curIdx].animalType}_{animalDataArray[curIdx].id}";
 
@@ -406,13 +408,14 @@ namespace BluehatGames
                                 targetAnimal.SetActive(false);
                             }
 
-                            Debug.Log($"index = {curIdx}, animalDataArray.Length = {animalDataArray.Length}");
+                            Debug.Log($"[Data] index = {curIdx}, animalDataArray.Length = {animalDataArray.Length}");
                             selectedAnimalData = animalDataArray[curIdx];
 
-
                             // LoadAnimalPrefab 대신에 AnimalFactory에서 오브젝트 가져와야 할 듯
-                            Debug.Log($"animalObjectArray.length => {animalObjectArray.Length}, index => {curIdx}");
-                            targetAnimal = animalObjectArray[curIdx];
+                            Debug.Log($"[Object] index => {curIdx}, animalObjectArray.length => {animalObjectArray.Length}");
+                            
+                            // targetAnimal = animalObjectArray[curIdx];
+                            targetAnimal = animalObject;
                             targetAnimal.SetActive(true);
                             // targetAnimal = LoadAnimalPrefab(selectedAnimalData.animalType, Vector3.zero, Camera.main.gameObject);
                             targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
