@@ -12,7 +12,6 @@ namespace BluehatGames
 
         private string key_authStatus = "AuthStatus";
         public Text infoText;
-        public Button btn_reset;
 
         [Header("Scene name")]
         public string loginSceneName;
@@ -20,16 +19,6 @@ namespace BluehatGames
 
         void Start()
         {
-            // 인증 정보 초기화 
-            btn_reset.onClick.AddListener(() =>
-            {
-                PlayerPrefs.SetInt(key_authStatus, AuthStatus._INIT);
-                // 만약 로컬에 저장되어 있는 유저 정보가 있다면 삭제한다.
-                SaveSystem.DeleteUserInfoFile();
-            });
-
-            Debug.Log($"PlayerPrefs.GetInt(key_completedAuth) = {PlayerPrefs.GetInt(key_authStatus)}");
-
             StartCoroutine(ShowInfoText());
         }
 
@@ -53,9 +42,19 @@ namespace BluehatGames
                 }
                 else
                 {
-                    infoText.text = "Login Success!";
-                    yield return new WaitForSeconds(2);
-                    SceneManager.LoadScene(SceneName._03_Main);
+                    if (AuthKey.CheckAuthKey())
+                    {
+                        infoText.text = "Please Login..";
+                        yield return new WaitForSeconds(2);
+                        SceneManager.LoadScene(SceneName._02_Login);
+                    }
+                    else
+                    {
+                        infoText.text = "Login Success!";
+                        yield return new WaitForSeconds(2);
+                        SceneManager.LoadScene(SceneName._03_Main);
+                    }
+
                 }
             }
         }
