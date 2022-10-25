@@ -17,14 +17,6 @@ namespace BluehatGames
 
         private GameObject selectedAnimalObject;
 
-        public Color tempColor1;
-
-        public Color tempColor2;
-
-        public Color tempColor3;
-
-        public Color tempColor4;
-
         public AnimalDataFormat selectedAnimalData;
 
         private GameObject resultAnimal;
@@ -73,7 +65,6 @@ namespace BluehatGames
 
         public void SendColorChangeAPI()
         {
-            Debug.Log($"selected animal id = {selectedAnimalData.id}, selected animal Type = {selectedAnimalData.animalType}");
             StartCoroutine(GetColorChangeResultFromServer(ApiUrl.postChangeColor));
         }
 
@@ -109,7 +100,6 @@ namespace BluehatGames
                 }
                 else
                 {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
                     string responseText = webRequest.downloadHandler.text;
 
                     var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
@@ -123,77 +113,12 @@ namespace BluehatGames
 
         public void OnRefreshAnimalDataAfterColorChange()
         {
-            Debug.Log($"ColorChangeManager: OnRefreshAnimalDataAfterColorChange - selectedAnimalData.id = {selectedAnimalData.id}");
-            // id를 가지고 결과 데이터를 다시 불러와서 동물의 텍스처를 적용해주어야 함 
             GameObject obj = synthesisManager.GetAnimalObject(selectedAnimalData.id);
             obj.SetActive(true);
             resultAnimal = obj;
             obj.transform.position = new Vector3(-2, -1, obj.transform.position.z);
             obj.transform.LookAt(Camera.main.transform);
-        }
-
-        // 지금 안쓰는 듯?
-        public void ChangeTextureColor()
-        {
-            Renderer animalMesh = selectedAnimalObject.GetComponentInChildren<Renderer>();
-            Texture2D originalTex =
-                animalMesh.material.GetTexture("_MainTex") as Texture2D;
-            Debug.Log("ChangeTextureColor");
-            Texture2D resultTex =
-                new Texture2D(originalTex.width,
-                    originalTex.height,
-                    TextureFormat.RGB24,
-                    false);
-            UnityEngine.Color[] sourcePixels = originalTex.GetPixels();
-            for (int h = 0; h < originalTex.height; h++)
-            {
-                for (int w = 0; w < originalTex.width; w++)
-                {
-                    UnityEngine.Color color =
-                        sourcePixels[h * originalTex.width + w];
-
-                    // 1. 이번 픽셀을 변경될 것인가에 대한 랜덤값
-                    var random = UnityEngine.Random.Range(0, 10);
-                    bool isChangeThisPixel = random > 4 ? false : true;
-
-                    UnityEngine.Color randomColor = color;
-                    if (isChangeThisPixel)
-                    {
-                        // 2. 1번이 true일 경우 변경할 색에 대한 랜덤값
-                        var randomColorValue = UnityEngine.Random.Range(0.0f, 1.0f);
-                        Debug.Log($"random Color Value = {randomColorValue}");
-
-                        // 3. r,g,b, 중 어느 값을 바꿀 것인거에 대한 랜덤값
-                        random = UnityEngine.Random.Range(0, 10);
-
-                        Debug.Log($"Before => {randomColor}");
-                        switch (random)
-                        {
-                            case 0:
-                                randomColor = tempColor1;
-                                break;
-                            case 1:
-                                randomColor = tempColor2;
-                                break;
-                            case 2:
-                                randomColor = tempColor3;
-                                break;
-                            default:
-                                randomColor = tempColor4;
-                                break;
-                        }
-                        Debug.Log($"After => {randomColor}");
-                    }
-
-                    resultTex.SetPixel(w, h, randomColor);
-                }
-            }
-
-            resultTex.Apply();
-
-            animalMesh.material.SetTexture("_MainTex", resultTex);
-            selectedAnimalObject.transform.position =
-                new Vector3(-2, -1, selectedAnimalObject.transform.position.z);
+            obj.transform.eulerAngles = new Vector3(0, obj.transform.eulerAngles.y, 0);
         }
 
         // EncodeToPNG 함수를 사용하기 위해 원래 에셋의 텍스처 포맷을 변경해야 함
