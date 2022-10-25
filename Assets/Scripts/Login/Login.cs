@@ -139,9 +139,7 @@ namespace BluehatGames
 
                         SetJoinCompletedSetting();
                         SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
-                        PlayerPrefs.SetString(PlayerPrefsKey.key_accessToken, response.access_token);
-                        Debug.Log("Login access_token response => " + PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken));
-
+                        AuthKey.SetAuthKey(response.access_token);
                     }
                     else
                     {
