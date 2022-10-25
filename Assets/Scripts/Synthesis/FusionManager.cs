@@ -103,8 +103,9 @@ public class FusionManager : MonoBehaviour
     {
         return resultAnimal;
     }
-    public void ClearAnimals()
+
+    public void ClearResultAnimal()
     {
-        Destroy(resultAnimal);
+        resultAnimal.SetActive(false);
     }
 }

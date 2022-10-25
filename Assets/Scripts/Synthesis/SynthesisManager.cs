@@ -88,20 +88,39 @@ namespace BluehatGames
                 else if (currentMode == COLOR_CHANGE_MODE)
                 {
                     // 결과창일 때 누르면 다시 색변경모드로 가도록
-                    panel_colorChange.SetActive(false);
-                    // 색변경 모드일 때 누르면 메인으로 가도록 
-                    colorChangeManager.ClearResultAnimal();
-                    currentMode = SELECT_MENU_MODE;
+                    if(panel_result.activeSelf)
+                    {
+                        panel_result.SetActive(false);
+                        animalListView.SetActive(true);
+                        colorChangeManager.ClearResultAnimal();
+                    }
+                    // 그냥 색변경모드이면
+                    else 
+                    {
+                        currentMode = SELECT_MENU_MODE;
+                        panel_colorChange.SetActive(false);
+                        animalListView.SetActive(false);
+
+                        colorChangeManager.ClearResultAnimal();
+                    }
                 }
                 else if (currentMode == FUSION_MODE)
                 {
-                    currentMode = SELECT_MENU_MODE;
-                    panel_fusion.SetActive(false);
-                    fusionManager.ClearAnimals();
+                    if(panel_result.activeSelf)
+                    {
+                        panel_result.SetActive(false);
+                        fusionManager.ClearResultAnimal();
+                    }
+                    else
+                    {
+                        currentMode = SELECT_MENU_MODE;
+                        panel_fusion.SetActive(false);
+                        animalListView.SetActive(false);
+
+                        fusionManager.ClearResultAnimal();
+                    }
                 }
 
-                animalListView.SetActive(false);
-                panel_result.SetActive(false);
                 ClearAnimals();
             });
 
