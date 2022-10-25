@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -14,364 +12,280 @@ namespace BluehatGames
 
     public class MarketManager : MonoBehaviour
     {
-        private bool isLoadig = false;
+        private string host = "https://api.bluehat.games";
         public int totalCount = 0;
         private int page = 1;
         public int limit = 10;
         public string order = "Newest";
-
-        public Transform myAnimalContent;
-
-        [Header("Common UI")]
-        public GameObject marketItemPrefab;
-
-        public Button myAnimalButton;
-
-        public GameObject myAnimalPanel;
-        public Button btnNext;
-        public Button btnBefore;
-
-
-        public Button myAnimalPanelCloseBtn;
-
-        public Button myAnimalSellBtn;
-
-        public GameObject myAnimalDetailPanel;
-
-        public Button bakcToMainBtn;
-
-        public Button myAnimalDetailPanelCloseBtn;
-
-        public Text coinInfoText;
-        public Text myAnimalDetailData;
-
-        public Text AnimalDescription;
-
-        public Text AniamlName;
-
-        public Text AnimalPrice;
-
-        public Text AnimalDetailViewCount;
-
-        public Text SellerName;
-
-        public Button animlBuyBtn;
-
+        
         public User user;
 
-        public GameObject AlertPanel;
-
-        public Button MarketAnimalDoneBtn;
-
-        public GameObject marketMyItemPrefab;
-
-
-
-        public Text BuyResultText;
-        [Header("My Animal Sell")]
-        public InputField inputPrice;
-
+        [Header("Market Main Panel")]
+        public Button backToMainBtn;
+        public Button beforeBtn;
+        public Button nextBtn;
+        public Text coinInfoText;
+        public Button myAnimalBtn;
+        public GameObject marketItemPrefab;
+        
+        [Header("MyAnimal Panel")]
+        public GameObject myAnimalPanel;
+        public Button myAnimalCloseBtn;
+        public Button myAnimalSellBtn;
+        public InputField myAnimalInputPrice;
+        public Transform myAnimalContent;
+        public GameObject myAnimalItemPrefab;
+        
+        [Header("Animal Detail Panel")]
+        public GameObject animalDetailPanel;
+        public Text animalDetailName;
+        public Text animalDetailSellerName;
+        public Text animalDetailPrice;
+        public Text animalDetailViewCount;
+        public Text animalDetailDescription;
+        public Button animalDetailBuyBtn;
+        public Button animalDetailCloseBtn;
+        
+        [Header("Common UI")]
+        public Text myAnimalDetailData;
+        
+        [Header("Alert Panel")]
+        public GameObject alertPanel;
+        public Button alertPanelDoneBtn;
+        public Text alertPanelMsg;
+        
         void Start()
         {
-            Debug.Log("MarketManager");
-            StartCoroutine(getItemCount());
-            StartCoroutine(getItems());
-            StartCoroutine(getUserInfo());
-
             myAnimalPanel.SetActive(false);
-            myAnimalDetailPanel.SetActive(false);
-
-            btnNext.onClick.AddListener(() =>
+            animalDetailPanel.SetActive(false);
+            
+            StartCoroutine(GetItemCount());
+            StartCoroutine(GetItems());
+            StartCoroutine(GetUserInfo());
+            
+            nextBtn.onClick.AddListener(() =>
             {
                 page = page + 1;
-                StartCoroutine(getItems());
+                StartCoroutine(GetItems());
             });
 
-            btnBefore.onClick.AddListener(() =>
+            beforeBtn.onClick.AddListener(() =>
             {
                 page = page - 1;
-                StartCoroutine(getItems());
+                StartCoroutine(GetItems());
             });
 
-            myAnimalButton.onClick.AddListener(() =>
+            myAnimalBtn.onClick.AddListener(() =>
             {
                 myAnimalPanel.SetActive(true);
-                StartCoroutine(getUserAnimal());
+                StartCoroutine(GetUserAnimal());
 
             });
 
-            myAnimalPanelCloseBtn.onClick.AddListener(() =>
+            myAnimalCloseBtn.onClick.AddListener(() =>
             {
                 myAnimalPanel.SetActive(false);
             });
 
-            bakcToMainBtn.onClick.AddListener(() =>
+            backToMainBtn.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneName._03_Main);
             });
 
-            myAnimalDetailPanelCloseBtn.onClick.AddListener(() =>
+            animalDetailCloseBtn.onClick.AddListener(() =>
             {
-                myAnimalDetailPanel.SetActive(false);
+                animalDetailPanel.SetActive(false);
             });
 
             myAnimalSellBtn.onClick.AddListener(() =>
             {
-                Debug.Log("myAnimalSellBtn");
-                StartCoroutine(sellMyAnimalToMarket());
+                StartCoroutine(SellMyAnimalToMarket());
             });
 
         }
 
-        private Vector2 setCardPostion(int pageIndex)
-        {
-            var screenHeight = Screen.height;
-            var screenWidth = Screen.width;
-            return new Vector2(0, 0);
-        }
-
-        private Vector2 setCardSize(int pageCardLimit)
-        {
-            var screenHeight = Screen.height;
-            var screenWidth = Screen.width;
-            return new Vector2(100, 100);
-        }
+        /*
+         * This Method call for open new panel to send Information
+         */
         private void OpenAlertPanel(string msg, GameObject prevPanel)
         {
-            Debug.Log("Alert Panel ");
             prevPanel.SetActive(false);
-            AlertPanel.SetActive(true);
-            MarketAnimalDoneBtn.onClick.AddListener(() =>
+            alertPanel.SetActive(true);
+            alertPanelDoneBtn.onClick.AddListener(() =>
                 {
-                    AlertPanel.SetActive(false);
+                    alertPanel.SetActive(false);
                 });
-            BuyResultText.text = msg;
+            alertPanelMsg.text = msg;
         }
 
 
-
-        IEnumerator getItemCount()
+        IEnumerator GetItemCount()
         {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
             string url = host + "/market/counts";
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                }
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                Debug.Log($"Received: {webRequest.downloadHandler.text}");
             }
         }
 
-
-        IEnumerator getUserInfo()
+        private IEnumerator GetUserInfo()
         {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
             string url = host + "/users";
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            webRequest.SetRequestHeader("Authorization", "0000");
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                webRequest.SetRequestHeader("Authorization", "0000");
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                    var response = "{\"user\":" + webRequest.downloadHandler.text + "}";
-                    Debug.Log($"Received: {response}");
-                    var parse_result = JsonUtility.FromJson<UserInfo>(response);
-                    Debug.Log($"User Coin: {parse_result.user.coin}");
-                    user = parse_result.user;
-                    coinInfoText.text = $"{user.coin.ToString()}";
-                }
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                var response = "{\"user\":" + webRequest.downloadHandler.text + "}";
+                var parseResult = JsonUtility.FromJson<UserInfo>(response);
+                user = parseResult.user;
+                coinInfoText.text = $"{user.coin.ToString()}";
             }
         }
 
-        IEnumerator getItems()
+        private IEnumerator GetItems()
         {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
             string url = host + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
-                    var parse_result = JsonUtility.FromJson<ItemCardList>(response);
-                    Debug.Log(parse_result.items);
-                    for (int i = 0; i < parse_result.items.Length; i++)
-                    {
-                        GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
-                        itemObj.transform.SetParent(GameObject.Find("MarketMainPanel").transform);
-                        itemObj.transform.Find("animal_id").GetComponent<Text>().text = parse_result.items[i].id.ToString();
-                        itemObj.transform.Find("animal_name").GetComponent<Text>().text = parse_result.items[i].username;
-                        itemObj.transform.Find("price").GetComponent<Text>().text = parse_result.items[i].price.ToString();
-                        itemObj.transform.Find("view_count").GetComponent<Text>().text = parse_result.items[i].view_count.ToString();
-                        itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200 + 350 * i, 0);
-                        itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
-                        {
-                            Debug.Log("Click");
-                            Debug.Log(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text));
-                            StartCoroutine(getAnimalDetail(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text)));
-                        });
-                    }
-                }
+                Debug.Log($"Error: {webRequest.error}");
             }
-        }
-
-
-
-        IEnumerator getUserAnimal()
-        {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
-            string url = host + "/animal/get-user-animal";
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+            else
             {
-                webRequest.SetRequestHeader("Authorization", "0000");
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
+                var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
+                var parseResult = JsonUtility.FromJson<ItemCardList>(response);
+                for (int i = 0; i < parseResult.items.Length; i++)
                 {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                    var animalInfo = JsonUtility.FromJson<UserAnimalList>(webRequest.downloadHandler.text);
-                    for (int i = 0; i < animalInfo.data.Length; i++)
+                    GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
+                    itemObj.transform.SetParent(GameObject.Find("MarketMainPanel").transform);
+                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = parseResult.items[i].id.ToString();
+                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = parseResult.items[i].username;
+                    itemObj.transform.Find("price").GetComponent<Text>().text = parseResult.items[i].price.ToString();
+                    itemObj.transform.Find("view_count").GetComponent<Text>().text = parseResult.items[i].view_count.ToString();
+                    itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200 + 350 * i, 0);
+                    itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
                     {
-                        GameObject itemObj = GameObject.Instantiate(marketMyItemPrefab);
-                        itemObj.transform.SetParent(myAnimalContent);
-                        itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalInfo.data[i].id.ToString();
-                        itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalInfo.data[i].name;
-                        itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
-                        {
-                            Debug.Log("Click");
-                            myAnimalDetailData.text = itemObj.transform.Find("animal_id").GetComponent<Text>().text;
-                        });
-                    }
-                }
-            }
-        }
-
-
-
-        IEnumerator getAnimalDetail(int id)
-        {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
-            string url = host + "/market/detail?id=" + id.ToString();
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
-            {
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                    myAnimalDetailPanel.SetActive(true);
-                    var animalInfo = JsonUtility.FromJson<AnimalDetailFromServer>(webRequest.downloadHandler.text).data;
-                    AnimalDescription.text = animalInfo.description;
-                    AniamlName.text = animalInfo.animal_name;
-                    AnimalPrice.text = animalInfo.price.ToString();
-                    AnimalDetailViewCount.text = animalInfo.view_count.ToString() + " Views";
-                    SellerName.text = animalInfo.username;
-                    var buyAnimalId = animalInfo.id;
-                    animlBuyBtn.onClick.AddListener(() =>
-                    {
-                        StartCoroutine(buyAnimal(buyAnimalId));
+                        Debug.Log("Click");
+                        Debug.Log(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text));
+                        StartCoroutine(GetAnimalDetail(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text)));
                     });
                 }
             }
         }
 
-        IEnumerator sellMyAnimalToMarket()
+
+        private IEnumerator GetUserAnimal()
         {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
-            string url = host + "/market/sell";
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = UnityWebRequest.Post(url, ""))
+            string url = host + "/animal/get-user-animal";
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            webRequest.SetRequestHeader("Authorization", "0000");
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                webRequest.SetRequestHeader("Authorization", "0000");
-                webRequest.SetRequestHeader("Content-Type", "application/json");
-                var price = inputPrice.text;
-                var animalId = myAnimalDetailData.text;
-                var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + "\"0000\"" + "}";
-                Debug.Log(json);
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError || webRequest.isHttpError)
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                var animalInfo = JsonUtility.FromJson<UserAnimalList>(webRequest.downloadHandler.text);
+                for (int i = animalInfo.data.Length - 1; i >= 0; i--)
                 {
-                    Debug.Log($"Error: {webRequest.error}");
-                    OpenAlertPanel("Sell Fail", myAnimalPanel);
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                    OpenAlertPanel("Sell Success", myAnimalPanel);
+                    GameObject itemObj = GameObject.Instantiate(myAnimalItemPrefab, myAnimalContent, true);
+                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalInfo.data[i].id;
+                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalInfo.data[i].name;
+                    itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Debug.Log("Click");
+                        myAnimalDetailData.text = itemObj.transform.Find("animal_id").GetComponent<Text>().text;
+                    });
                 }
             }
         }
 
 
-        IEnumerator buyAnimal(int id)
+        // ReSharper disable Unity.PerformanceAnalysis
+        private IEnumerator GetAnimalDetail(int id)
         {
-            string host = "https://api.bluehat.games";
-            string localhost = "http://localhost:3000";
-            string url = host + "/market/buy";
-            Debug.Log($"Request to Get Item -> URL: {url}");
-            using (UnityWebRequest webRequest = new UnityWebRequest(url, "POST"))
+            string url = host + "/market/detail?id=" + id;
+            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                webRequest.SetRequestHeader("Authorization", "0000");
-                webRequest.SetRequestHeader("Content-Type", "application/json");
-                string json = "{\"buy_animal_id\":" + id.ToString() + "}";
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                Debug.Log(json);
-                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = new DownloadHandlerBuffer();
-                yield return webRequest.SendWebRequest();
-                if (webRequest.isNetworkError || webRequest.isHttpError)
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                animalDetailPanel.SetActive(true);
+                var animalInfo = JsonUtility.FromJson<AnimalDetailFromServer>(webRequest.downloadHandler.text).data;
+                animalDetailDescription.text = animalInfo.description;
+                animalDetailName.text = animalInfo.animal_name;
+                animalDetailPrice.text = animalInfo.price.ToString();
+                animalDetailViewCount.text = animalInfo.view_count + " Views";
+                animalDetailSellerName.text = animalInfo.username;
+                var buyAnimalId = animalInfo.id;
+                animalDetailBuyBtn.onClick.AddListener(() =>
                 {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                    StartCoroutine(BuyAnimal(buyAnimalId));
+                });
+            }
+        }
 
-                    var result = JsonUtility.FromJson<AnimalBuyResult>(webRequest.downloadHandler.text);
-                    if (result.msg == "success")
-                    {
-                        OpenAlertPanel("Buy Success", myAnimalDetailPanel);
-                    }
-                    else
-                    {
-                        OpenAlertPanel("Buy Fail", myAnimalDetailPanel);
-                    }
-                }
+        private IEnumerator SellMyAnimalToMarket()
+        {
+            string url = host + "/market/sell";
+            using UnityWebRequest webRequest = UnityWebRequest.Post(url, "");
+            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            var price = myAnimalInputPrice.text;
+            var animalId = myAnimalDetailData.text;
+            var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + "\"0000\"" + "}";
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log($"Error: {webRequest.error}");
+                OpenAlertPanel("Sell Fail", myAnimalPanel);
+            }
+            else
+            {
+                OpenAlertPanel("Sell Success", myAnimalPanel);
+            }
+        }
+
+
+        private IEnumerator BuyAnimal(int id)
+        {
+            string url = host + "/market/buy";
+            using UnityWebRequest webRequest = new UnityWebRequest(url, "POST");
+            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            string json = "{\"buy_animal_id\":" + id.ToString() + "}";
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                var result = JsonUtility.FromJson<AnimalBuyResult>(webRequest.downloadHandler.text);
+                OpenAlertPanel(result.msg == "success" ? "Buy Success" : "Buy Fail", animalDetailPanel);
             }
         }
     }
@@ -425,7 +339,7 @@ namespace BluehatGames
             this.description = description;
         }
 
-        public ItemCard getItemCard()
+        public ItemCard GetItemCard()
         {
             return this;
         }
@@ -466,7 +380,7 @@ namespace BluehatGames
         public int tier;
         public string color;
         public string id;
-        public string antimalType;
+        public string animalType;
         public string headItem;
         public string pattern;
     }
