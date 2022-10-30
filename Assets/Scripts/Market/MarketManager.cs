@@ -136,7 +136,7 @@ namespace BluehatGames
 
         private IEnumerator GetUserInfo()
         {
-            string url = host + "/users";
+            string url = host + "/user";
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.SetRequestHeader("Authorization", "0000");
             yield return webRequest.SendWebRequest();
