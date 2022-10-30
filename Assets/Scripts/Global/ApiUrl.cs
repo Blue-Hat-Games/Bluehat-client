@@ -15,7 +15,7 @@ namespace BluehatGames
 
         //Login
         public const string emailLoginVerify = "https://api.bluehat.games/auth";
-        public const string login = "https://api.bluehat.games/users";
+        public const string login = "https://api.bluehat.games/user";
 
         //Animal
         public const string postAnimalNew = "https://api.bluehat.games/animal";
