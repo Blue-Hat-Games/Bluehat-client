@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4439403, g: 0.4931519, b: 0.5722083, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -905,7 +905,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e9e982f3b19f4191992c66996f0cdf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  formatTexture: {fileID: 2800000, guid: bfcdd9cf5a6ef0b4a89c86dabce93a0d, type: 3}
 --- !u!4 &338619944
 Transform:
   m_ObjectHideFlags: 0
@@ -3579,36 +3578,36 @@ MonoBehaviour:
   totalCount: 0
   limit: 5
   order: Newest
-  myAnimalContent: {fileID: 970482676}
-  marketItemPrefab: {fileID: 5614814810390453508, guid: 6bf067fdb4ec94db983c759b4927ff28, type: 3}
-  myAnimalButton: {fileID: 1009773624}
-  myAnimalPanel: {fileID: 1768014899}
-  btnNext: {fileID: 1348847632}
-  btnBefore: {fileID: 1328570482}
-  myAnimalPanelCloseBtn: {fileID: 64657195}
-  myAnimalSellBtn: {fileID: 1115234728}
-  myAnimalDetailPanel: {fileID: 1963828245}
-  bakcToMainBtn: {fileID: 2110938276}
-  myAnimalDetailPanelCloseBtn: {fileID: 1401542519}
-  coinInfoText: {fileID: 654317543}
-  myAnimalDetailData: {fileID: 1435847576}
-  AnimalDescription: {fileID: 153017211}
-  AniamlName: {fileID: 747628736}
-  AnimalPrice: {fileID: 81502929}
-  AnimalDetailViewCount: {fileID: 541593842}
-  SellerName: {fileID: 820375625}
-  animlBuyBtn: {fileID: 334566135}
   user:
     username: 
     coin: 0
     wallet_address: 
     email: 
     createdAt: 
-  AlertPanel: {fileID: 108526921}
-  MarketAnimalDoneBtn: {fileID: 599089268}
-  marketMyItemPrefab: {fileID: 5614814810390453508, guid: d0ab4824145fe461d99154ee3077e9a0, type: 3}
-  BuyResultText: {fileID: 2121496359}
-  inputPrice: {fileID: 1863933708}
+  backToMainBtn: {fileID: 2110938276}
+  beforeBtn: {fileID: 1328570482}
+  nextBtn: {fileID: 1348847632}
+  coinInfoText: {fileID: 654317543}
+  myAnimalBtn: {fileID: 1009773624}
+  marketItemPrefab: {fileID: 5614814810390453508, guid: 6bf067fdb4ec94db983c759b4927ff28, type: 3}
+  myAnimalPanel: {fileID: 1768014899}
+  myAnimalCloseBtn: {fileID: 64657195}
+  myAnimalSellBtn: {fileID: 1115234728}
+  myAnimalInputPrice: {fileID: 1863933708}
+  myAnimalContent: {fileID: 970482676}
+  myAnimalItemPrefab: {fileID: 5614814810390453508, guid: d0ab4824145fe461d99154ee3077e9a0, type: 3}
+  animalDetailPanel: {fileID: 1963828245}
+  animalDetailName: {fileID: 747628736}
+  animalDetailSellerName: {fileID: 820375625}
+  animalDetailPrice: {fileID: 81502929}
+  animalDetailViewCount: {fileID: 541593842}
+  animalDetailDescription: {fileID: 153017211}
+  animalDetailBuyBtn: {fileID: 334566135}
+  animalDetailCloseBtn: {fileID: 1401542519}
+  myAnimalDetailData: {fileID: 1435847576}
+  alertPanel: {fileID: 108526921}
+  alertPanelDoneBtn: {fileID: 599089268}
+  alertPanelMsg: {fileID: 2121496359}
 --- !u!4 &1288204137
 Transform:
   m_ObjectHideFlags: 0
@@ -5161,8 +5160,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 2
+  m_Sprite: {fileID: 21300000, guid: 66efb24ed46044ab8a039599cbc47d7b, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
