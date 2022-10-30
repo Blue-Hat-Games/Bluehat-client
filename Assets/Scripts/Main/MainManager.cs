@@ -16,6 +16,13 @@ namespace BluehatGames
         public Button btn_nftMarket;
         // public Button btn_exit;
 
+        [Header("Setting Button")]
+        public Button btn_setting;
+        public GameObject settingPanel;
+        public Button btn_setting_close;
+        public Button btn_logout;
+
+
         private DataManager dataManager;
 
         public Text text_fistAnimal;
@@ -45,6 +52,26 @@ namespace BluehatGames
             {
                 SceneManager.LoadScene(SceneName._06_Market);
             });
+
+
+            settingPanel.SetActive(false);
+            btn_logout.onClick.AddListener(() =>
+            {
+                AuthKey.ClearAuthKey();
+                PlayerPrefs.SetInt(PlayerPrefsKey.key_authStatus, AuthStatus._INIT);
+                SceneManager.LoadScene(SceneName._01_Title);
+            });
+
+            btn_setting.onClick.AddListener(() =>
+            {
+                settingPanel.SetActive(true);
+            });
+
+            btn_setting_close.onClick.AddListener(() =>
+            {
+                settingPanel.SetActive(false);
+            });
+
 
             // btn_exit.onClick.AddListener(() => {
             //     Application.Quit();
