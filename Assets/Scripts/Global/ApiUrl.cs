@@ -18,7 +18,7 @@ namespace BluehatGames
         public const string login = "https://api.bluehat.games/user";
 
         //Animal
-        public const string postAnimalNew = "https://api.bluehat.games/animal";
+        public const string postAnimalNew = "https://api.bluehat.games/animal/make-animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
         public const string getUserAnimal = "https://api.bluehat.games/animal/get-user-animal";
 
