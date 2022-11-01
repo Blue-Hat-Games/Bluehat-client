@@ -29,15 +29,12 @@ namespace BluehatGames
 
         public Dictionary<string, GameObject> ConvertJsonToAnimalObject(string jsonData)
         {
-            List<GameObject> animalObjects = new List<GameObject>();
-
             Dictionary<string, GameObject> animalObjectDictionary = new Dictionary<string, GameObject>();
 
             Animal[] animalList = GetAnimalDataFromJson(jsonData);
             foreach (Animal data in animalList)
             {
                 GameObject animalObj = GetAnimalGameObject(data);
-                animalObjects.Add(animalObj);
                 animalObjectDictionary.Add(data.id, animalObj);
             }
 
