@@ -17,7 +17,7 @@ namespace BluehatGames
         private int page = 1;
         public int limit = 10;
         public string order = "Newest";
-        
+
         public User user;
 
         [Header("Market Main Panel")]
@@ -27,7 +27,7 @@ namespace BluehatGames
         public Text coinInfoText;
         public Button myAnimalBtn;
         public GameObject marketItemPrefab;
-        
+
         [Header("MyAnimal Panel")]
         public GameObject myAnimalPanel;
         public Button myAnimalCloseBtn;
@@ -35,7 +35,7 @@ namespace BluehatGames
         public InputField myAnimalInputPrice;
         public Transform myAnimalContent;
         public GameObject myAnimalItemPrefab;
-        
+
         [Header("Animal Detail Panel")]
         public GameObject animalDetailPanel;
         public Text animalDetailName;
@@ -45,24 +45,24 @@ namespace BluehatGames
         public Text animalDetailDescription;
         public Button animalDetailBuyBtn;
         public Button animalDetailCloseBtn;
-        
+
         [Header("Common UI")]
         public Text myAnimalDetailData;
-        
+
         [Header("Alert Panel")]
         public GameObject alertPanel;
         public Button alertPanelDoneBtn;
         public Text alertPanelMsg;
-        
+
         void Start()
         {
             myAnimalPanel.SetActive(false);
             animalDetailPanel.SetActive(false);
-            
+
             StartCoroutine(GetItemCount());
             StartCoroutine(GetItems());
             StartCoroutine(GetUserInfo());
-            
+
             nextBtn.onClick.AddListener(() =>
             {
                 page = page + 1;
@@ -304,7 +304,7 @@ namespace BluehatGames
         public string username;
         public int aniaml_type;
         public string animal_name;
-        public string animal_color;
+        public string color;
 
     }
 
