@@ -15,6 +15,9 @@ namespace BluehatGames
         public AnimalFactory animalFactory;
 
         public string acessToken = "0000";
+        public bool isTest = false;
+        public string testAccessToken = "0000";
+
         private Dictionary<string, GameObject> animalObjectDictionary;
         private AnimalDataFormat[] prevAnimalDataArray;
         private AnimalDataFormat[] animalDataArray;
@@ -37,6 +40,10 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             Debug.Log($"access token = {acessToken}");
+            if(isTest)
+            {
+                acessToken = testAccessToken;
+            }
             request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
@@ -109,9 +116,14 @@ namespace BluehatGames
         private IEnumerator UpdateDataOnColorChange(string URL, string animalId)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-
-            Debug.Log($"access token = {acessToken}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            if(isTest) 
+            {
+                access_token = testAccessToken;
+            }
+            Debug.Log($"access token = {access_token}");
+            
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -161,8 +173,11 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: 임시로 설정
-            access_token = tempAccessToken;
+
+            if(isTest) 
+            {
+                access_token = testAccessToken;
+            }
 
             Debug.Log($"access token = {access_token}");
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);

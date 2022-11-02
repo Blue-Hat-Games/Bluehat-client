@@ -82,6 +82,7 @@ namespace BluehatGames
                     uiSet.GetComponent<RawImage>().texture = resultTex;
                     uiSet.GetComponent<Button>().onClick.AddListener(() =>
                     {
+                        GameObject.FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
                         // id를 저장
                         PlayerPrefs.SetString(PlayerPrefsKey.key_multiplayAnimal, animalDataArray[curIdx].id);
                         Debug.Log($"PlayerPrefsKey.key_multiplayAnimal => {animalDataArray[curIdx].id}");
