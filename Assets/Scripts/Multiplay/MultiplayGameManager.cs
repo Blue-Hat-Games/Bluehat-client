@@ -15,6 +15,7 @@ namespace BluehatGames
         public string playerPrefabPath;
         public GameObject cameraPrefab;
         private string selectedAnimal;
+
         public void SetPlayerPrefabPath(string animalName)
         {
             Debug.Log($"setPlayerPrefabPath -> {animalName}");
@@ -32,7 +33,6 @@ namespace BluehatGames
             {
                 Destroy(this.gameObject);
             }
-
         }
 
         public void GameOver()

@@ -60,7 +60,9 @@ namespace BluehatGames
                     case SceneName._04_Synthesis:
                         SetSynthesisSceneAnimals(jsonData);
                         break;
-
+                    case SceneName._05_Multiplay:
+                        SetMultiplaySceneAnimals(jsonData);
+                        break;
                 }
             }
         }
@@ -88,12 +90,18 @@ namespace BluehatGames
         {
             animalObjectDictionary.Clear();
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
-            // isRefresh가 true이면 여기에서 이전 jsonData랑 비교해서 달라진 오브젝트만 dictionary 교체해주자
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
        
             GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
         }
 
+        private void SetMultiplaySceneAnimals(string jsonData)
+        {
+            animalObjectDictionary.Clear();
+            animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
+            animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
+            GameObject.FindObjectOfType<MyAnimalListController>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
+        }
        
         // 색 변경 이후 다시 데이터를 불러와야 함 
         public void RefreshAnimalDataColorChange(string animalId)
