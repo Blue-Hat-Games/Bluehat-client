@@ -21,16 +21,23 @@ namespace BluehatGames
         public GameObject settingPanel;
         public Button btn_setting_close;
         public Button btn_logout;
-
-
+        public Toggle toggle_music;
+        public Toggle toggle_sound_effect;
         private DataManager dataManager;
 
+        [Header("Alert Panel")]
         public Text text_fistAnimal;
+        public Button AlertDoneBtn;
+        public GameObject AlertPanel;
+
+        [Header("Music")]
+        public AudioSource audioSource;
 
         void Start()
         {
-            text_fistAnimal.gameObject.SetActive(false);
             dataManager = GameObject.FindObjectOfType<DataManager>();
+            AlertPanel.SetActive(false);
+
 
             if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
             {
@@ -72,10 +79,22 @@ namespace BluehatGames
                 settingPanel.SetActive(false);
             });
 
+            AlertDoneBtn.onClick.AddListener(() =>
+            {
+                AlertPanel.SetActive(false);
+            });
 
-            // btn_exit.onClick.AddListener(() => {
-            //     Application.Quit();
-            // });
+            toggle_music.onValueChanged.AddListener((bool value) =>
+            {
+                if (value)
+                {
+                    audioSource.mute = false;
+                }
+                else
+                {
+                    audioSource.mute = true;
+                }
+            });
         }
         void SaveClientInfo(string key, int value)
         {
@@ -123,10 +142,10 @@ namespace BluehatGames
                     dataManager.AddNewAnimal(animalName);
                     LoadAnimalPrefab(animalName);
 
+                    AlertPanel.SetActive(true);
                     text_fistAnimal.text = $"Your First Animal is {animalName}!";
                     text_fistAnimal.gameObject.SetActive(true);
-                    yield return new WaitForSeconds(2);
-                    text_fistAnimal.gameObject.SetActive(false);
+                    SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._GENERAL_USER);
                 }
             }
         }
