@@ -6,14 +6,12 @@ using UnityEngine;
 [System.Serializable]
 public class SaveData
 {
-    public SaveData(string _email, string _wallet_address)
+    public SaveData(string _email)
     {
         email = _email;
-        wallet_address = _wallet_address;
     }
 
     public string email;
-    public string wallet_address;
 
 }
 

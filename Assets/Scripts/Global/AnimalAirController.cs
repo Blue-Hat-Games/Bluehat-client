@@ -14,7 +14,7 @@ namespace BluehatGames
     {
         public AnimalFactory animalFactory;
 
-        public string tempAccessToken = "0000";
+        public string acessToken = "0000";
         private Dictionary<string, GameObject> animalObjectDictionary;
         private AnimalDataFormat[] prevAnimalDataArray;
         private AnimalDataFormat[] animalDataArray;
@@ -25,6 +25,7 @@ namespace BluehatGames
 
         void Start()
         {
+            acessToken = PlayerPrefs.GetString("AccessToken");
             animalObjectDictionary = new Dictionary<string, GameObject>();
             currentScene = SceneManager.GetActiveScene();
             currentSceneName = currentScene.name;
@@ -35,12 +36,8 @@ namespace BluehatGames
         public IEnumerator DownLoadGet(string URL)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: 임시로 설정
-            access_token = tempAccessToken;
-
-            Debug.Log($"access token = {access_token}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            Debug.Log($"access token = {acessToken}");
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -90,11 +87,11 @@ namespace BluehatGames
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
             // isRefresh가 true이면 여기에서 이전 jsonData랑 비교해서 달라진 오브젝트만 dictionary 교체해주자
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
-       
+
             GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
         }
 
-       
+
         // 색 변경 이후 다시 데이터를 불러와야 함 
         public void RefreshAnimalDataColorChange(string animalId)
         {
@@ -102,14 +99,11 @@ namespace BluehatGames
         }
 
         private IEnumerator UpdateDataOnColorChange(string URL, string animalId)
-        {   
+        {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: 임시로 설정
-            access_token = tempAccessToken;
 
-            Debug.Log($"access token = {access_token}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            Debug.Log($"access token = {acessToken}");
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -132,11 +126,11 @@ namespace BluehatGames
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
             AnimalDataFormat updatedAnimalData;
             // 업데이트 된 동물의 정보 찾기
-            for(int i = 0; i < animalDataArray.Length; i++)
+            for (int i = 0; i < animalDataArray.Length; i++)
             {
-                if(animalDataArray[i].id == animalId)
+                if (animalDataArray[i].id == animalId)
                 {
-                    updatedAnimalData = animalDataArray[i]; 
+                    updatedAnimalData = animalDataArray[i];
 
                     // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
                     GameObject animalObj = animalObjectDictionary[updatedAnimalData.id];
@@ -156,7 +150,7 @@ namespace BluehatGames
         }
 
         private IEnumerator UpdateDataOnFusion(string URL, string animalId1, string animalId2, string resultAnimalId)
-        {   
+        {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
             // TODO: 임시로 설정
@@ -192,11 +186,11 @@ namespace BluehatGames
 
 
             // 서버에서 새로 받아온 데이터에서 추가된 동물의 정보 찾기
-            for(int i = 0; i < animalDataArray.Length; i++)
+            for (int i = 0; i < animalDataArray.Length; i++)
             {
-                if(animalDataArray[i].id == resultAnimalId)
+                if (animalDataArray[i].id == resultAnimalId)
                 {
-                    updatedAnimalData = animalDataArray[i]; 
+                    updatedAnimalData = animalDataArray[i];
 
                     // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
                     Animal animal = new Animal(updatedAnimalData);
