@@ -11,6 +11,7 @@ namespace BluehatGames
     {
         public static MultiplayGameManager instance = null;
         private bool isConnect = false;
+        public Transform spawnPoint;
 
         public string playerPrefabPath;
         public GameObject cameraPrefab;
@@ -69,11 +70,13 @@ namespace BluehatGames
             yield return new WaitForSeconds(3); // TEST 
             PlayerStatusController.instance.SetStartTimeAttack();
             // 360도 Sphere 공간안에서 랜덤으로 한 점을 찍은 것
-            Vector3 randPos = Random.insideUnitSphere * 10;
+            Vector3 adjustedPos = spawnPoint.position;
+            Vector3 randPos = Random.insideUnitSphere * 5;
             // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
-            randPos.y = 0;
+            adjustedPos = new Vector3(adjustedPos.x + randPos.x, adjustedPos.y, adjustedPos.z + randPos.z);
+            
             // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
-            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, randPos, Quaternion.identity);
+            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, Quaternion.identity);
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
             camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
