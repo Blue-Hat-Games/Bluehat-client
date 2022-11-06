@@ -44,15 +44,17 @@ namespace BluehatGames
                 {
                     if (AuthKey.CheckAuthKey())
                     {
-                        infoText.text = "Please Login..";
-                        yield return new WaitForSeconds(2);
-                        SceneManager.LoadScene(SceneName._02_Login);
-                    }
-                    else
-                    {
                         infoText.text = "Login Success!";
                         yield return new WaitForSeconds(2);
                         SceneManager.LoadScene(SceneName._03_Main);
+
+                    }
+                    else
+                    {
+                        infoText.text = "Please Login..";
+                        yield return new WaitForSeconds(2);
+                        SceneManager.LoadScene(SceneName._02_Login);
+
                     }
 
                 }
