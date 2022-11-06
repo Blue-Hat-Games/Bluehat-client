@@ -25,7 +25,8 @@ namespace BluehatGames
 
         void Start()
         {
-            acessToken = PlayerPrefs.GetString("AccessToken");
+
+            acessToken = "0000";
             animalObjectDictionary = new Dictionary<string, GameObject>();
             currentScene = SceneManager.GetActiveScene();
             currentSceneName = currentScene.name;
@@ -154,7 +155,7 @@ namespace BluehatGames
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
             // TODO: 임시로 설정
-            access_token = tempAccessToken;
+            access_token = "0000";
 
             Debug.Log($"access token = {access_token}");
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
