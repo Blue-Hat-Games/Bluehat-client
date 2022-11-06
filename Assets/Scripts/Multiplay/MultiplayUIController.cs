@@ -25,6 +25,8 @@ namespace BluehatGames
         }
 
         // 멀티플레이에 이용되는 UI들 처리
+        public GameObject joystickCanvas;
+
         public GameObject startPanel;
         public Button goToMainButton;
         public Button startPanelExitButton;
@@ -59,6 +61,11 @@ namespace BluehatGames
             {
                 startPanel.SetActive(false);
             });
+        }
+
+        public void SetJoystickCanvasActive(bool isActive)
+        {
+            joystickCanvas.SetActive(isActive);
         }
 
         public void SetCurrentEggCount(int count)
