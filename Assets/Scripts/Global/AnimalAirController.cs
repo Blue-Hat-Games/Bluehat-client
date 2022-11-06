@@ -15,6 +15,9 @@ namespace BluehatGames
         public AnimalFactory animalFactory;
 
         public string acessToken = "0000";
+        public bool isTest = false;
+        public string testAccessToken = "0000";
+
         private Dictionary<string, GameObject> animalObjectDictionary;
         private AnimalDataFormat[] prevAnimalDataArray;
         private AnimalDataFormat[] animalDataArray;
@@ -37,6 +40,10 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             Debug.Log($"access token = {acessToken}");
+            if(isTest)
+            {
+                acessToken = testAccessToken;
+            }
             request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
@@ -57,7 +64,9 @@ namespace BluehatGames
                     case SceneName._04_Synthesis:
                         SetSynthesisSceneAnimals(jsonData);
                         break;
-
+                    case SceneName._05_Multiplay:
+                        SetMultiplaySceneAnimals(jsonData);
+                        break;
                 }
             }
         }
@@ -85,12 +94,18 @@ namespace BluehatGames
         {
             animalObjectDictionary.Clear();
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
-            // isRefresh가 true이면 여기에서 이전 jsonData랑 비교해서 달라진 오브젝트만 dictionary 교체해주자
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
 
             GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
         }
 
+        private void SetMultiplaySceneAnimals(string jsonData)
+        {
+            animalObjectDictionary.Clear();
+            animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
+            animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
+            GameObject.FindObjectOfType<MyAnimalListController>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
+        }
 
         // 색 변경 이후 다시 데이터를 불러와야 함 
         public void RefreshAnimalDataColorChange(string animalId)
@@ -101,9 +116,14 @@ namespace BluehatGames
         private IEnumerator UpdateDataOnColorChange(string URL, string animalId)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-
-            Debug.Log($"access token = {acessToken}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            if(isTest) 
+            {
+                access_token = testAccessToken;
+            }
+            Debug.Log($"access token = {access_token}");
+            
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -153,8 +173,11 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            // TODO: 임시로 설정
-            access_token = tempAccessToken;
+
+            if(isTest) 
+            {
+                access_token = testAccessToken;
+            }
 
             Debug.Log($"access token = {access_token}");
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
