@@ -101,7 +101,8 @@ namespace BluehatGames
             int allEggCount = originEggCount + GetMultiplyAetherCount();
             PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, allEggCount);
 
-            
+            // Joystick 비활성화
+            MultiplayUIController.instance.SetJoystickCanvasActive(false);
             // UI에 반영
             MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), allMyCoin, GetMultiplyEggCount(), allEggCount);
         }
