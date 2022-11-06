@@ -15,8 +15,6 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
     protected Joystick joystick;
     protected Joybutton joybutton;
 
-    protected bool jump;
-
     private float moveSpeed = 10;
     private float jumpPower = 5;
     private float rotSpeed = 45;
@@ -27,6 +25,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
     private string ANIM_PARAMETER_JUMP = "Jump";
     private string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
 
+    private bool isGround = true;
     void Start()
     {
         joystick = FindObjectOfType<Joystick>();
@@ -62,16 +61,11 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         }
 
         // Jump에 대한 처리
-        if (!jump && joybutton.Pressed)
+        if (isGround && joybutton.Pressed)
         {
-            jump = true;
             rigid.velocity = Vector3.up * jumpPower;
             animator.SetTrigger(ANIM_PARAMETER_JUMP);
-        }
-
-        if (jump && !joybutton.Pressed)
-        {
-            jump = false;
+            isGround = false;
         }
     }
 
@@ -103,6 +97,16 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
             remotePos = (Vector3)stream.ReceiveNext();
             remoteRot = (Quaternion)stream.ReceiveNext();
             //remoteCamRot = (Quaternion)stream.ReceiveNext();
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // 부딪힌 물체의 태그가 "Ground"라면
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            // isGround를 true로 변경
+            isGround = true;
         }
     }
 }

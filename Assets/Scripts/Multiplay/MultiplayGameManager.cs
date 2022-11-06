@@ -16,6 +16,9 @@ namespace BluehatGames
         public string playerPrefabPath;
         public GameObject cameraPrefab;
         private string selectedAnimal;
+
+        private SelectedAnimalDataCupid cupid;
+
         public void SetPlayerPrefabPath(string animalName)
         {
             Debug.Log($"setPlayerPrefabPath -> {animalName}");
@@ -33,7 +36,6 @@ namespace BluehatGames
             {
                 Destroy(this.gameObject);
             }
-
         }
 
         public void GameOver()
@@ -43,7 +45,12 @@ namespace BluehatGames
 
         void Start()
         {
-            string animalName = PlayerPrefs.GetString(PlayerPrefsKey.key_multiplayAnimal);
+            cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
+            if(cupid == null)
+            {
+                Debug.Log("cupid null");
+            }
+            string animalName = cupid.GetSelectedAnimalType();
             SetPlayerPrefabPath(animalName);
 
             StartCoroutine(CreatePlayer());
@@ -84,7 +91,7 @@ namespace BluehatGames
 
         private void SetMultiplayAnimalObject(GameObject animalPlayer)
         {
-
+            cupid.SetAnimalTexture(animalPlayer);
             animalPlayer.AddComponent<MultiplayAnimalController>();
             animalPlayer.AddComponent<PlayerTrigger>();
             animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();

@@ -44,6 +44,19 @@ namespace BluehatGames
         }
 
 
+        private int eggCount = 0;
+        public void AddMultiplayEggCount()
+        {
+            eggCount++;
+            MultiplayUIController.instance.SetCurrentEggCount(eggCount);
+        }
+
+         // 멀티플레이 도중에 얻는 egg Count에 대한 처리
+        public int GetMultiplyEggCount()
+        {
+            return eggCount;
+        }
+
         void Update()
         {
 
@@ -79,8 +92,19 @@ namespace BluehatGames
             int myCoin = GetMultiplyAetherCount();
             // AetherController를 통해 획득 정보 저장
             AetherController.instance.AddAetherCount(myCoin);
+
+            // 총 얻은 코인 
+            int allMyCoin = AetherController.instance.GetAetherCount();
+            
+            // 알
+            int originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
+            int allEggCount = originEggCount + GetMultiplyAetherCount();
+            PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, allEggCount);
+
+            // Joystick 비활성화
+            MultiplayUIController.instance.SetJoystickCanvasActive(false);
             // UI에 반영
-            MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), myCoin + GetMultiplyAetherCount());
+            MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), allMyCoin, GetMultiplyEggCount(), allEggCount);
         }
 
         // 멀티플레이 도중에 얻는 Aether Count에 대한 처리

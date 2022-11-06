@@ -156,7 +156,14 @@ namespace BluehatGames
                             }
 
                             StartCoroutine(ShowAlertPopup(authCompleted));
-                            SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
+                            if (response.msg == "Register Success")
+                            {
+                                SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
+                            }
+                            else
+                            {
+                                SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._LOGIN_COMPLETED);
+                            }
                             AuthKey.SetAuthKey(response.access_token);
                             SceneManager.LoadScene(SceneName._03_Main);
                         }

@@ -18,13 +18,14 @@ namespace BluehatGames
         public const string login = "https://api.bluehat.games/user";
 
         //Animal
-        public const string postAnimalNew = "https://api.bluehat.games/animal";
+        public const string postAnimalNew = "https://api.bluehat.games/animal/make-animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
         public const string getUserAnimal = "https://api.bluehat.games/animal/get-user-animal";
 
         //Synthesis
         public const string postChangeColor = "https://api.bluehat.games/animal/change-color";
-
+        public const string postFusion = "https://api.bluehat.games/animal/merge";
+        public const string postFusionResultPNG = "https://api.bluehat.games/nft/mint";
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
@@ -102,5 +103,11 @@ namespace BluehatGames
     public class RequestColorChangeAnimalFormat
     {
         public string animalId;
+    }
+
+    public class RequestFusionAnimalFormat
+    {
+        public string animalId1;
+        public string animalId2;
     }
 }
