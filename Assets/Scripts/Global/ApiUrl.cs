@@ -26,6 +26,8 @@ namespace BluehatGames
         public const string postChangeColor = "https://api.bluehat.games/animal/change-color";
         public const string postFusion = "https://api.bluehat.games/animal/merge";
         public const string postFusionResultPNG = "https://api.bluehat.games/nft/mint";
+        public const string getRandomHat = "https://api.bluehat.games/hat/new-hat";
+
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
@@ -98,6 +100,16 @@ namespace BluehatGames
     public class ResponseResult
     {
         public string msg;
+    }
+
+    public class ResponseHatResult
+    {
+        public string new_item;
+    }
+
+    public class RequestRandomHatFormat
+    {
+        public string animalId;
     }
 
     public class RequestColorChangeAnimalFormat

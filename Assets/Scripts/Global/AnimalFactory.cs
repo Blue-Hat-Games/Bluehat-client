@@ -51,7 +51,6 @@ namespace BluehatGames
             Debug.Log(animalData.ToString());
             for (int i = 0; i < animalData.Length; i++)
             {
-                Debug.Log($"animalData[{i}] = {animalData[i]}");
                 Animal animal = new Animal(animalData[i]);
                 animalList[i] = animal;
             }
@@ -72,13 +71,44 @@ namespace BluehatGames
             GameObject animalPrefab = animalData.getAnimalPrefab();
 
             GameObject animalObj = GameObject.Instantiate(animalPrefab);
-            // animalObj.transform.LookAt(Camera.main.transform);
             animalObj.name = $"{animalData.animalType}_{animalData.id}";
 
+            LoadHatItemPrefab(animalData.headItem, animalObj);
             Texture2D meshTex = animalData.getAnimalTexture();
             animalObj.GetComponentInChildren<Renderer>().material.SetTexture("_MainTex", meshTex);
 
             return animalObj;
+        }
+
+        private void LoadHatItemPrefab(string itemName, GameObject animalObject)
+        {
+            if(itemName == "None")
+            {
+                return;
+            }
+
+            var path = $"Prefab/Hats/{itemName}";
+            GameObject obj = Resources.Load(path) as GameObject;
+            GameObject hatObj = Instantiate(obj);
+            Transform[] allChildren = animalObject.GetComponentsInChildren<Transform>();
+            Transform hatPoint = null;
+
+            foreach(Transform childTr in allChildren) 
+            {
+                if(childTr.name == "HatPoint")
+                {
+                    hatPoint = childTr;   
+                }
+            }
+            // 모자가 이미 있으면 삭제 
+            if(hatPoint.childCount > 0)
+            {
+                Destroy(hatPoint.GetChild(0).gameObject); 
+            }
+            
+            hatObj.transform.SetParent(hatPoint);
+            hatObj.transform.localPosition = Vector3.zero;
+            hatObj.transform.localEulerAngles = Vector3.zero;
         }
 
     }
