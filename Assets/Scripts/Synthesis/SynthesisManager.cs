@@ -72,7 +72,6 @@ namespace BluehatGames
 
         public ObjectPool contentUiPool;
         public AnimalFactory animalFactory;
-        public Texture2D formatTexture;
 
         public AnimalAirController animalAirController;
 
@@ -117,7 +116,6 @@ namespace BluehatGames
 
         private float adjustAnimaionSpeed = 0.2f;
 
-        private GameObject[] contentUis;
         private Dictionary<string, GameObject> contentUiDictionary;
 
         public float firstAnimalX;
