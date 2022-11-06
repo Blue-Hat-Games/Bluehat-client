@@ -21,6 +21,13 @@ namespace BluehatGames
                     PhotonNetwork.Destroy(coll.gameObject);
                 }
             }
+
+            // 동물의 알은 네트워크 객체는 아님
+            if(coll.tag == "AnimalEgg")
+            {
+                PlayerStatusController.instance.AddMultiplayEggCount();
+                GameObject.Destroy(coll.gameObject);
+            }
         }
     }
 }

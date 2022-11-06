@@ -38,6 +38,11 @@ namespace BluehatGames
         public TextMeshProUGUI resultObtainedAetherCoin;
         public TextMeshProUGUI resultMyAetherCoin;
 
+        // egg
+        public TextMeshProUGUI eggCountText;
+        public TextMeshProUGUI resultObtainedEggCount;
+        public TextMeshProUGUI resultMyEggCount;
+
 
 
         void Start()
@@ -56,6 +61,10 @@ namespace BluehatGames
             });
         }
 
+        public void SetCurrentEggCount(int count)
+        {
+            eggCountText.text = count.ToString();
+        }
 
         public void SetCurrentAetherCoinCount(int count)
         {
@@ -105,10 +114,12 @@ namespace BluehatGames
             gameOverTime.text = "00:00";
         }
 
-        public void SetMultiplayResultPanel(int obtainedCoin, int myCoin)
+        public void SetMultiplayResultPanel(int obtainedCoin, int myCoin, int obtainedEgg, int myEgg)
         {
             resultObtainedAetherCoin.text = obtainedCoin.ToString();
             resultMyAetherCoin.text = myCoin.ToString();
+            resultObtainedEggCount.text = obtainedEgg.ToString();
+            resultMyEggCount.text = myEgg.ToString();
             resultPanel.SetActive(true);
         }
 
