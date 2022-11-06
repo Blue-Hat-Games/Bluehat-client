@@ -112,7 +112,7 @@ namespace BluehatGames
             }
             else
             {
-                gameOverTime.text = $"00:0{(int)gameTime}";
+                gameOverTime.text = $"<color=\"red\">00:0{(int)gameTime}</color>";
             }
         }
 

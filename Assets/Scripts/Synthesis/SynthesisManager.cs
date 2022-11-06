@@ -79,6 +79,8 @@ namespace BluehatGames
         public GameObject animalListView;
         public Transform animalListContentsView;
         public GameObject animalListContentPrefab;
+        public GameObject loadingPanel;
+
         [Header("Result Pannel")]
         public GameObject panel_result;
         public Button btn_result;
@@ -580,6 +582,8 @@ namespace BluehatGames
             SetColorChangeButtonOnClick();
             SetFusionButtonOnClick();
             SetAccessoryButtonOnClick();
+
+            loadingPanel.SetActive(false);
 
         }
 
