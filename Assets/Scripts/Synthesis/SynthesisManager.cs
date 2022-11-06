@@ -80,7 +80,10 @@ namespace BluehatGames
         public GameObject animalListView;
         public Transform animalListContentsView;
         public GameObject animalListContentPrefab;
+        [Header("Result Pannel")]
         public GameObject panel_result;
+        public Button btn_result;
+
         public Button btn_goToMain;
 
         [Header("Color Change UI")]
@@ -97,7 +100,7 @@ namespace BluehatGames
         public Button btn_fusion;
         public Button btn_exitListView;
         public Button btn_startFusion;
-        public GameObject[] text_NFTs;
+        public Image img_klaytnLogo;
 
         [Header("AnimalListThumbnail")]
         public Camera thumbnailCamera;
@@ -146,6 +149,13 @@ namespace BluehatGames
             btn_exitListView.onClick.AddListener(() =>
             {
                 animalListView.SetActive(false);
+            });
+
+            btn_result.onClick.AddListener(() =>
+            {
+                panel_result.SetActive(false);
+                colorChangeManager.ClearResultAnimal();
+                fusionManager.ClearResultAnimal();
             });
 
             InitContentViewUIObjectPool();
@@ -206,11 +216,7 @@ namespace BluehatGames
             {
 
                 panel_result.SetActive(true);
-                for (int i = 0; i < text_NFTs.Length; i++)
-                {
-                    text_NFTs[i].SetActive(false);
-                }
-
+                img_klaytnLogo.gameObject.SetActive(false);
                 // colorChangeManager.ChangeTextureColor();
                 animalListView.SetActive(false);
 
@@ -243,12 +249,7 @@ namespace BluehatGames
 
                 // fusionManager.CreateFusionTexture();
                 panel_result.SetActive(true);
-
-                for (int i = 0; i < text_NFTs.Length; i++)
-                {
-                    text_NFTs[i].SetActive(true);
-                }
-
+                img_klaytnLogo.gameObject.SetActive(true);
                 ClearAnimals();
                 AetherController.instance.SubAetherCount();
                 fusionManager.SendFusionAPI();
