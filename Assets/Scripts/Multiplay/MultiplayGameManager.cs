@@ -16,6 +16,7 @@ namespace BluehatGames
         public string playerPrefabPath;
         public GameObject cameraPrefab;
         private string selectedAnimal;
+        public GameObject loadingPanel;
 
         private SelectedAnimalDataCupid cupid;
 
@@ -75,6 +76,7 @@ namespace BluehatGames
             // yield return new WaitUntil(() => isConnect);
             // TODO: 로딩이 다 되고나서 되어야 하는데, 관련 포톤 함수를 못찾아서 일단 3초 정도 지연 후 Create 되도록 함
             yield return new WaitForSeconds(3); // TEST 
+
             PlayerStatusController.instance.SetStartTimeAttack();
             // 360도 Sphere 공간안에서 랜덤으로 한 점을 찍은 것
             Vector3 adjustedPos = spawnPoint.position;
@@ -87,6 +89,8 @@ namespace BluehatGames
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
             camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
+            loadingPanel.SetActive(false);
+
         }
 
         private void SetMultiplayAnimalObject(GameObject animalPlayer)

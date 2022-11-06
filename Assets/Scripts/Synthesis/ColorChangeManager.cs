@@ -12,6 +12,7 @@ namespace BluehatGames
     public class ColorChangeManager : MonoBehaviour
     {
         public bool isTest = false;
+        public string tempAccessToken = "0000";
 
         private SynthesisManager synthesisManager;
 
@@ -20,6 +21,7 @@ namespace BluehatGames
         public AnimalDataFormat selectedAnimalData;
 
         private GameObject resultAnimal;
+        public GameObject resultAnimalParticle;
 
         public void SetSynthesisManager(SynthesisManager instance)
         {
@@ -49,6 +51,7 @@ namespace BluehatGames
             if(resultAnimal)
             {
                 resultAnimal.SetActive(false);
+                DestroyParticle();
             }
             if(selectedAnimalObject)
             {
@@ -74,8 +77,10 @@ namespace BluehatGames
             string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
             // TODO: 테스트이면 0000 으로 
-            if (isTest) access_token = "0000";
-
+            if (isTest) 
+            {
+                access_token = tempAccessToken;
+            }
             Debug.Log($"access_token = {access_token}");
             using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
             {
@@ -116,9 +121,25 @@ namespace BluehatGames
             GameObject obj = synthesisManager.GetAnimalObject(selectedAnimalData.id);
             obj.SetActive(true);
             resultAnimal = obj;
+
+
             obj.transform.position = new Vector3(-2, -1, obj.transform.position.z);
+            CreateResultAnimalParticle(obj.transform);
             obj.transform.LookAt(Camera.main.transform);
             obj.transform.eulerAngles = new Vector3(0, obj.transform.eulerAngles.y, 0);
+        }
+
+        private GameObject tempParticle;
+        private void CreateResultAnimalParticle(Transform particlePoint)
+        {
+            Vector3 newPos = new Vector3(particlePoint.position.x, particlePoint.position.y + 0.5f, particlePoint.position.z);
+            tempParticle = Instantiate(resultAnimalParticle, newPos, Quaternion.identity);
+            tempParticle.GetComponent<ParticleSystem>().Play();
+        }
+
+        private void DestroyParticle()
+        {
+            GameObject.Destroy(tempParticle);
         }
 
         // EncodeToPNG 함수를 사용하기 위해 원래 에셋의 텍스처 포맷을 변경해야 함

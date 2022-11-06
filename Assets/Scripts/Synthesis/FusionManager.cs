@@ -12,6 +12,8 @@ namespace BluehatGames
     public class FusionManager : MonoBehaviour
     {
         public bool isTest;
+        public string tempAccessToken;
+
         private SynthesisManager synthesisManager;
 
         private GameObject targetAnimal_1;
@@ -26,6 +28,7 @@ namespace BluehatGames
 
         private GameObject resultAnimal;
 
+        public GameObject resultAnimalParticle;
         public void SetSynthesisManager(SynthesisManager instance)
         {
             synthesisManager = instance;
@@ -69,12 +72,14 @@ namespace BluehatGames
 
         public IEnumerator GetFusionResultFromServer(string URL)
         {
-            string access_token =
-                PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
             // TODO: 테스트이면 0000 으로
 
-            if (isTest) access_token = "0000";
+            if (isTest) 
+            {
+                access_token = tempAccessToken;
+            }
             Debug.Log($"access_token = {access_token}");
 
             using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
@@ -130,10 +135,24 @@ namespace BluehatGames
             resultAnimalObject.transform.position = new Vector3(-2, -0.5f, resultAnimalObject.transform.position.z);
             resultAnimalObject.GetComponentInChildren<Animator>().speed = 0.3f;
             resultAnimal = resultAnimalObject;
+            CreateResultAnimalParticle(resultAnimal.transform);
             resultAnimal.transform.LookAt(Camera.main.transform);
             resultAnimal.transform.eulerAngles = new Vector3(0, resultAnimal.transform.eulerAngles.y, 0);
 
             synthesisManager.TakeScreenshotForMarketPNG();
+        }
+
+        private GameObject tempParticle;
+        private void CreateResultAnimalParticle(Transform particlePoint)
+        {
+            Vector3 newPos = new Vector3(particlePoint.position.x, particlePoint.position.y + 0.5f, particlePoint.position.z);
+            tempParticle = Instantiate(resultAnimalParticle, newPos, Quaternion.identity);
+            tempParticle.GetComponent<ParticleSystem>().Play();
+        }
+
+        private void DestroyParticle()
+        {
+            GameObject.Destroy(tempParticle);
         }
 
         public GameObject GetResultAnimal()
@@ -146,6 +165,7 @@ namespace BluehatGames
             if(resultAnimal)
             {
                 resultAnimal.SetActive(false);
+                DestroyParticle();
             }
         }
     }
