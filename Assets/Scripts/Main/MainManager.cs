@@ -32,12 +32,24 @@ namespace BluehatGames
 
         [Header("Music")]
         public AudioSource audioSource;
+        private SoundUtil soundUtil;
 
         void Start()
         {
             dataManager = GameObject.FindObjectOfType<DataManager>();
             AlertPanel.SetActive(false);
+            soundUtil = new SoundUtil();
 
+            if (soundUtil.isbackgroundMusicOn())
+            {
+                audioSource.Play();
+                toggle_music.isOn = true;
+            }
+            else
+            {
+                audioSource.Stop();
+                toggle_music.isOn = false;
+            }
 
             if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
             {
@@ -88,11 +100,13 @@ namespace BluehatGames
             {
                 if (value)
                 {
-                    audioSource.mute = false;
+                    audioSource.Play();
+                    soundUtil.turnOnBackgroundMusic();
                 }
                 else
                 {
-                    audioSource.mute = true;
+                    audioSource.Stop();
+                    soundUtil.turnOffBackgroundMusic();
                 }
             });
         }
