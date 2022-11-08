@@ -84,7 +84,7 @@ namespace BluehatGames
             return animalObj;
         }
 
-        private void LoadHatItemPrefab(string itemName, GameObject animalObject)
+        public void LoadHatItemPrefab(string itemName, GameObject animalObject)
         {
             Debug.Log($"LoadHatItemPrefab() | itemName = {itemName}");
             if(itemName == "None" || itemName == "")

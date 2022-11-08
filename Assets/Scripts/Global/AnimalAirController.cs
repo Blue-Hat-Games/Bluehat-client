@@ -109,12 +109,12 @@ namespace BluehatGames
         }
 
         // 색 변경 이후 다시 데이터를 불러와야 함 
-        public void RefreshAnimalDataColorChange(string animalId)
+        public void RefreshAnimalData(string animalId, bool isColorChange)
         {
-            StartCoroutine(UpdateDataOnColorChange(ApiUrl.getUserAnimal, animalId));
+            StartCoroutine(UpdateDataFromServer(ApiUrl.getUserAnimal, animalId, isColorChange));
         }
 
-        private IEnumerator UpdateDataOnColorChange(string URL, string animalId)
+        private IEnumerator UpdateDataFromServer(string URL, string animalId, bool isColorChange)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
@@ -136,12 +136,12 @@ namespace BluehatGames
             {
                 Debug.Log(request.downloadHandler.text);
                 string jsonData = request.downloadHandler.text;
-                SetUpdatedAnimalOnColorChange(animalId, jsonData);
+                SetUpdatedAnimalObject(animalId, jsonData, isColorChange);
             }
         }
 
         // 색 변경 이후 업데이트 된 동물에 한해 딕셔너리 데이터를 교체해주자
-        private void SetUpdatedAnimalOnColorChange(string animalId, string jsonData)
+        private void SetUpdatedAnimalObject(string animalId, string jsonData, bool isColorChange)
         {
             // 딕셔너리 데이터 교체 후 썸네일 다시 만들어주는 것까지 해야 함
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
@@ -157,8 +157,14 @@ namespace BluehatGames
                     GameObject animalObj = animalObjectDictionary[updatedAnimalData.id];
                     Animal animal = new Animal(updatedAnimalData);
                     // animal의 텍스처 변경
-                    animalFactory.ChangeTextureAnimalObject(animalObj, animal);
-
+                    if(isColorChange)
+                    {
+                        animalFactory.ChangeTextureAnimalObject(animalObj, animal);
+                    }
+                    else
+                    {
+                        animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);                        
+                    }
                     GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
                 }
             }
