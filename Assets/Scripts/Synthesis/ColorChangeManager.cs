@@ -111,7 +111,7 @@ namespace BluehatGames
                     Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
 
                     // refresh data
-                    synthesisManager.SendRequestRefreshAnimalDataOnColorChange(selectedAnimalData.id);
+                    synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, true);
                 }
             }
         }
