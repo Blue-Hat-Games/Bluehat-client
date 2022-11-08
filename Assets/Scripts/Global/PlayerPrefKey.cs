@@ -9,5 +9,7 @@ namespace BluehatGames
         public const string key_AnimalEgg = "AnimalEgg";
         public const string key_BackgroundMusic = "BackgroundMusic";
         public const string key_SoundEffect = "SoundEffect";
+        public const string key_WalletAddress = "WalletAddress";
+        public const string key_WalletPrivateKey = "WalletPrivateKey";
     }
 }
