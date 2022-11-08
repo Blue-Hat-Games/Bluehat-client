@@ -17,6 +17,7 @@ namespace BluehatGames
         public GameObject selectedAnimalObject;
 
         public GameObject hatParticle;
+        private GameObject resultAnimal;
 
         public void SetSynthesisManager(SynthesisManager instance)
         {
@@ -69,6 +70,9 @@ namespace BluehatGames
                     var new_item = JsonUtility.FromJson<ResponseHatResult>(responseText).new_item;
                     Debug.Log($"AccessoryManager | [{URL}] - new_item = {new_item}");
                     LoadHatItemPrefab(new_item);
+
+                    // refresh data
+                    synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, false);
                 }
             }
         }
@@ -133,6 +137,11 @@ namespace BluehatGames
                     .transform
                     .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
                 }
+            }
+
+            if(resultAnimal != null)
+            {
+                resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
             }
             
         }

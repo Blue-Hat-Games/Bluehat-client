@@ -241,8 +241,6 @@ namespace BluehatGames
 
             btn_startFusion.onClick.AddListener(() =>
             {
-
-                // fusionManager.CreateFusionTexture();
                 panel_result.SetActive(true);
                 img_klaytnLogo.gameObject.SetActive(true);
                 AetherController.instance.SubAetherCount();
@@ -419,7 +417,7 @@ namespace BluehatGames
             {
                 colorChangeManager.OnRefreshAnimalDataAfterColorChange();
             }
-            else
+            else if(pannelSwitch.CheckStatus(PannelStatus.FUSION))
             {
                 fusionManager.OnRefreshAnimalDataAfterFusion(updatedAnimalObject);
             }
@@ -598,9 +596,9 @@ namespace BluehatGames
             action.Invoke(tex);
         }
 
-        public void SendRequestRefreshAnimalDataOnColorChange(string animalId)
+        public void SendRequestRefreshAnimalData(string animalId, bool isColorChange)
         {
-            animalAirController.RefreshAnimalDataColorChange(animalId);
+            animalAirController.RefreshAnimalData(animalId, isColorChange);
         }
 
         public void SendRequestRefreshAnimalDataOnFusion(string animalId1, string animalId2, string resultAnimalId)
