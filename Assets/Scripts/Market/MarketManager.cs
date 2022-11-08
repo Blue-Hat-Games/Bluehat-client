@@ -56,10 +56,15 @@ namespace BluehatGames
 
         public AnimalFactory animalFactory;
 
+        private String authToken;
+
         void Start()
         {
             myAnimalPanel.SetActive(false);
             animalDetailPanel.SetActive(false);
+
+            authToken = "0000";
+            Debug.Log("authToken: " + authToken);
 
             StartCoroutine(GetItemCount());
             StartCoroutine(GetItems());
@@ -140,7 +145,7 @@ namespace BluehatGames
         {
             string url = host + "/user";
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Authorization", authToken);
             yield return webRequest.SendWebRequest();
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
@@ -256,7 +261,7 @@ namespace BluehatGames
         {
             string url = host + "/animal/get-user-animal";
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Authorization", authToken);
             yield return webRequest.SendWebRequest();
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
@@ -312,7 +317,7 @@ namespace BluehatGames
         {
             string url = host + "/market/sell";
             using UnityWebRequest webRequest = UnityWebRequest.Post(url, "");
-            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Authorization", authToken);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             var price = myAnimalInputPrice.text;
             var animalId = myAnimalDetailData.text;
@@ -337,7 +342,7 @@ namespace BluehatGames
         {
             string url = host + "/market/buy";
             using UnityWebRequest webRequest = new UnityWebRequest(url, "POST");
-            webRequest.SetRequestHeader("Authorization", "0000");
+            webRequest.SetRequestHeader("Authorization", authToken);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             string json = "{\"buy_animal_id\":" + id.ToString() + "}";
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
