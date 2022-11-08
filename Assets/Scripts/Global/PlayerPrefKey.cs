@@ -7,5 +7,7 @@ namespace BluehatGames
         public const string key_aetherCoin = "AetherCoin";
         public const string key_multiplayAnimal = "MultiplayAnimal";
         public const string key_AnimalEgg = "AnimalEgg";
+        public const string key_BackgroundMusic = "BackgroundMusic";
+        public const string key_SoundEffect = "SoundEffect";
     }
 }
