@@ -54,6 +54,8 @@ namespace BluehatGames
         public Button alertPanelDoneBtn;
         public Text alertPanelMsg;
 
+        public AnimalFactory animalFactory;
+
         void Start()
         {
             myAnimalPanel.SetActive(false);
@@ -165,15 +167,68 @@ namespace BluehatGames
             else
             {
                 var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
-                var parseResult = JsonUtility.FromJson<ItemCardList>(response);
-                for (int i = 0; i < parseResult.items.Length; i++)
-                {
+                ItemCard[] parseResult = JsonUtility.FromJson<ItemCardList>(response).items;
+                StartCoroutine(MakeAnimalThumbnail(parseResult));
+                
+            }
+        }
+
+
+        void ResetAnimalState(GameObject animal)
+        {
+            animal.GetComponent<Rigidbody>().useGravity = false;
+            animal.GetComponent<Rigidbody>().isKinematic = true;
+            animal.GetComponent<CapsuleCollider>().enabled = false;
+
+        }
+
+        public Transform thumbnailSpot;
+        public Camera thumbnailCamera;
+        public RenderTexture renderTexture;
+
+        IEnumerator MakeAnimalThumbnail(ItemCard[] itemCardArray)
+        {
+            for (int i = 0; i < itemCardArray.Length; i++)
+                {                    
+                    ItemCard item = itemCardArray[i];
                     GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
                     itemObj.transform.SetParent(GameObject.Find("MarketMainPanel").transform);
-                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = parseResult.items[i].id.ToString();
-                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = parseResult.items[i].username;
-                    itemObj.transform.Find("price").GetComponent<Text>().text = parseResult.items[i].price.ToString();
-                    itemObj.transform.Find("view_count").GetComponent<Text>().text = parseResult.items[i].view_count.ToString();
+                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = item.id.ToString();
+                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = item.username;
+                    itemObj.transform.Find("price").GetComponent<Text>().text = item.price.ToString();
+                    itemObj.transform.Find("view_count").GetComponent<Text>().text = item.view_count.ToString();
+                    
+                    RawImage rawImage = itemObj.transform.Find("animal_img").GetComponent<RawImage>();
+
+                    AnimalDataFormat updatedAnimalData = new AnimalDataFormat();
+                    updatedAnimalData.name = item.animal_name;
+                    updatedAnimalData.tier = 0;
+                    updatedAnimalData.id = item.id.ToString();
+                    updatedAnimalData.animalType = item.animal_type;
+                    updatedAnimalData.headItem = item.head_item;
+                    updatedAnimalData.pattern = "";
+                    updatedAnimalData.color = item.color;
+                    
+                    Debug.Log($"MarketManager | id = {item.id.ToString()}, animal_type = {item.animal_type}, color = {item.color}");
+
+                    Animal animal = new Animal(updatedAnimalData);
+                    GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
+                    ResetAnimalState(animalObject);
+
+                    animalObject.transform.position = thumbnailSpot.position;
+                    animalObject.transform.rotation = thumbnailSpot.rotation;
+
+                    thumbnailCamera.Render();
+                    
+                    yield return new WaitForEndOfFrame();
+
+                    animalObject.SetActive(false);
+                    ToTexture2D(renderTexture, (Texture2D resultTex) =>
+                    {
+                        rawImage.texture = resultTex;
+
+                    });
+
                     itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200 + 350 * i, 0);
                     itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
                     {
@@ -182,9 +237,20 @@ namespace BluehatGames
                         StartCoroutine(GetAnimalDetail(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text)));
                     });
                 }
-            }
+
+             
+            
         }
 
+        void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
+        {
+            Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
+            // ReadPixels looks at the active RenderTexture.
+            RenderTexture.active = rTex;
+            tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
+            tex.Apply();
+            action.Invoke(tex);
+        }
 
         private IEnumerator GetUserAnimal()
         {
@@ -320,18 +386,22 @@ namespace BluehatGames
     {
         public int id;
         public string username;
-        public int aniaml_type;
+        public string animal_type;
         public string animal_name;
+        public string color;
         public string updatedAt;
         public float price;
         public int view_count;
+        public string head_item;
         public string description;
 
-        public ItemCard(int id, string username, int aniaml_type, string animal_name, string updatedAt, float price, int view_count, string description)
+        public ItemCard(int id, string username, string animal_type, string color, string head_item, string animal_name, string updatedAt, float price, int view_count, string description)
         {
             this.id = id;
             this.username = username;
-            this.aniaml_type = aniaml_type;
+            this.animal_type = animal_type;
+            this.color = color;
+            this.head_item = head_item;
             this.animal_name = animal_name;
             this.updatedAt = updatedAt;
             this.price = price;

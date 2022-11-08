@@ -67,7 +67,11 @@ namespace BluehatGames
         // synthesis manager 같은 곳에서 하나의 동물을 불러올 때 사용 
         public GameObject GetAnimalGameObject(Animal animalData)
         {
-            // Debug.Log($"type = {animalData.animalType}");
+            Debug.Log($"type = {animalData.animalType}");
+            if(animalData.animalType == null)
+            {
+                return null;
+            }
             GameObject animalPrefab = animalData.getAnimalPrefab();
 
             GameObject animalObj = GameObject.Instantiate(animalPrefab);
@@ -82,7 +86,8 @@ namespace BluehatGames
 
         private void LoadHatItemPrefab(string itemName, GameObject animalObject)
         {
-            if(itemName == "None")
+            Debug.Log($"LoadHatItemPrefab() | itemName = {itemName}");
+            if(itemName == "None" || itemName == "")
             {
                 return;
             }
