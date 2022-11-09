@@ -16,22 +16,40 @@ namespace BluehatGames
         [Header("Common UI")]
         public GameObject animalListView;
         public Transform animalListContentsView;
+        public GameObject LoadingPanel;
         public GameObject animalListContentPrefab;
         private Dictionary<string, GameObject> contentUiDictionary;
+        public RawImage selectedAnimalImage;
 
         [Header("AnimalListThumbnail")]
         public Camera thumbnailCamera;
         public RenderTexture renderTexture;
         public Transform thumbnailSpot;
         public GameObject[] animalObjectArray;
+        private GameObject activeAnimalObject;
 
         private int poolSize = 30; // 얼만큼일지 모르지만 이만큼은 만들어놓자
 
         void Start()
         {
+            selectedAnimalImage.gameObject.SetActive(false);
             InitContentViewUIObjectPool();
             contentUiDictionary = new Dictionary<string, GameObject>();
+        }
 
+        void Update()
+        {
+            if (Input.GetMouseButton(0))
+            {
+                if (activeAnimalObject != null)
+                {
+
+                    activeAnimalObject
+                    .transform
+                    .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
+                }
+            }
+                
         }
 
         private void InitContentViewUIObjectPool()
@@ -45,6 +63,7 @@ namespace BluehatGames
         {
             StartCoroutine(MakeThumbnailAnimalList(animalObjectDictionary, animalDataArray));
         }
+
 
         IEnumerator MakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary, AnimalDataFormat[] animalDataArray)
         {
@@ -61,7 +80,7 @@ namespace BluehatGames
 
                 animalObject.transform.position = thumbnailSpot.position;
                 animalObject.transform.rotation = thumbnailSpot.rotation;
-                animalObject.transform.LookAt(thumbnailCamera.transform);
+
                 animalObjectArray[curIdx] = animalObject;
                 animalObject.name = $"{animalObject.name}";
                 ResetAnimalState(animalObject);
@@ -79,9 +98,17 @@ namespace BluehatGames
 
                 ToTexture2D(renderTexture, (Texture2D resultTex) =>
                 {
-                    uiSet.GetComponent<RawImage>().texture = resultTex;
+                    uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                     uiSet.GetComponent<Button>().onClick.AddListener(() =>
                     {
+                        if(activeAnimalObject)
+                        {
+                            activeAnimalObject.SetActive(false);
+                        }
+                        // 선택한 동물 활성화
+                        animalObject.SetActive(true);
+                        activeAnimalObject = animalObject;
+
                         GameObject.FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
                         // id를 저장
                         PlayerPrefs.SetString(PlayerPrefsKey.key_multiplayAnimal, animalDataArray[curIdx].id);
@@ -89,10 +116,13 @@ namespace BluehatGames
                     });
                 
                     uiSet.GetComponentInChildren<Text>().text = animalDataArray[curIdx].animalType;
-                    uiSet.transform.SetParent(animalListContentsView);
+                    uiSet.transform.SetParent(animalListContentsView, false);
                 });
                 index++;
             }
+
+            LoadingPanel.SetActive(false);
+            selectedAnimalImage.gameObject.SetActive(true);
 
         }
 

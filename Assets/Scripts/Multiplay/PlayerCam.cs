@@ -31,8 +31,6 @@ public class PlayerCam : MonoBehaviour
         var lookAxisRot = Quaternion.LookRotation(targetTr.forward);
         var projRot = Vector3.ProjectOnPlane(lookAxisRot.eulerAngles, Vector3.right);
 
-        // this.transform.rotation = Quaternion.Euler(projRot);
-        //this.transform.RotateAround(targetTr.position, Vector3.up, joystick.Horizontal * Time.deltaTime * this.cameraRotSpeed);
         this.transform.position = new Vector3(targetTr.position.x, targetTr.position.y + 3, targetTr.position.z - 10);
     }
 }

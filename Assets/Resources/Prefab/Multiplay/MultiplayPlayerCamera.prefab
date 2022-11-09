@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2249436998571002278}
   - component: {fileID: 2249436998571002279}
   - component: {fileID: 4652539665967469098}
+  - component: {fileID: 1557852690244516452}
   m_Layer: 0
   m_Name: MultiplayPlayerCamera
   m_TagString: MainCamera
@@ -88,3 +89,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb08d5d60be624cbb95a1a14132996db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraRotSpeed: 3
+--- !u!114 &1557852690244516452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2249436998571002277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d404d3c9178034e1fa24e7f51ff38066, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  btn: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  cameraSensitivity: 0
