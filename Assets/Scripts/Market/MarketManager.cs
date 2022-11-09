@@ -43,11 +43,16 @@ namespace BluehatGames
         public Text animalDetailPrice;
         public Text animalDetailViewCount;
         public Text animalDetailDescription;
+        public RawImage animalDetailImg;
         public Button animalDetailBuyBtn;
         public Button animalDetailCloseBtn;
 
-        [Header("Common UI")]
-        public Text myAnimalDetailData;
+        [Header("MyAnimalDetail UI")]
+        public Text myAnimalIdHidedData;
+        public RawImage myAnimalDetailRawImage;
+        public Text myAnimalDetailName;
+        public Text myAnimalDetailType;
+        public Text myAnimalHatItem;
 
         [Header("Alert Panel")]
         public GameObject alertPanel;
@@ -58,6 +63,9 @@ namespace BluehatGames
 
         private String authToken;
 
+        private GameObject[] pageItemObjects;
+
+
         void Start()
         {
             myAnimalPanel.SetActive(false);
@@ -65,6 +73,8 @@ namespace BluehatGames
 
             authToken = "0000";
             Debug.Log("authToken: " + authToken);
+            pageItemObjects = new GameObject[5];
+ 
 
             StartCoroutine(GetItemCount());
             StartCoroutine(GetItems());
@@ -85,6 +95,10 @@ namespace BluehatGames
             myAnimalBtn.onClick.AddListener(() =>
             {
                 myAnimalPanel.SetActive(true);
+                if(isBuyResult == false)
+                {
+                    return;
+                }
                 StartCoroutine(GetUserAnimal());
 
             });
@@ -173,6 +187,17 @@ namespace BluehatGames
             {
                 var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
                 ItemCard[] parseResult = JsonUtility.FromJson<ItemCardList>(response).items;
+                if(hasItemObjects)
+                {
+                    hasItemObjects = false;
+                    for(int i=0; i<pageItemObjects.Length; i++)
+                    {
+                        if(pageItemObjects[i] != null)
+                        {
+                            Destroy(pageItemObjects[i]);
+                        }
+                    }
+                }
                 StartCoroutine(MakeAnimalThumbnail(parseResult));
                 
             }
@@ -190,61 +215,64 @@ namespace BluehatGames
         public Transform thumbnailSpot;
         public Camera thumbnailCamera;
         public RenderTexture renderTexture;
+        
+        private bool hasItemObjects = false;
 
         IEnumerator MakeAnimalThumbnail(ItemCard[] itemCardArray)
         {
+            hasItemObjects = true;
+
             for (int i = 0; i < itemCardArray.Length; i++)
-                {                    
-                    ItemCard item = itemCardArray[i];
-                    GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
-                    itemObj.transform.SetParent(GameObject.Find("MarketMainPanel").transform);
-                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = item.id.ToString();
-                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = item.username;
-                    itemObj.transform.Find("price").GetComponent<Text>().text = item.price.ToString();
-                    itemObj.transform.Find("view_count").GetComponent<Text>().text = item.view_count.ToString();
-                    
-                    RawImage rawImage = itemObj.transform.Find("animal_img").GetComponent<RawImage>();
+            {   
+                ItemCard item = itemCardArray[i];
+                GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
+                pageItemObjects[i] = itemObj;
 
-                    AnimalDataFormat updatedAnimalData = new AnimalDataFormat();
-                    updatedAnimalData.name = item.animal_name;
-                    updatedAnimalData.tier = 0;
-                    updatedAnimalData.id = item.id.ToString();
-                    updatedAnimalData.animalType = item.animal_type;
-                    updatedAnimalData.headItem = item.head_item;
-                    updatedAnimalData.pattern = "";
-                    updatedAnimalData.color = item.color;
-                    
-                    Debug.Log($"MarketManager | id = {item.id.ToString()}, animal_type = {item.animal_type}, color = {item.color}");
+                itemObj.transform.SetParent(GameObject.Find("MarketMainPanel").transform);
+                itemObj.transform.Find("animal_id").GetComponent<Text>().text = item.id.ToString();
+                itemObj.transform.Find("animal_name").GetComponent<Text>().text = item.username;
+                itemObj.transform.Find("price").GetComponent<Text>().text = item.price.ToString();
+                itemObj.transform.Find("view_count").GetComponent<Text>().text = item.view_count.ToString();
+                
+                RawImage rawImage = itemObj.transform.Find("animal_img").GetComponent<RawImage>();
 
-                    Animal animal = new Animal(updatedAnimalData);
-                    GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
-                    ResetAnimalState(animalObject);
+                AnimalDataFormat updatedAnimalData = new AnimalDataFormat();
+                updatedAnimalData.name = item.animal_name;
+                updatedAnimalData.tier = 0;
+                updatedAnimalData.id = item.id.ToString();
+                updatedAnimalData.animalType = item.animal_type;
+                updatedAnimalData.headItem = item.head_item;
+                updatedAnimalData.pattern = "";
+                updatedAnimalData.color = item.color;
+                
+                Debug.Log($"MarketManager | id = {item.id.ToString()}, animal_type = {item.animal_type}, color = {item.color}");
 
-                    animalObject.transform.position = thumbnailSpot.position;
-                    animalObject.transform.rotation = thumbnailSpot.rotation;
+                Animal animal = new Animal(updatedAnimalData);
+                GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
+                ResetAnimalState(animalObject);
 
-                    thumbnailCamera.Render();
-                    
-                    yield return new WaitForEndOfFrame();
+                animalObject.transform.position = thumbnailSpot.position;
+                animalObject.transform.rotation = thumbnailSpot.rotation;
 
-                    animalObject.SetActive(false);
-                    ToTexture2D(renderTexture, (Texture2D resultTex) =>
-                    {
-                        rawImage.texture = resultTex;
+                thumbnailCamera.Render();
+                
+                yield return new WaitForEndOfFrame();
 
-                    });
+                animalObject.SetActive(false);
 
-                    itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(200 + 350 * i, 0);
-                    itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
-                    {
-                        Debug.Log("Click");
-                        Debug.Log(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text));
-                        StartCoroutine(GetAnimalDetail(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text)));
-                    });
-                }
+                ToTexture2D(renderTexture, (Texture2D resultTex) =>
+                {
+                    rawImage.texture = resultTex;
+                });
 
-             
-            
+                itemObj.GetComponent<RectTransform>().anchoredPosition = new Vector2(340 + 430 * i, 0);
+                itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
+                {
+                    Debug.Log("Click");
+                    Debug.Log(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text));
+                    StartCoroutine(GetAnimalDetail(int.Parse(itemObj.transform.Find("animal_id").GetComponent<Text>().text), rawImage));
+                });
+            }
         }
 
         void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
@@ -256,6 +284,8 @@ namespace BluehatGames
             tex.Apply();
             action.Invoke(tex);
         }
+
+        // My Animal List 
 
         private IEnumerator GetUserAnimal()
         {
@@ -271,27 +301,75 @@ namespace BluehatGames
             {
                 Debug.Log($"Received: {webRequest.downloadHandler.text}");
                 var animalInfo = JsonUtility.FromJson<UserAnimalList>(webRequest.downloadHandler.text);
-                for (int i = animalInfo.data.Length - 1; i >= 0; i--)
+                StartCoroutine(MakeMyAnimalThumbnail(animalInfo.data));
+                isBuyResult = false;
+            }
+        }
+
+        // my room thumbnail
+        IEnumerator MakeMyAnimalThumbnail(AnimalDataFormat[] animalDataArray)
+        {
+            for (int i = 0; i < animalDataArray.Length; i++)
+            {                    
+                AnimalDataFormat animalData = animalDataArray[i];
+    
+                GameObject itemObj = GameObject.Instantiate(myAnimalItemPrefab, myAnimalContent, true);
+                itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalData.id;
+                itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalData.name;
+
+                RawImage rawImage = itemObj.transform.Find("animal_img").GetComponent<RawImage>();
+
+                itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    GameObject itemObj = GameObject.Instantiate(myAnimalItemPrefab, myAnimalContent, true);
-                    itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalInfo.data[i].id;
-                    itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalInfo.data[i].name;
-                    itemObj.GetComponentInChildren<Button>().onClick.AddListener(() =>
-                    {
-                        Debug.Log("Click");
-                        myAnimalDetailData.text = itemObj.transform.Find("animal_id").GetComponent<Text>().text;
-                    });
+                    Debug.Log("Click");
+                    myAnimalDetailName.text = animalData.name;
+                    myAnimalDetailRawImage.texture = rawImage.texture;
+                    myAnimalDetailType.text = animalData.animalType;
+                    string hatItemStr = animalData.headItem;
+                    if(animalData.headItem == "" || animalData.headItem == "None")
+                    {   
+                        hatItemStr = "-"; 
+                    }
+                    myAnimalHatItem.text = hatItemStr;
+                    myAnimalIdHidedData.text = animalData.id;
+                });
+
+                Animal animal = new Animal(animalData);
+                GameObject animalObject = animalFactory.GetAnimalGameObject(animal);
+                ResetAnimalState(animalObject);
+
+                animalObject.transform.position = thumbnailSpot.position;
+                animalObject.transform.rotation = thumbnailSpot.rotation;
+
+                thumbnailCamera.Render();
+                
+                yield return new WaitForEndOfFrame();
+
+                animalObject.SetActive(false);
+
+                ToTexture2D(renderTexture, (Texture2D resultTex) =>
+                {
+                    rawImage.texture = resultTex;
+                });
+
+                if(i == 0)
+                {
+                    myAnimalDetailName.text = animalData.name;
+                    myAnimalDetailRawImage.texture = rawImage.texture;
+                    myAnimalDetailType.text = animalData.animalType;
+                    myAnimalHatItem.text = animalData.headItem;
+                    myAnimalIdHidedData.text = animalData.id;
                 }
             }
         }
 
-
         // ReSharper disable Unity.PerformanceAnalysis
-        private IEnumerator GetAnimalDetail(int id)
+        private IEnumerator GetAnimalDetail(int id, RawImage rawImg)
         {
             string url = host + "/market/detail?id=" + id;
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
             yield return webRequest.SendWebRequest();
+
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log($"Error: {webRequest.error}");
@@ -310,8 +388,13 @@ namespace BluehatGames
                 {
                     StartCoroutine(BuyAnimal(buyAnimalId));
                 });
+
+                animalDetailImg.texture = rawImg.texture;
             }
         }
+
+        public string sellFailString;
+        public string sellSuccessString;
 
         private IEnumerator SellMyAnimalToMarket()
         {
@@ -320,7 +403,7 @@ namespace BluehatGames
             webRequest.SetRequestHeader("Authorization", authToken);
             webRequest.SetRequestHeader("Content-Type", "application/json");
             var price = myAnimalInputPrice.text;
-            var animalId = myAnimalDetailData.text;
+            var animalId = myAnimalIdHidedData.text;
             var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + "\"0000\"" + "}";
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
             webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
@@ -329,14 +412,18 @@ namespace BluehatGames
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log($"Error: {webRequest.error}");
-                OpenAlertPanel("Sell Fail", myAnimalPanel);
+                OpenAlertPanel(sellFailString, myAnimalPanel);
             }
             else
             {
-                OpenAlertPanel("Sell Success", myAnimalPanel);
+                OpenAlertPanel(sellSuccessString, myAnimalPanel);
             }
         }
 
+        public string paySuccessMessage;
+        public string payFailMessage;
+        
+        private bool isBuyResult = true;
 
         private IEnumerator BuyAnimal(int id)
         {
@@ -356,7 +443,11 @@ namespace BluehatGames
             else
             {
                 var result = JsonUtility.FromJson<AnimalBuyResult>(webRequest.downloadHandler.text);
-                OpenAlertPanel(result.msg == "success" ? "Buy Success" : "Buy Fail", animalDetailPanel);
+                OpenAlertPanel(result.msg == "success" ? paySuccessMessage : payFailMessage, animalDetailPanel);
+                if(result.msg == "success")
+                {
+                    isBuyResult = true;
+                }
             }
         }
     }
@@ -449,20 +540,8 @@ namespace BluehatGames
     }
 
     [Serializable]
-    public class AnimalFormatData
-    {
-        public string name;
-        public int tier;
-        public string color;
-        public string id;
-        public string animalType;
-        public string headItem;
-        public string pattern;
-    }
-
-    [Serializable]
     public class UserAnimalList
     {
-        public AnimalFormatData[] data;
+        public AnimalDataFormat[] data;
     }
 }
