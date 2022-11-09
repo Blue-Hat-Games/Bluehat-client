@@ -11,5 +11,6 @@ namespace BluehatGames
         public const string key_SoundEffect = "SoundEffect";
         public const string key_WalletAddress = "WalletAddress";
         public const string key_WalletPrivateKey = "WalletPrivateKey";
+        public const string key_KlaytnWalletKey = "KlaytnWalletKey";
     }
 }
