@@ -23,7 +23,7 @@ namespace BluehatGames
         public bool isTestMode;
 
         private GameObject myNewAnimal;
-
+        
         void Start()
         {
             int myEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
@@ -31,6 +31,10 @@ namespace BluehatGames
             eggAlertPanel.SetActive(false);
 
             eggButton.onClick.AddListener(() => {
+                if(eggAlertPanel.activeSelf)
+                {
+                    return;
+                }
                 if(myEggCount <= 0)
                 {
                     StartCoroutine(ShowAlertPanel());

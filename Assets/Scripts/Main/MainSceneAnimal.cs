@@ -29,14 +29,16 @@ public class MainSceneAnimal : MonoBehaviour
     private IEnumerator moveCoroutine;
 
     [SerializeField] private Vector3 direction;
-    [SerializeField] private float animalMoveSpeed = 10;
+    [SerializeField] private float animalMoveSpeed = 6;
 
     private float idleToWalkTransitionValue = 0.2f;
     private float walkToIdleTransitionValue = 0.08f;
 
+    private bool isWallCollision = false;
 
     void Start()
     {
+        this.gameObject.layer = LayerMask.NameToLayer("Animal");
         rigidl = this.gameObject.GetComponent<Rigidbody>();
         animalAnim = this.gameObject.GetComponentInChildren<Animator>();
         animalState = AnimalState.Idle;
@@ -65,6 +67,7 @@ public class MainSceneAnimal : MonoBehaviour
                 idleCoroutine = null;
                 if (moveCoroutine == null)
                 {
+                    isWallCollision = false;
                     moveCoroutine = SetMoveStateTimer();
                     StartCoroutine(moveCoroutine);
                 }
@@ -104,23 +107,28 @@ public class MainSceneAnimal : MonoBehaviour
         {
             yield return null;
             timer += Time.deltaTime;
-            if (timer > randomTimer)
+            if (timer > randomTimer || isWallCollision)
             {
                 animalState = AnimalState.Idle;
                 yield break;
             }
-
+            if(Vector3.Distance(this.transform.eulerAngles, direction) > 0.1)
+            {
+                this.transform.eulerAngles = Vector3.Lerp(this.transform.eulerAngles, direction, 0.5f);
+            }
             // 애니메이터 파라미터 설정 
             animalAnim.SetFloat(ANIM_PARAMETER_MOTIONSPEED, idleToWalkTransitionValue);
 
             rigidl.MovePosition(transform.position + transform.forward * animalMoveSpeed * Time.deltaTime);
+        }
+    }   
 
-            Vector3 _rotation = Vector3.Lerp(transform.eulerAngles, direction, 0.01f);
-            rigidl.MoveRotation(Quaternion.Euler(_rotation));
-            // this.gameObject.transform.LookAt(randomDir - curPos);
-            // // this.gameObject.transform.rotation = Quaternion.LookRotation(randomDir - curPos);
-            // this.gameObject.transform.Translate(randomDir * animalMoveSpeed * Time.deltaTime);
-
+    private void OnCollisionEnter(Collision coll)
+    {
+        if(coll.gameObject.tag == "RestrictedArea")
+        {
+            Debug.Log("RestrictedArea collision -------------");
+            isWallCollision = true;
         }
     }
 
