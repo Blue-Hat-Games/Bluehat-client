@@ -70,6 +70,7 @@ namespace BluehatGames
                     var new_item = JsonUtility.FromJson<ResponseHatResult>(responseText).new_item;
                     Debug.Log($"AccessoryManager | [{URL}] - new_item = {new_item}");
                     LoadHatItemPrefab(new_item);
+                    synthesisManager.SetResultLoadingPanel(false);
 
                     // refresh data
                     synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, false);

@@ -109,7 +109,7 @@ namespace BluehatGames
 
                     var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
                     Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
-
+                    
                     // refresh data
                     synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, true);
                 }
@@ -122,11 +122,13 @@ namespace BluehatGames
             obj.SetActive(true);
             resultAnimal = obj;
 
-
             obj.transform.position = new Vector3(-2, -1, obj.transform.position.z);
             CreateResultAnimalParticle(obj.transform);
             obj.transform.LookAt(Camera.main.transform);
             obj.transform.eulerAngles = new Vector3(0, obj.transform.eulerAngles.y, 0);
+
+            synthesisManager.SetResultLoadingPanel(false);
+
         }
 
         private GameObject tempParticle;

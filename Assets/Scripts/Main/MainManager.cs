@@ -33,6 +33,9 @@ namespace BluehatGames
         [Header("Music")]
         public AudioSource audioSource;
         private SoundUtil soundUtil;
+        public AudioClip multiplayButtonSound;
+        public AudioClip upperButtonSound;
+        public AudioClip mainButtonSound;
 
         void Start()
         {
@@ -59,16 +62,19 @@ namespace BluehatGames
 
             btn_synthesis.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(mainButtonSound);
                 SceneManager.LoadScene(SceneName._04_Synthesis);
             });
 
             btn_multiplay.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(multiplayButtonSound);
                 SceneManager.LoadScene(SceneName._05_Multiplay);
             });
 
             btn_nftMarket.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(mainButtonSound);
                 SceneManager.LoadScene(SceneName._06_Market);
             });
 
@@ -83,6 +89,7 @@ namespace BluehatGames
 
             btn_setting.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(upperButtonSound);
                 settingPanel.SetActive(true);
             });
 

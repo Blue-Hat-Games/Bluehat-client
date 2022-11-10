@@ -83,6 +83,7 @@ namespace BluehatGames
 
         [Header("Result Pannel")]
         public GameObject panel_result;
+        public GameObject panel_result_LoadingImg;
         public Button btn_result;
 
         public Button btn_goToMain;
@@ -281,6 +282,11 @@ namespace BluehatGames
             });
         }
 
+        public void SetResultLoadingPanel(bool isActive)
+        {
+            panel_result_LoadingImg.gameObject.SetActive(isActive);
+        }
+
         void ResetAnimalState(GameObject animal)
         {
             animal.GetComponent<Rigidbody>().useGravity = false;
@@ -409,7 +415,7 @@ namespace BluehatGames
             yield return new WaitForEndOfFrame();
             ToTexture2D(renderTexture, (Texture2D resultTex) =>
             {
-                uiSet.GetComponent<RawImage>().texture = resultTex;
+                uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                 uiSet.GetComponent<Button>().onClick.AddListener(() =>
                 {
                     animalListView.SetActive(false);
@@ -563,7 +569,7 @@ namespace BluehatGames
 
                 ToTexture2D(renderTexture, (Texture2D resultTex) =>
                 {
-                    uiSet.GetComponent<RawImage>().texture = resultTex;
+                    uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                     uiSet.GetComponent<Button>().onClick.AddListener(() =>
                     {
                         animalListView.SetActive(false);

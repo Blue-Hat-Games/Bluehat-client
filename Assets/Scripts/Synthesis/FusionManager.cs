@@ -138,6 +138,8 @@ namespace BluehatGames
             CreateResultAnimalParticle(resultAnimal.transform);
             resultAnimal.transform.LookAt(Camera.main.transform);
             resultAnimal.transform.eulerAngles = new Vector3(0, resultAnimal.transform.eulerAngles.y, 0);
+            
+            synthesisManager.SetResultLoadingPanel(false);
 
             synthesisManager.TakeScreenshotForMarketPNG();
         }
