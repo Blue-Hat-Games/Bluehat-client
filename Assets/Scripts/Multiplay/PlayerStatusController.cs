@@ -38,6 +38,10 @@ namespace BluehatGames
         private bool isGameOver = false;
         private bool isStartTimeAttack = false;
 
+        public AudioClip addAetherCoinEffectSound;
+
+        public Animator addAetherPlusUIAnim;
+
         private void Start()
         {
             MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
@@ -116,7 +120,9 @@ namespace BluehatGames
         private void AddMultiplayAetherCount()
         {
             aetherCount++;
+            SoundManager.instance.PlayEffectSound(addAetherCoinEffectSound);
             MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
+            addAetherPlusUIAnim.SetTrigger("PlayTrigger");
         }
 
         // Aether Energy는 멀티플레이에서 플레이어 상태 정보이므로 여기에서 관리함

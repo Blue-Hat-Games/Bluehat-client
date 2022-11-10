@@ -18,7 +18,11 @@ namespace BluehatGames
         private ParticleSystem obstacleParticleSystem1;
         private GameObject obstacleParticle2;
         private ParticleSystem obstacleParticleSystem2;
-        
+
+        private AudioClip eatEffectSound;
+
+        bool isFirst = false;
+
         void Start()
         {
             obstacleParticle1 = MultiplayGameManager.instance.GetObstacleTriggerParticle();
@@ -28,7 +32,14 @@ namespace BluehatGames
             obstacleParticleSystem2 = obstacleParticle1.GetComponent<ParticleSystem>();
 
             obstacleParticle1.transform.SetParent(this.transform, false);
+            obstacleParticle1.transform.localPosition = new Vector3(0, 1, 0);
             obstacleParticle2.transform.SetParent(this.transform, false);
+            obstacleParticle1.transform.localPosition = new Vector3(0, 1, 0);
+        }
+
+        public void SetEatEffectAudioClip(AudioClip clip)
+        {
+            eatEffectSound = clip;
         }
 
         private void PlayParticle(int number, Vector3 playPos)
@@ -43,9 +54,8 @@ namespace BluehatGames
                 // obstacleParticle2.transform.position = playPos;
                 obstacleParticleSystem2.Play();
             }
-
         }
-        bool isFirst = false;
+
         void OnTriggerEnter(Collider coll)
         {
             if (coll.tag == "Obstacle")
@@ -67,6 +77,7 @@ namespace BluehatGames
                 {
                     PlayParticle(2, this.transform.position);
                 } 
+                SoundManager.instance.PlayEffectSound(eatEffectSound);
                 isFirst = !isFirst;
             }
 
