@@ -11,13 +11,14 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
     Vector3 remotePos = Vector3.zero;
     Quaternion remoteRot = Quaternion.identity;
     Quaternion remoteCamRot = Quaternion.identity;
+    Vector3 remoteScale = Vector3.zero;
 
     protected Joystick joystick;
     protected Joybutton joybutton;
 
     private float moveSpeed = 10;
     private float jumpPower = 5;
-    private float rotSpeed = 45;
+    public float rotSpeed = 1;
 
     private Rigidbody rigid;
     private Animator animator;
@@ -74,6 +75,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
         transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
+        transform.localScale = Vector3.Lerp(transform.localScale, remoteScale, 10 * Time.deltaTime);
         //camera.rotation = Quaternion.Lerp(camera.rotation, remoteCamRot, 10 * Time.deltaTime);
     }
 
@@ -88,6 +90,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
             // - 내 포지션 값을 보내보자
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
+            stream.SendNext(transform.localScale);
             //stream.SendNext(camera.rotation);
         }
         // 내가 데이터를 받는 중이라면 
@@ -96,6 +99,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
             // 순서대로 보내면 순서대로 들어옴. 근데 타입캐스팅 해주어야 함
             remotePos = (Vector3)stream.ReceiveNext();
             remoteRot = (Quaternion)stream.ReceiveNext();
+            remoteScale = (Vector3)stream.ReceiveNext();
             //remoteCamRot = (Quaternion)stream.ReceiveNext();
         }
     }

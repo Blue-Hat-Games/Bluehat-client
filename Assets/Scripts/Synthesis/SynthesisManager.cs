@@ -92,7 +92,6 @@ namespace BluehatGames
         public Button btn_colorChange;
         public Button btn_startColorChange;
 
-
         [Header("Accessory Change UI")]
         public GameObject panel_accessory;
         public Button btn_accessory;
@@ -207,6 +206,10 @@ namespace BluehatGames
             // color change button in synthesis main menu
             btn_colorChange.onClick.AddListener(() =>
             {
+                btn_colorChange.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                btn_fusion.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+                btn_accessory.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+                
                 pannelSwitch.ChangeStatus(PannelStatus.COLOR_CHANGE);
                 panel_result.SetActive(false);
                 animalListView.SetActive(true);
@@ -225,12 +228,19 @@ namespace BluehatGames
                 AetherController.instance.SubAetherCount();
                 colorChangeManager.SendColorChangeAPI();
             });
+
+            btn_colorChange.onClick.Invoke();            
+            btn_startColorChange.gameObject.SetActive(false);
         }
 
         private void SetFusionButtonOnClick()
         {
             btn_fusion.onClick.AddListener(() =>
             {
+                btn_fusion.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                btn_colorChange.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+                btn_accessory.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+                
                 pannelSwitch.ChangeStatus(PannelStatus.FUSION);
                 panel_result.SetActive(false);
                 btn_startFusion.gameObject.SetActive(false);
@@ -252,6 +262,10 @@ namespace BluehatGames
         private void SetAccessoryButtonOnClick()
         {
             btn_accessory.onClick.AddListener(() => {
+                btn_accessory.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                btn_colorChange.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+                btn_fusion.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
+
                 pannelSwitch.ChangeStatus(PannelStatus.ACCESORY);
                 panel_result.SetActive(false);
                 btn_startAccessory.gameObject.SetActive(false);
@@ -429,7 +443,7 @@ namespace BluehatGames
             {
                 targetAnimal.SetActive(false);
             }
-
+            btn_startColorChange.gameObject.SetActive(true);
             selectedAnimalData = animalData;
 
             targetAnimal = animalObject;

@@ -31,7 +31,7 @@ namespace BluehatGames
         private float aetherEnergy = 0;
 
         public int energyToExchangeAether = 50;
-        public float addedAetherEnergyValue = 10;
+        public float addedAetherEnergyValue = 5;
 
         public float gameTime = 0;
 

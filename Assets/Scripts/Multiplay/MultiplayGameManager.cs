@@ -18,6 +18,8 @@ namespace BluehatGames
         private string selectedAnimal;
         public GameObject loadingPanel;
 
+        public GameObject obstacleTriggerParticle;
+
         private SelectedAnimalDataCupid cupid;
 
         public void SetPlayerPrefabPath(string animalName)
@@ -51,8 +53,12 @@ namespace BluehatGames
             {
                 Debug.Log("cupid null");
             }
-            string animalName = cupid.GetSelectedAnimalType();
-            SetPlayerPrefabPath(animalName);
+            else
+            {
+                playerPrefabPath = cupid.GetSelectedAnimalType();
+            }
+        
+            SetPlayerPrefabPath(playerPrefabPath);
 
             StartCoroutine(CreatePlayer());
         }
@@ -88,14 +94,18 @@ namespace BluehatGames
             GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, Quaternion.identity);
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
-            camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
+            // camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
+            camera.GetComponent<MultiplayCameraController>().SetCameraTarget(playerTemp);
             loadingPanel.SetActive(false);
 
         }
 
         private void SetMultiplayAnimalObject(GameObject animalPlayer)
         {
-            cupid.SetAnimalTexture(animalPlayer);
+            if(cupid != null)
+            {
+                cupid.SetAnimalTexture(animalPlayer);
+            }
             animalPlayer.AddComponent<MultiplayAnimalController>();
             animalPlayer.AddComponent<PlayerTrigger>();
             animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
@@ -107,6 +117,9 @@ namespace BluehatGames
             PhotonNetwork.Disconnect();
         }
 
-
+        public GameObject GetObstacleTriggerParticle()
+        {
+            return Instantiate(this.obstacleTriggerParticle, Vector3.zero, Quaternion.identity);
+        }
     }
 }

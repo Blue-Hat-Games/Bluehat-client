@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
+using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
+
 
 namespace BluehatGames
 {
@@ -16,8 +18,10 @@ namespace BluehatGames
         private bool isConnecting = false;
 
         [Header("UI")]
-        public InputField nickNameInputField;
+        // public InputField nickNameInputField;
         public Button connectButton;
+        public Button goToMainButton;
+
         public GameObject controlPanel; // inputField, PlayButton
         public GameObject progressPanel; // connecting ...
         void Awake()
@@ -38,6 +42,11 @@ namespace BluehatGames
             connectButton.onClick.AddListener(() =>
             {
                 Connect();
+            });
+
+            goToMainButton.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene(SceneName._03_Main);
             });
         }
 
