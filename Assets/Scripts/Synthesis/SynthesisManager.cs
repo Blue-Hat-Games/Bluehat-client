@@ -223,6 +223,7 @@ namespace BluehatGames
             btn_startColorChange.onClick.AddListener(() =>
             {
                 panel_result.SetActive(true);
+                panel_result_LoadingImg.SetActive(true);
                 img_klaytnLogo.gameObject.SetActive(false);
                 animalListView.SetActive(false);
                 // sub aether count
@@ -253,6 +254,7 @@ namespace BluehatGames
             btn_startFusion.onClick.AddListener(() =>
             {
                 panel_result.SetActive(true);
+                panel_result_LoadingImg.SetActive(true);
                 img_klaytnLogo.gameObject.SetActive(true);
                 AetherController.instance.SubAetherCount();
                 fusionManager.SendFusionAPI();
@@ -277,6 +279,7 @@ namespace BluehatGames
 
             btn_startAccessory.onClick.AddListener(() => {
                 panel_result.SetActive(true);
+                panel_result_LoadingImg.SetActive(true);
                 AetherController.instance.SubAetherCount();
                 accessoryManager.SendRandomHatAPI();
             });
@@ -284,7 +287,18 @@ namespace BluehatGames
 
         public void SetResultLoadingPanel(bool isActive)
         {
+            if(isActive == false)
+            {
+                Invoke("ShowOffResultLoadingImage", 3.0f);
+                return;
+            }
+
             panel_result_LoadingImg.gameObject.SetActive(isActive);
+        }
+
+        public void ShowOffResultLoadingImage()
+        {
+            panel_result_LoadingImg.gameObject.SetActive(false);
         }
 
         void ResetAnimalState(GameObject animal)
@@ -329,7 +343,7 @@ namespace BluehatGames
         {
             // Create a Web Form
             WWWForm form = new WWWForm();
-            form.AddField("wallet_address", "0x9b09EfC0a10BaCd3f296B069D1C8bD0032570EB8");
+            form.AddField("wallet_address", "0x4f898b8e903120fffb07165a34409940971da4ae");
             form.AddBinaryData("file", bytes);
 
             // Upload to a cgi script
@@ -455,7 +469,7 @@ namespace BluehatGames
             targetAnimal = animalObject;
             targetAnimal.SetActive(true);
             targetAnimal.GetComponentInChildren<Animator>().speed = adjustAnimaionSpeed;
-            // targetAnimal.transform.position = new Vector3(-4, -0.5f, targetAnimal.transform.position.z);
+
             targetAnimal.transform.position = thumbnailSpot.transform.position;
 
             ResetAnimalState(targetAnimal);

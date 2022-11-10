@@ -29,7 +29,6 @@ namespace BluehatGames
         void Start()
         {
 
-            acessToken = "0000";
             animalObjectDictionary = new Dictionary<string, GameObject>();
             currentScene = SceneManager.GetActiveScene();
             currentSceneName = currentScene.name;
@@ -41,6 +40,7 @@ namespace BluehatGames
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
             Debug.Log($"access token = {acessToken}");
+            acessToken = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
             if (isTest)
             {
                 acessToken = testAccessToken;

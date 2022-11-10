@@ -92,7 +92,7 @@ namespace BluehatGames
             adjustedPos = new Vector3(adjustedPos.x + randPos.x, adjustedPos.y, adjustedPos.z + randPos.z);
             
             // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
-            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, Quaternion.identity);
+            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, spawnPoint.rotation);
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
             // camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);

@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a9e44a36b94dd58a3b87f83f516e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 1
+  isTest: 0
   tempAccessToken: 0000
   selectedAnimalData:
     name: 
@@ -478,7 +478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 10}
+  m_AnchoredPosition: {x: 0, y: 200}
   m_SizeDelta: {x: 1200, y: 1200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &118802226
@@ -501,7 +501,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 8b5af9315603e41f288e868fb968b373, type: 2}
+  m_Texture: {fileID: 8400000, guid: 7f7e8ce8a6c035f43ba73116c20b9897, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1324,7 +1324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 1300, y: 50}
+  m_AnchoredPosition: {x: 1200, y: 50}
   m_SizeDelta: {x: 900, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &478063935
@@ -1952,7 +1952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2121e6dd1cfd85344817ea91264f28ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 1
+  isTest: 0
   tempAccessToken: 0000
   selectedAnimalData:
     name: 
@@ -1963,6 +1963,7 @@ MonoBehaviour:
     headItem: 
     pattern: 
   resultAnimalParticle: {fileID: 1597810799027298, guid: 0058d5de97db72045a6e7a53526e4937, type: 3}
+  thumbnailSpot: {fileID: 1180054566}
 --- !u!1 &822255168
 GameObject:
   m_ObjectHideFlags: 0
@@ -4139,7 +4140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animalFactory: {fileID: 1739391805}
   acessToken: 0000
-  isTest: 1
+  isTest: 0
   testAccessToken: 0000
 --- !u!4 &1341115605
 Transform:
@@ -9501,8 +9502,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7210f083a62f48a469243accabd27a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 1
+  isTest: 0
   tempAccessToken: 0000
+  thumbnailSpot: {fileID: 1180054566}
   resultAnimalParticle: {fileID: 1497030318103322, guid: 3313c584bfb0ca54584fe5b29871dfc2, type: 3}
 --- !u!1 &1456134140
 GameObject:
@@ -11151,7 +11153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 800, y: 50}
+  m_AnchoredPosition: {x: 650, y: 50}
   m_SizeDelta: {x: 900, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1857329820

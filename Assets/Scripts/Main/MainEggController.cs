@@ -26,6 +26,8 @@ namespace BluehatGames
         
         void Start()
         {
+
+            PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, 79);
             int myEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
             eggText.text = myEggCount.ToString();
             eggAlertPanel.SetActive(false);

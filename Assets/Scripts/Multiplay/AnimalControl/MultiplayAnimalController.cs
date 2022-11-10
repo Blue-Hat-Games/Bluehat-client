@@ -18,7 +18,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
     private float moveSpeed = 10;
     private float jumpPower = 5;
-    public float rotSpeed = 1;
+    public float rotSpeed = 10;
 
     private Rigidbody rigid;
     private Animator animator;

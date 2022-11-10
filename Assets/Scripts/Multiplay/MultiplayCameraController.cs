@@ -54,7 +54,7 @@ public class MultiplayCameraController : MonoBehaviour
         }
         // this.transform.position = Vector3.Lerp(this.transform.position, this.player.transform.position + new Vector3(0, this.transform.position.y, 0), this.speed);
 
-        GetTouchInput();
+        // GetTouchInput();
     }
 
     private void GetTouchInput()
