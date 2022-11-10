@@ -28,6 +28,10 @@ namespace BluehatGames
         public const string postFusionResultPNG = "https://api.bluehat.games/nft/mint";
         public const string getRandomHat = "https://api.bluehat.games/hat/new-hat";
 
+
+
+        // wallet
+        public const string CreateNewWallet = "https://api.bluehat.games" + "/wallet/create-new-wallet";
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
