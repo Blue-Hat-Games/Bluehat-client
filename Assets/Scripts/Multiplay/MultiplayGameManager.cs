@@ -19,6 +19,7 @@ namespace BluehatGames
         public GameObject loadingPanel;
 
         public GameObject obstacleTriggerParticle;
+        public AudioClip eatEffectSound; 
 
         private SelectedAnimalDataCupid cupid;
 
@@ -107,7 +108,8 @@ namespace BluehatGames
                 cupid.SetAnimalTexture(animalPlayer);
             }
             animalPlayer.AddComponent<MultiplayAnimalController>();
-            animalPlayer.AddComponent<PlayerTrigger>();
+            PlayerTrigger playerTrigger = animalPlayer.AddComponent<PlayerTrigger>();
+            playerTrigger.SetEatEffectAudioClip(eatEffectSound);
             animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
         }
 

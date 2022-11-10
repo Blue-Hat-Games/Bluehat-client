@@ -45,8 +45,6 @@ namespace BluehatGames
         public TextMeshProUGUI resultObtainedEggCount;
         public TextMeshProUGUI resultMyEggCount;
 
-
-
         void Start()
         {
             aetherProgressBar.value = 0;
