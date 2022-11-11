@@ -11,7 +11,11 @@ namespace BluehatGames
         }
 
         public string liveServer = "https://api.bluehat.games";
+
         public string testServer = "";
+        public static string prodSever = "https://api.bluehat.games";
+
+        public static string devServer = "http://localhost:3000";
 
         //Login
         public const string emailLoginVerify = "https://api.bluehat.games/auth";
@@ -29,9 +33,14 @@ namespace BluehatGames
         public const string getRandomHat = "https://api.bluehat.games/hat/new-hat";
 
 
+        // Quest
+        public const string getQuestList = "https://api.bluehat.games/quest";
+        public const string getQuestCount = "https://api.bluehat.games/quest/count";
+
 
         // wallet
         public const string CreateNewWallet = "https://api.bluehat.games" + "/wallet/create-new-wallet";
+
         //Get Header Authorization
         public const string AuthGetHeader = "Authorization";
 
