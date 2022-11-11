@@ -1,18 +1,26 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking;
 
-namespace BluehatGames 
+namespace BluehatGames
 {
-
     public class FusionManager : MonoBehaviour
     {
         public bool isTest;
         public string tempAccessToken;
+
+        public Transform thumbnailSpot;
+
+        public GameObject resultAnimalParticle;
+
+        private Texture2D[] referenceTextures;
+
+        private GameObject resultAnimal;
+
+        private AnimalDataFormat selectedAnimalData_1;
+
+        private AnimalDataFormat selectedAnimalData_2;
 
         private SynthesisManager synthesisManager;
 
@@ -20,21 +28,7 @@ namespace BluehatGames
 
         private GameObject targetAnimal_2;
 
-        private AnimalDataFormat selectedAnimalData_1;
-
-        private AnimalDataFormat selectedAnimalData_2;
-
-        private Texture2D[] referenceTextures;
-
-        private GameObject resultAnimal;
-
-        public Transform thumbnailSpot;
-
-        public GameObject resultAnimalParticle;
-        public void SetSynthesisManager(SynthesisManager instance)
-        {
-            synthesisManager = instance;
-        }
+        private GameObject tempParticle;
 
         private void Start()
         {
@@ -45,14 +39,16 @@ namespace BluehatGames
         {
             if (Input.GetMouseButton(0))
             {
-                if (resultAnimal == null)
-                {
-                    return;
-                }
+                if (resultAnimal == null) return;
                 resultAnimal
                     .transform
                     .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
             }
+        }
+
+        public void SetSynthesisManager(SynthesisManager instance)
+        {
+            synthesisManager = instance;
         }
 
         public void SetCurSelectedAnimal_1(AnimalDataFormat animalData, GameObject animalObject)
@@ -61,7 +57,7 @@ namespace BluehatGames
             targetAnimal_1 = animalObject;
         }
 
-        public void SetCurSelectedAnimal_2(AnimalDataFormat animalData,GameObject animalObject)
+        public void SetCurSelectedAnimal_2(AnimalDataFormat animalData, GameObject animalObject)
         {
             selectedAnimalData_2 = animalData;
             targetAnimal_2 = animalObject;
@@ -74,44 +70,41 @@ namespace BluehatGames
 
         public IEnumerator GetFusionResultFromServer(string URL)
         {
-            string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
             // TODO: 테스트이면 0000 으로
 
-            if (isTest) 
-            {
-                access_token = tempAccessToken;
-            }
+            if (isTest) access_token = tempAccessToken;
             Debug.Log($"access_token = {access_token}");
 
-            using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
+            using (var webRequest = UnityWebRequest.Post(URL, ""))
             {
                 webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
                 webRequest.SetRequestHeader("Content-Type", "application/json");
 
-                RequestFusionAnimalFormat requestData = new RequestFusionAnimalFormat();
+                var requestData = new RequestFusionAnimalFormat();
                 requestData.animalId1 = selectedAnimalData_1.id;
                 requestData.animalId2 = selectedAnimalData_2.id;
 
-                string json = JsonUtility.ToJson(requestData);
-                Debug.Log (json);
+                var json = JsonUtility.ToJson(requestData);
+                Debug.Log(json);
 
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = (UploadHandler) new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
+                var bodyRaw = Encoding.UTF8.GetBytes(json);
+                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
 
                 yield return webRequest.SendWebRequest();
 
-                long responseCode = webRequest.responseCode;
-                string responseText = webRequest.downloadHandler.text;
+                var responseCode = webRequest.responseCode;
+                var responseText = webRequest.downloadHandler.text;
 
-                switch(responseCode)
+                switch (responseCode)
                 {
                     case 400:
                     case 419:
                         var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
                         Debug.Log($"responseCode 400 | msg = {responseMsg}");
-                    break;
+                        break;
                     default:
                         if (webRequest.isNetworkError || webRequest.isHttpError)
                         {
@@ -122,13 +115,14 @@ namespace BluehatGames
                             var responseData = JsonUtility.FromJson<AnimalDataFormat>(responseText);
                             Debug.Log($"FusionManager | [{URL}] - {responseData}");
 
-                            string resultAnimalId = responseData.id;
+                            var resultAnimalId = responseData.id;
                             // refresh data
-                            synthesisManager.SendRequestRefreshAnimalDataOnFusion(selectedAnimalData_1.id, selectedAnimalData_2.id, resultAnimalId);
+                            synthesisManager.SendRequestRefreshAnimalDataOnFusion(selectedAnimalData_1.id,
+                                selectedAnimalData_2.id, resultAnimalId);
                         }
-                    break;
+
+                        break;
                 }
-            
             }
         }
 
@@ -141,23 +135,23 @@ namespace BluehatGames
             CreateResultAnimalParticle(resultAnimal.transform);
             resultAnimal.transform.LookAt(Camera.main.transform);
             resultAnimal.transform.eulerAngles = new Vector3(0, resultAnimal.transform.eulerAngles.y, 0);
-            
+
             synthesisManager.SetResultLoadingPanel(false);
 
             synthesisManager.TakeScreenshotForMarketPNG();
         }
 
-        private GameObject tempParticle;
         private void CreateResultAnimalParticle(Transform particlePoint)
         {
-            Vector3 newPos = new Vector3(particlePoint.position.x, particlePoint.position.y + 0.5f, particlePoint.position.z);
+            var newPos = new Vector3(particlePoint.position.x, particlePoint.position.y + 0.5f,
+                particlePoint.position.z);
             tempParticle = Instantiate(resultAnimalParticle, newPos, Quaternion.identity);
             tempParticle.GetComponent<ParticleSystem>().Play();
         }
 
         private void DestroyParticle()
         {
-            GameObject.Destroy(tempParticle);
+            Destroy(tempParticle);
         }
 
         public GameObject GetResultAnimal()
@@ -167,7 +161,7 @@ namespace BluehatGames
 
         public void ClearResultAnimal()
         {
-            if(resultAnimal)
+            if (resultAnimal)
             {
                 resultAnimal.SetActive(false);
                 DestroyParticle();

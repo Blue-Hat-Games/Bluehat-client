@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,8 +5,6 @@ namespace BluehatGames
 {
     public class DebugManager : MonoBehaviour
     {
-        private string key_autoStatus = "AuthStatus";
-
         public Button btn_status_init;
         public Button btn_status_email_authenticating;
         public Button btn_status_join_completed;
@@ -16,18 +12,12 @@ namespace BluehatGames
         public Toggle toggle_debugManager;
 
         public GameObject debugPanel;
-        void SaveClientInfo(string key, int value)
-        {
-            PlayerPrefs.SetInt(key, value);
-        }
+        private readonly string key_autoStatus = "AuthStatus";
 
-        void Start()
+        private void Start()
         {
             debugPanel.SetActive(false);
-            toggle_debugManager.onValueChanged.AddListener((onoff) =>
-            {
-                debugPanel.SetActive(onoff);
-            });
+            toggle_debugManager.onValueChanged.AddListener(onoff => { debugPanel.SetActive(onoff); });
 
             btn_status_init.onClick.AddListener(() =>
             {
@@ -49,6 +39,11 @@ namespace BluehatGames
                 Debug.Log("[DebugManager] Current Status - GENERAL_USER");
                 SaveClientInfo(key_autoStatus, AuthStatus._GENERAL_USER);
             });
+        }
+
+        private void SaveClientInfo(string key, int value)
+        {
+            PlayerPrefs.SetInt(key, value);
         }
     }
 }

@@ -3,10 +3,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class SceneLoader : MonoBehaviour
 {
     protected static SceneLoader instance;
+
+    [SerializeField] private CanvasGroup sceneLoaderCanvasGroup;
+
+    [SerializeField] private Image progressBar;
+
+    private string loadSceneName;
+
     public static SceneLoader Instance
     {
         get
@@ -15,34 +21,15 @@ public class SceneLoader : MonoBehaviour
             {
                 var obj = FindObjectOfType<SceneLoader>();
                 if (obj != null)
-                {
                     instance = obj;
-                }
                 else
-                {
                     instance = Create();
-                }
             }
+
             return instance;
         }
 
-        private set
-        {
-            instance = value;
-        }
-    }
-
-    [SerializeField]
-    private CanvasGroup sceneLoaderCanvasGroup;
-    [SerializeField]
-    private Image progressBar;
-
-    private string loadSceneName;
-
-    public static SceneLoader Create()
-    {
-        var SceneLoaderPrefab = Resources.Load<SceneLoader>("SceneLoader");
-        return Instantiate(SceneLoaderPrefab);
+        private set => instance = value;
     }
 
     private void Awake()
@@ -55,6 +42,13 @@ public class SceneLoader : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
     }
+
+    public static SceneLoader Create()
+    {
+        var SceneLoaderPrefab = Resources.Load<SceneLoader>("SceneLoader");
+        return Instantiate(SceneLoaderPrefab);
+    }
+
     public void LoadScene(string sceneName)
     {
         gameObject.SetActive(true);
@@ -68,10 +62,10 @@ public class SceneLoader : MonoBehaviour
         progressBar.fillAmount = 0f;
         yield return StartCoroutine(Fade(true));
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+        var op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
 
-        float timer = 0.0f;
+        var timer = 0.0f;
         while (!op.isDone)
         {
             yield return null;
@@ -80,10 +74,7 @@ public class SceneLoader : MonoBehaviour
             if (op.progress < 0.9f)
             {
                 progressBar.fillAmount = Mathf.Lerp(progressBar.fillAmount, op.progress, timer);
-                if (progressBar.fillAmount >= op.progress)
-                {
-                    timer = 0f;
-                }
+                if (progressBar.fillAmount >= op.progress) timer = 0f;
             }
             else
             {
@@ -109,7 +100,7 @@ public class SceneLoader : MonoBehaviour
 
     private IEnumerator Fade(bool isFadeIn)
     {
-        float timer = 0f;
+        var timer = 0f;
 
         while (timer <= 1f)
         {
@@ -118,10 +109,6 @@ public class SceneLoader : MonoBehaviour
             sceneLoaderCanvasGroup.alpha = Mathf.Lerp(isFadeIn ? 0 : 1, isFadeIn ? 1 : 0, timer);
         }
 
-        if (!isFadeIn)
-        {
-            gameObject.SetActive(false);
-        }
+        if (!isFadeIn) gameObject.SetActive(false);
     }
-
 }

@@ -1,24 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using System.IO;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class SaveData
 {
+    public string email;
+
     public SaveData(string _email)
     {
         email = _email;
     }
-
-    public string email;
-
 }
 
 public static class SaveSystem
 {
+    private static readonly string UserInfoSaveFileName = "userInfo";
     private static string SavePath => Application.persistentDataPath + "/saves/";
-    private static string UserInfoSaveFileName = "userInfo";
 
     public static void SaveUserInfoFile(SaveData saveData)
     {
@@ -28,16 +26,16 @@ public static class SaveSystem
             Debug.Log($"SaveSystem | Create Directory => {SavePath}");
         }
 
-        string saveJson = JsonUtility.ToJson(saveData);
+        var saveJson = JsonUtility.ToJson(saveData);
 
-        string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
+        var saveFilePath = SavePath + UserInfoSaveFileName + ".json";
         File.WriteAllText(saveFilePath, saveJson);
         Debug.Log("SaveUserInfoFile Success: " + saveFilePath);
     }
 
     public static SaveData LoadUserInfoFile()
     {
-        string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
+        var saveFilePath = SavePath + UserInfoSaveFileName + ".json";
 
         if (!File.Exists(saveFilePath))
         {
@@ -45,19 +43,20 @@ public static class SaveSystem
             return null;
         }
 
-        string saveFile = File.ReadAllText(saveFilePath);
-        SaveData saveData = JsonUtility.FromJson<SaveData>(saveFile);
+        var saveFile = File.ReadAllText(saveFilePath);
+        var saveData = JsonUtility.FromJson<SaveData>(saveFile);
         return saveData;
     }
 
     public static void DeleteUserInfoFile()
     {
-        string saveFilePath = SavePath + UserInfoSaveFileName + ".json";
+        var saveFilePath = SavePath + UserInfoSaveFileName + ".json";
         if (!File.Exists(saveFilePath))
         {
             Debug.Log("No such saveFile exists");
             return;
         }
+
         File.Delete(saveFilePath);
     }
 }

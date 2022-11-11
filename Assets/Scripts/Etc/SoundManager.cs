@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager instance = null;
+    public static SoundManager instance;
     public AudioSource[] audioSources;
 
     private void Awake()
@@ -12,35 +10,23 @@ public class SoundManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else if (instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
     public void PlayEffectSound(AudioClip clip)
     {
-        for(int i=0; i<audioSources.Length; i++)
-        {
-            if(audioSources[i].isPlaying == false)
+        for (var i = 0; i < audioSources.Length; i++)
+            if (audioSources[i].isPlaying == false)
             {
                 audioSources[i].clip = clip;
                 audioSources[i].Play();
 
                 break;
             }
-        }
-    }
-
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
     }
 }

@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -26,10 +24,7 @@ namespace BluehatGames
                 missionPanel.SetActive(true);
             });
 
-            btn_mission_pannel_close.onClick.AddListener(() =>
-            {
-                missionPanel.SetActive(false);
-            });
+            btn_mission_pannel_close.onClick.AddListener(() => { missionPanel.SetActive(false); });
         }
 
         public void LoadMission()
@@ -51,7 +46,7 @@ namespace BluehatGames
             else
             {
                 Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                String jsonData = webRequest.downloadHandler.text;
+                var jsonData = webRequest.downloadHandler.text;
                 var questList = JsonHelper.FromJson<Quest>(jsonData);
                 StartCoroutine(createQuestCard(questList));
             }
@@ -59,22 +54,18 @@ namespace BluehatGames
 
         private IEnumerator createQuestCard(Quest[] questList)
         {
-            for (int i = 0; i < questList.Length; i++)
+            for (var i = 0; i < questList.Length; i++)
             {
-                Quest quest = questList[i];
+                var quest = questList[i];
                 Debug.Log($"quest = {quest.title}");
-                GameObject questCard = GameObject.Instantiate(missionCardPrefab, missionContent, false);
+                var questCard = Instantiate(missionCardPrefab, missionContent, false);
                 questCard.transform.Find("Title").GetComponent<Text>().text = quest.title;
                 questCard.transform.Find("Description").GetComponent<Text>().text = quest.description;
                 questCard.transform.Find("CoinText").GetComponent<Text>().text = quest.reward_coin.ToString();
                 questCard.transform.Find("EggText").GetComponent<Text>().text = quest.reward_egg.ToString();
-                if (quest.status == true)
-                {
-                    questCard.transform.Find("Button").GetComponent<Button>().interactable = false;
-                }
+                if (quest.status) questCard.transform.Find("Button").GetComponent<Button>().interactable = false;
                 yield return new WaitForEndOfFrame();
             }
         }
     }
-
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EggSpawner : MonoBehaviour
@@ -12,13 +10,12 @@ public class EggSpawner : MonoBehaviour
     public Transform[] spawnPoints;
     public GameObject eggPrefab;
 
-    void Start()
-    {   
-        for(int i = 0; i < spawnPoints.Length; i++)
+    private void Start()
+    {
+        for (var i = 0; i < spawnPoints.Length; i++)
         {
-            GameObject egg = Instantiate(eggPrefab, spawnPoints[i].position, Quaternion.identity);
+            var egg = Instantiate(eggPrefab, spawnPoints[i].position, Quaternion.identity);
             egg.transform.eulerAngles = new Vector3(-90, 0, 0);
         }
     }
-
 }

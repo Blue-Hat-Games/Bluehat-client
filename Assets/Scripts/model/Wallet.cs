@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
+using System;
 
 namespace BluehatGames
 {
-    [System.Serializable]
+    [Serializable]
     public class Wallet
     {
         public string address;
@@ -18,6 +15,5 @@ namespace BluehatGames
             this.privateKey = privateKey;
             this.klaytnWalletKey = klaytnWalletKey;
         }
-
     }
 }

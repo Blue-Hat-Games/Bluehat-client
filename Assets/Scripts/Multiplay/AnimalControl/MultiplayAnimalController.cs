@@ -1,33 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Pun;
+using UnityEngine;
 
 public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 {
-    private float camAngle;
-
-    // 받은 데이터 기억 변수 (보간처리하기 위해서)
-    Vector3 remotePos = Vector3.zero;
-    Quaternion remoteRot = Quaternion.identity;
-    Quaternion remoteCamRot = Quaternion.identity;
-    Vector3 remoteScale = Vector3.zero;
-
-    protected Joystick joystick;
-    protected Joybutton joybutton;
-
-    private float moveSpeed = 10;
-    private float jumpPower = 5;
     public float rotSpeed = 10;
 
-    private Rigidbody rigid;
-    private Animator animator;
+    private readonly string ANIM_PARAMETER_JUMP = "Jump";
+    private readonly string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
+    private readonly float jumpPower = 5;
 
-    private string ANIM_PARAMETER_JUMP = "Jump";
-    private string ANIM_PARAMETER_MOTIONSPEED = "MotionSpeed";
+    private readonly float moveSpeed = 10;
+    private Animator animator;
+    private float camAngle;
 
     private bool isGround = true;
-    void Start()
+    protected Joybutton joybutton;
+
+    protected Joystick joystick;
+    private Quaternion remoteCamRot = Quaternion.identity;
+
+    // 받은 데이터 기억 변수 (보간처리하기 위해서)
+    private Vector3 remotePos = Vector3.zero;
+    private Quaternion remoteRot = Quaternion.identity;
+    private Vector3 remoteScale = Vector3.zero;
+
+    private Rigidbody rigid;
+
+    private void Start()
     {
         joystick = FindObjectOfType<Joystick>();
         joybutton = FindObjectOfType<Joybutton>();
@@ -36,7 +35,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         animator = GetComponentInChildren<Animator>();
     }
 
-    void Update()
+    private void Update()
     {
         // 리모트 캐릭터 처리
         if (photonView.IsMine == false)
@@ -53,13 +52,12 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         var h = joystick.Horizontal;
         var v = joystick.Vertical;
 
-        Vector3 dir = new Vector3(h, 0, v);
+        var dir = new Vector3(h, 0, v);
 
         if (!(h == 0 && v == 0))
-        {
             // 바라보는 방향으로 회전
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * rotSpeed);
-        }
+            transform.rotation =
+                Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * rotSpeed);
 
         // Jump에 대한 처리
         if (isGround && joybutton.Pressed)
@@ -70,13 +68,12 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         }
     }
 
-    private void ControlRemotePlayer()
+    private void OnCollisionEnter(Collision collision)
     {
-
-        transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
-        transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
-        transform.localScale = Vector3.Lerp(transform.localScale, remoteScale, 10 * Time.deltaTime);
-        //camera.rotation = Quaternion.Lerp(camera.rotation, remoteCamRot, 10 * Time.deltaTime);
+        // 부딪힌 물체의 태그가 "Ground"라면
+        if (collision.gameObject.CompareTag("Ground"))
+            // isGround를 true로 변경
+            isGround = true;
     }
 
     // IPunObservable 상속 시 꼭 구현해야 하는 것
@@ -104,13 +101,11 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void ControlRemotePlayer()
     {
-        // 부딪힌 물체의 태그가 "Ground"라면
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            // isGround를 true로 변경
-            isGround = true;
-        }
+        transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
+        transform.localScale = Vector3.Lerp(transform.localScale, remoteScale, 10 * Time.deltaTime);
+        //camera.rotation = Quaternion.Lerp(camera.rotation, remoteCamRot, 10 * Time.deltaTime);
     }
 }

@@ -1,34 +1,30 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using System.Linq;
 
 namespace BluehatGames
 {
-
     // 서버에서 동물 정보를 받아옴
     public class AnimalAirController : MonoBehaviour
     {
         public AnimalFactory animalFactory;
 
         public string acessToken = "0000";
-        public bool isTest = false;
+        public bool isTest;
         public string testAccessToken = "0000";
+        private AnimalDataFormat[] animalDataArray;
 
         private Dictionary<string, GameObject> animalObjectDictionary;
-        private AnimalDataFormat[] prevAnimalDataArray;
-        private AnimalDataFormat[] animalDataArray;
 
         private Scene currentScene;
         private string currentSceneName;
+        private AnimalDataFormat[] prevAnimalDataArray;
 
 
-        void Start()
+        private void Start()
         {
-
             animalObjectDictionary = new Dictionary<string, GameObject>();
             currentScene = SceneManager.GetActiveScene();
             currentSceneName = currentScene.name;
@@ -38,13 +34,10 @@ namespace BluehatGames
 
         public IEnumerator DownLoadGet(string URL)
         {
-            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var request = UnityWebRequest.Get(URL);
             Debug.Log($"access token = {acessToken}");
             acessToken = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            if (isTest)
-            {
-                acessToken = testAccessToken;
-            }
+            if (isTest) acessToken = testAccessToken;
             request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
@@ -56,7 +49,7 @@ namespace BluehatGames
             else
             {
                 Debug.Log(request.downloadHandler.text);
-                string jsonData = request.downloadHandler.text;
+                var jsonData = request.downloadHandler.text;
                 switch (currentSceneName)
                 {
                     case SceneName._03_Main:
@@ -78,17 +71,16 @@ namespace BluehatGames
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
 
             // 메인 씬에 동물 배치
-            foreach (KeyValuePair<string, GameObject> pair in animalObjectDictionary)
+            foreach (var pair in animalObjectDictionary)
             {
-                GameObject animalObject = pair.Value;
-                float randomX = UnityEngine.Random.Range(-20, 20);
-                float randomZ = UnityEngine.Random.Range(-20, 20);
+                var animalObject = pair.Value;
+                float randomX = Random.Range(-20, 20);
+                float randomZ = Random.Range(-20, 20);
                 animalObject.transform.position = new Vector3(randomX, 0.1f, randomZ);
                 animalObject.transform.rotation = Quaternion.identity;
 
                 animalObject.AddComponent<MainSceneAnimal>();
             }
-
         }
 
         private void SetSynthesisSceneAnimals(string jsonData)
@@ -97,7 +89,7 @@ namespace BluehatGames
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
 
-            GameObject.FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
+            FindObjectOfType<SynthesisManager>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
         }
 
         private void SetMultiplaySceneAnimals(string jsonData)
@@ -105,7 +97,8 @@ namespace BluehatGames
             animalObjectDictionary.Clear();
             animalObjectDictionary = animalFactory.ConvertJsonToAnimalObject(jsonData);
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
-            GameObject.FindObjectOfType<MyAnimalListController>().StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
+            FindObjectOfType<MyAnimalListController>()
+                .StartMakeThumbnailAnimalList(animalObjectDictionary, animalDataArray);
         }
 
         // 색 변경 이후 다시 데이터를 불러와야 함 
@@ -116,12 +109,9 @@ namespace BluehatGames
 
         private IEnumerator UpdateDataFromServer(string URL, string animalId, bool isColorChange)
         {
-            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            if (isTest)
-            {
-                access_token = testAccessToken;
-            }
+            if (isTest) access_token = testAccessToken;
             Debug.Log($"access token = {access_token}");
 
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
@@ -135,7 +125,7 @@ namespace BluehatGames
             else
             {
                 Debug.Log(request.downloadHandler.text);
-                string jsonData = request.downloadHandler.text;
+                var jsonData = request.downloadHandler.text;
                 SetUpdatedAnimalObject(animalId, jsonData, isColorChange);
             }
         }
@@ -147,27 +137,21 @@ namespace BluehatGames
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
             AnimalDataFormat updatedAnimalData;
             // 업데이트 된 동물의 정보 찾기
-            for (int i = 0; i < animalDataArray.Length; i++)
-            {
+            for (var i = 0; i < animalDataArray.Length; i++)
                 if (animalDataArray[i].id == animalId)
                 {
                     updatedAnimalData = animalDataArray[i];
 
                     // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
-                    GameObject animalObj = animalObjectDictionary[updatedAnimalData.id];
-                    Animal animal = new Animal(updatedAnimalData);
+                    var animalObj = animalObjectDictionary[updatedAnimalData.id];
+                    var animal = new Animal(updatedAnimalData);
                     // animal의 텍스처 변경
-                    if(isColorChange)
-                    {
+                    if (isColorChange)
                         animalFactory.ChangeTextureAnimalObject(animalObj, animal);
-                    }
                     else
-                    {
-                        animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);                        
-                    }
-                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
+                        animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);
+                    FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
                 }
-            }
         }
 
         // 합성 이후 다시 데이터를 불러와야 함 
@@ -178,13 +162,10 @@ namespace BluehatGames
 
         private IEnumerator UpdateDataOnFusion(string URL, string animalId1, string animalId2, string resultAnimalId)
         {
-            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var request = UnityWebRequest.Get(URL);
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
-            if (isTest)
-            {
-                access_token = testAccessToken;
-            }
+            if (isTest) access_token = testAccessToken;
 
             Debug.Log($"access token = {access_token}");
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
@@ -198,13 +179,14 @@ namespace BluehatGames
             else
             {
                 Debug.Log(request.downloadHandler.text);
-                string jsonData = request.downloadHandler.text;
+                var jsonData = request.downloadHandler.text;
                 SetUpdatedAnimalOnFusion(animalId1, animalId2, resultAnimalId, jsonData);
             }
         }
 
         // 합성 이후 업데이트 된 동물의 딕셔너리 데이터를 추가해주자
-        private void SetUpdatedAnimalOnFusion(string animalId1, string animalId2, string resultAnimalId, string jsonData)
+        private void SetUpdatedAnimalOnFusion(string animalId1, string animalId2, string resultAnimalId,
+            string jsonData)
         {
             // 딕셔너리 데이터 교체 후 썸네일 다시 만들어주는 것까지 해야 함
             animalDataArray = JsonHelper.FromJson<AnimalDataFormat>(jsonData);
@@ -216,33 +198,27 @@ namespace BluehatGames
 
 
             // 서버에서 새로 받아온 데이터에서 추가된 동물의 정보 찾기
-            for (int i = 0; i < animalDataArray.Length; i++)
-            {
+            for (var i = 0; i < animalDataArray.Length; i++)
                 if (animalDataArray[i].id == resultAnimalId)
                 {
                     updatedAnimalData = animalDataArray[i];
 
                     // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
-                    Animal animal = new Animal(updatedAnimalData);
+                    var animal = new Animal(updatedAnimalData);
                     // animalFactory를 통해 새로운 오브젝트 생성
-                    GameObject animalObj = animalFactory.GetAnimalGameObject(animal);
+                    var animalObj = animalFactory.GetAnimalGameObject(animal);
                     // 딕셔너리에 추가
                     animalObjectDictionary.Add(updatedAnimalData.id, animalObj);
                     // synthesisManager 에서 썸네일 추가해줌 
-                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
+                    FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
                 }
-            }
         }
 
         public GameObject GetAnimalObject(string id)
         {
             GameObject obj = null;
-            if (animalObjectDictionary.ContainsKey(id))
-            {
-                obj = animalObjectDictionary[id];
-            }
+            if (animalObjectDictionary.ContainsKey(id)) obj = animalObjectDictionary[id];
             return obj;
         }
     }
-
 }

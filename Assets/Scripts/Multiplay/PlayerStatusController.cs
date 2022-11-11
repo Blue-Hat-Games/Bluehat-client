@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 /** 멀티플레이에서 플레이어의 상태
 - 에테르 에너지
@@ -9,74 +6,69 @@ using TMPro;
 */
 namespace BluehatGames
 {
-
     public class PlayerStatusController : MonoBehaviour
     {
-        public static PlayerStatusController instance = null;
+        public static PlayerStatusController instance;
+
+        public int energyToExchangeAether = 50;
+        public float addedAetherEnergyValue = 5;
+
+        public float gameTime;
+
+        public AudioClip addAetherCoinEffectSound;
+
+        public Animator addAetherPlusUIAnim;
+
+        private int aetherCount;
+        private float aetherEnergy;
+
+
+        private int eggCount;
+
+        private bool isGameOver;
+        private bool isStartTimeAttack;
 
         private void Awake()
         {
             if (instance == null)
             {
                 instance = this;
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
             else if (instance != null)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
-
-        private int aetherCount = 0;
-        private float aetherEnergy = 0;
-
-        public int energyToExchangeAether = 50;
-        public float addedAetherEnergyValue = 5;
-
-        public float gameTime = 0;
-
-        private bool isGameOver = false;
-        private bool isStartTimeAttack = false;
-
-        public AudioClip addAetherCoinEffectSound;
-
-        public Animator addAetherPlusUIAnim;
 
         private void Start()
         {
             MultiplayUIController.instance.SetCurrentAetherCoinCount(aetherCount);
         }
 
-
-        private int eggCount = 0;
-        public void AddMultiplayEggCount()
+        private void Update()
         {
-            eggCount++;
-            MultiplayUIController.instance.SetCurrentEggCount(eggCount);
-        }
-
-         // 멀티플레이 도중에 얻는 egg Count에 대한 처리
-        public int GetMultiplyEggCount()
-        {
-            return eggCount;
-        }
-
-        void Update()
-        {
-
             if (false == isStartTimeAttack)
                 return;
 
             gameTime -= Time.deltaTime;
 
             if (gameTime < 0)
-            {
                 GameOver();
-            }
             else
-            {
                 MultiplayUIController.instance.UpdateGameTimeText(gameTime);
-            }
+        }
+
+        public void AddMultiplayEggCount()
+        {
+            eggCount++;
+            MultiplayUIController.instance.SetCurrentEggCount(eggCount);
+        }
+
+        // 멀티플레이 도중에 얻는 egg Count에 대한 처리
+        public int GetMultiplyEggCount()
+        {
+            return eggCount;
         }
 
         public void SetStartTimeAttack()
@@ -93,22 +85,23 @@ namespace BluehatGames
 
             isGameOver = true;
             // 이번 판에서 획득한 코인
-            int myCoin = GetMultiplyAetherCount();
+            var myCoin = GetMultiplyAetherCount();
             // AetherController를 통해 획득 정보 저장
             AetherController.instance.AddAetherCount(myCoin);
 
             // 총 얻은 코인 
-            int allMyCoin = AetherController.instance.GetAetherCount();
-            
+            var allMyCoin = AetherController.instance.GetAetherCount();
+
             // 알
-            int originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-            int allEggCount = originEggCount + GetMultiplyAetherCount();
+            var originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
+            var allEggCount = originEggCount + GetMultiplyAetherCount();
             PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, allEggCount);
 
             // Joystick 비활성화
             MultiplayUIController.instance.SetJoystickCanvasActive(false);
             // UI에 반영
-            MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), allMyCoin, GetMultiplyEggCount(), allEggCount);
+            MultiplayUIController.instance.SetMultiplayResultPanel(GetMultiplyAetherCount(), allMyCoin,
+                GetMultiplyEggCount(), allEggCount);
         }
 
         // 멀티플레이 도중에 얻는 Aether Count에 대한 처리
@@ -133,9 +126,8 @@ namespace BluehatGames
 
         public void AddAetherEnergy()
         {
-
             aetherEnergy += addedAetherEnergyValue;
-            float adjustedEnergyValue = aetherEnergy / energyToExchangeAether;
+            var adjustedEnergyValue = aetherEnergy / energyToExchangeAether;
 
             // 교환 가능한 만큼 에너지를 다 모았으면 에너지 초기화, 에테르 획득
             if (aetherEnergy >= energyToExchangeAether)
@@ -154,14 +146,10 @@ namespace BluehatGames
 
         public void SubAetherEnergy(float value)
         {
-
             aetherEnergy -= value;
             if (aetherEnergy < 0)
-            {
                 // 에너지양은 0보다 작아질 수는 없도록 한다.
                 aetherEnergy = 0;
-            }
         }
-
     }
 }

@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainSceneCameraController : MonoBehaviour
 {
-    public GameObject target;       // 타겟이 될 게임오브젝트
-    private Vector3 point = Vector3.zero;   // 타겟의 위치(바라볼 위치)
+    public GameObject target; // 타겟이 될 게임오브젝트
+    private readonly float speed = 100.0f; // 회전속도
+    private Vector3 point = Vector3.zero; // 타겟의 위치(바라볼 위치)
 
-    private float rotationX = 0.0f;         // X축 회전값
-    private float rotationY = 0.0f;         // Y축 회전값
-    private float speed = 100.0f;           // 회전속도
+    private float rotationX; // X축 회전값
+    private float rotationY; // Y축 회전값
 
-    void Start()
+    private void Start()
     {
         // 바라볼 위치 얻기
         point = target.transform.position;
@@ -26,10 +24,9 @@ public class MainSceneCameraController : MonoBehaviour
 
         // 회전후 타겟 바라보기
         transform.LookAt(point);
-
     }
 
-    void Update()
+    private void Update()
     {
         // 마우스가 눌러지면,
         if (Input.GetMouseButton(0))

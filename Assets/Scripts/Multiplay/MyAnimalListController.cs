@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
 namespace BluehatGames
 {
@@ -13,43 +13,38 @@ namespace BluehatGames
         public AnimalFactory animalFactory;
 
         public AnimalAirController animalAirController;
-        [Header("Common UI")]
-        public GameObject animalListView;
+
+        [Header("Common UI")] public GameObject animalListView;
+
         public Transform animalListContentsView;
         public GameObject LoadingPanel;
         public GameObject animalListContentPrefab;
-        private Dictionary<string, GameObject> contentUiDictionary;
         public RawImage selectedAnimalImage;
 
-        [Header("AnimalListThumbnail")]
-        public Camera thumbnailCamera;
+        [Header("AnimalListThumbnail")] public Camera thumbnailCamera;
+
         public RenderTexture renderTexture;
         public Transform thumbnailSpot;
         public GameObject[] animalObjectArray;
+
+        private readonly int poolSize = 30; // 얼만큼일지 모르지만 이만큼은 만들어놓자
         private GameObject activeAnimalObject;
+        private Dictionary<string, GameObject> contentUiDictionary;
 
-        private int poolSize = 30; // 얼만큼일지 모르지만 이만큼은 만들어놓자
-
-        void Start()
+        private void Start()
         {
             selectedAnimalImage.gameObject.SetActive(false);
             InitContentViewUIObjectPool();
             contentUiDictionary = new Dictionary<string, GameObject>();
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetMouseButton(0))
-            {
                 if (activeAnimalObject != null)
-                {
-
                     activeAnimalObject
-                    .transform
-                    .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
-                }
-            }
-                
+                        .transform
+                        .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
         }
 
         private void InitContentViewUIObjectPool()
@@ -59,23 +54,26 @@ namespace BluehatGames
 
 
         // AnimalAirController에서 호출하는 함수
-        public void StartMakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary, AnimalDataFormat[] animalDataArray)
+        public void StartMakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary,
+            AnimalDataFormat[] animalDataArray)
         {
             StartCoroutine(MakeThumbnailAnimalList(animalObjectDictionary, animalDataArray));
         }
 
 
-        IEnumerator MakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary, AnimalDataFormat[] animalDataArray)
+        private IEnumerator MakeThumbnailAnimalList(Dictionary<string, GameObject> animalObjectDictionary,
+            AnimalDataFormat[] animalDataArray)
         {
             animalListView.SetActive(true);
             animalObjectArray = new GameObject[animalDataArray.Length];
 
-            int index = 0;
-            for (int i = 0; i < animalObjectDictionary.Count; i++)
+            var index = 0;
+            for (var i = 0; i < animalObjectDictionary.Count; i++)
             {
-                int curIdx = index;
-                GameObject animalObject = animalObjectDictionary.Values.ToList()[curIdx];
-                Debug.Log($"animalDataArray.length = {animalDataArray.Length}, contentUiPool.size = {contentUiPool.GetPoolSize()}");
+                var curIdx = index;
+                var animalObject = animalObjectDictionary.Values.ToList()[curIdx];
+                Debug.Log(
+                    $"animalDataArray.length = {animalDataArray.Length}, contentUiPool.size = {contentUiPool.GetPoolSize()}");
                 contentUiDictionary.Add(animalDataArray[i].id, contentUiPool.GetObject());
 
                 animalObject.transform.position = thumbnailSpot.position;
@@ -92,29 +90,24 @@ namespace BluehatGames
 
                 yield return new WaitForEndOfFrame();
 
-                if(animalObjectArray[curIdx]) {
-                    animalObjectArray[curIdx].SetActive(false);
-                }
+                if (animalObjectArray[curIdx]) animalObjectArray[curIdx].SetActive(false);
 
-                ToTexture2D(renderTexture, (Texture2D resultTex) =>
+                ToTexture2D(renderTexture, resultTex =>
                 {
                     uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                     uiSet.GetComponent<Button>().onClick.AddListener(() =>
                     {
-                        if(activeAnimalObject)
-                        {
-                            activeAnimalObject.SetActive(false);
-                        }
+                        if (activeAnimalObject) activeAnimalObject.SetActive(false);
                         // 선택한 동물 활성화
                         animalObject.SetActive(true);
                         activeAnimalObject = animalObject;
 
-                        GameObject.FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
+                        FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
                         // id를 저장
                         PlayerPrefs.SetString(PlayerPrefsKey.key_multiplayAnimal, animalDataArray[curIdx].id);
                         Debug.Log($"PlayerPrefsKey.key_multiplayAnimal => {animalDataArray[curIdx].id}");
                     });
-                
+
                     uiSet.GetComponentInChildren<Text>().text = animalDataArray[curIdx].animalType;
                     uiSet.transform.SetParent(animalListContentsView, false);
                 });
@@ -123,19 +116,18 @@ namespace BluehatGames
 
             LoadingPanel.SetActive(false);
             selectedAnimalImage.gameObject.SetActive(true);
-
         }
 
-        void ResetAnimalState(GameObject animal)
+        private void ResetAnimalState(GameObject animal)
         {
             animal.GetComponent<Rigidbody>().useGravity = false;
             animal.GetComponent<Rigidbody>().isKinematic = true;
             animal.GetComponent<CapsuleCollider>().enabled = false;
         }
 
-        void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
+        private void ToTexture2D(RenderTexture rTex, Action<Texture2D> action)
         {
-            Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
+            var tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
             // ReadPixels looks at the active RenderTexture.
             RenderTexture.active = rTex;
             tex.ReadPixels(new Rect(0, 0, rTex.width, rTex.height), 0, 0);
@@ -185,8 +177,5 @@ namespace BluehatGames
         //     Debug.Log($"Creating Animal is Success! => {animalName}");
         //     return animal;
         // }
-
-
-
     }
 }

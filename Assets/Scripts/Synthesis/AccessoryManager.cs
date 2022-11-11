@@ -1,23 +1,39 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Text;
-
 
 namespace BluehatGames
 {
     public class AccessoryManager : MonoBehaviour
     {
-        public bool isTest = false;
+        public bool isTest;
         public string tempAccessToken = "0000";
-
-        private SynthesisManager synthesisManager;
         public AnimalDataFormat selectedAnimalData;
         public GameObject selectedAnimalObject;
 
         public GameObject hatParticle;
         private GameObject resultAnimal;
+
+        private SynthesisManager synthesisManager;
+
+        private GameObject tempParticle;
+
+        private void Start()
+        {
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButton(0))
+                if (selectedAnimalObject != null)
+                    selectedAnimalObject
+                        .transform
+                        .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
+
+            if (resultAnimal != null)
+                resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
+        }
 
         public void SetSynthesisManager(SynthesisManager instance)
         {
@@ -31,31 +47,28 @@ namespace BluehatGames
 
         public IEnumerator GetRandomHatResultFromServer(string URL)
         {
-            string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
-            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var request = UnityWebRequest.Get(URL);
 
-            if (isTest)
-            {
-                access_token = tempAccessToken;
-            }
+            if (isTest) access_token = tempAccessToken;
 
             Debug.Log($"access token = {access_token}");
 
-            using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
+            using (var webRequest = UnityWebRequest.Post(URL, ""))
             {
                 webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
                 webRequest.SetRequestHeader("Content-Type", "application/json");
 
-                RequestRandomHatFormat requestData = new RequestRandomHatFormat();
+                var requestData = new RequestRandomHatFormat();
                 requestData.animalId = selectedAnimalData.id;
 
-                string json = JsonUtility.ToJson(requestData);
+                var json = JsonUtility.ToJson(requestData);
                 Debug.Log(json);
 
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                var bodyRaw = Encoding.UTF8.GetBytes(json);
+                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
 
                 yield return webRequest.SendWebRequest();
 
@@ -65,7 +78,7 @@ namespace BluehatGames
                 }
                 else
                 {
-                    string responseText = webRequest.downloadHandler.text;
+                    var responseText = webRequest.downloadHandler.text;
 
                     var new_item = JsonUtility.FromJson<ResponseHatResult>(responseText).new_item;
                     Debug.Log($"AccessoryManager | [{URL}] - new_item = {new_item}");
@@ -77,34 +90,26 @@ namespace BluehatGames
                 }
             }
         }
-                
+
         private void LoadHatItemPrefab(string itemName)
         {
             var path = $"Prefab/Hats/{itemName}";
-            GameObject obj = Resources.Load(path) as GameObject;
-            GameObject hatObj = Instantiate(obj);
-            Transform[] allChildren = selectedAnimalObject.GetComponentsInChildren<Transform>();
+            var obj = Resources.Load(path) as GameObject;
+            var hatObj = Instantiate(obj);
+            var allChildren = selectedAnimalObject.GetComponentsInChildren<Transform>();
             Transform hatPoint = null;
 
-            foreach(Transform childTr in allChildren) 
-            {
-                if(childTr.name == "HatPoint")
-                {
-                    hatPoint = childTr;   
-                }
-            }
-            
-            if(hatPoint.childCount > 0)
-            {
-                Destroy(hatPoint.GetChild(0).gameObject); 
-            }
+            foreach (var childTr in allChildren)
+                if (childTr.name == "HatPoint")
+                    hatPoint = childTr;
+
+            if (hatPoint.childCount > 0) Destroy(hatPoint.GetChild(0).gameObject);
             CreateHatParticle(hatPoint);
             hatObj.transform.SetParent(hatPoint);
             hatObj.transform.localPosition = Vector3.zero;
             hatObj.transform.localEulerAngles = Vector3.zero;
         }
 
-        private GameObject tempParticle;
         private void CreateHatParticle(Transform hatPoint)
         {
             tempParticle = Instantiate(hatParticle, hatPoint.position, Quaternion.identity);
@@ -114,37 +119,13 @@ namespace BluehatGames
 
         private void DestroyParticle()
         {
-            GameObject.Destroy(tempParticle);
+            Destroy(tempParticle);
         }
 
         public void SetCurSelectedAnimal(AnimalDataFormat animalData, GameObject animalObject)
         {
             selectedAnimalData = animalData;
             selectedAnimalObject = animalObject;
-        }
-
-        void Start()
-        {
-            
-        }
-
-        void Update()
-        {
-            if (Input.GetMouseButton(0))
-            {
-                if (selectedAnimalObject != null)
-                {
-                    selectedAnimalObject
-                    .transform
-                    .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
-                }
-            }
-
-            if(resultAnimal != null)
-            {
-                resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
-            }
-            
         }
     }
 }

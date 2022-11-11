@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace BluehatGames 
+namespace BluehatGames
 {
     public class SelectedAnimalDataCupid : MonoBehaviour
     {
-
         private AnimalDataFormat selectedAnimalData;
 
         public void Awake()
@@ -27,9 +24,9 @@ namespace BluehatGames
         public void SetAnimalTexture(GameObject animalObject)
         {
             // 업데이트 할 동물의 오브젝트를 딕셔너리에서 가져옴
-            Animal animal = new Animal(selectedAnimalData);
+            var animal = new Animal(selectedAnimalData);
             // animal의 텍스처 변경
-            Texture2D meshTex = animal.getAnimalTexture();
+            var meshTex = animal.getAnimalTexture();
             animalObject.GetComponentInChildren<Renderer>().material.SetTexture("_MainTex", meshTex);
         }
     }

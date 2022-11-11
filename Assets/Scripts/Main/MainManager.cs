@@ -1,45 +1,43 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 namespace BluehatGames
 {
-
     public class MainManager : MonoBehaviour
     {
         public Button btn_synthesis;
         public Button btn_multiplay;
+
         public Button btn_nftMarket;
         // public Button btn_exit;
 
-        [Header("Setting Button")]
-        public Button btn_setting;
+        [Header("Setting Button")] public Button btn_setting;
+
         public GameObject settingPanel;
         public Button btn_setting_close;
         public Button btn_logout;
         public Toggle toggle_music;
         public Toggle toggle_sound_effect;
-        private DataManager dataManager;
 
-        [Header("Alert Panel")]
-        public Text text_fistAnimal;
+        [Header("Alert Panel")] public Text text_fistAnimal;
+
         public Button AlertDoneBtn;
         public GameObject AlertPanel;
 
-        [Header("Music")]
-        public AudioSource audioSource;
-        private SoundUtil soundUtil;
+        [Header("Music")] public AudioSource audioSource;
+
         public AudioClip multiplayButtonSound;
         public AudioClip upperButtonSound;
         public AudioClip mainButtonSound;
+        private DataManager dataManager;
+        private SoundUtil soundUtil;
 
-        void Start()
+        private void Start()
         {
-            dataManager = GameObject.FindObjectOfType<DataManager>();
+            dataManager = FindObjectOfType<DataManager>();
             AlertPanel.SetActive(false);
             soundUtil = new SoundUtil();
 
@@ -93,17 +91,11 @@ namespace BluehatGames
                 settingPanel.SetActive(true);
             });
 
-            btn_setting_close.onClick.AddListener(() =>
-            {
-                settingPanel.SetActive(false);
-            });
+            btn_setting_close.onClick.AddListener(() => { settingPanel.SetActive(false); });
 
-            AlertDoneBtn.onClick.AddListener(() =>
-            {
-                AlertPanel.SetActive(false);
-            });
+            AlertDoneBtn.onClick.AddListener(() => { AlertPanel.SetActive(false); });
 
-            toggle_music.onValueChanged.AddListener((bool value) =>
+            toggle_music.onValueChanged.AddListener(value =>
             {
                 if (value)
                 {
@@ -117,12 +109,13 @@ namespace BluehatGames
                 }
             });
         }
-        void SaveClientInfo(string key, int value)
+
+        private void SaveClientInfo(string key, int value)
         {
             PlayerPrefs.SetInt(key, value);
         }
 
-        int GetClientInfo(string key)
+        private int GetClientInfo(string key)
         {
             return PlayerPrefs.GetInt(key);
         }
@@ -130,15 +123,12 @@ namespace BluehatGames
 
         public IEnumerator GetFirstAnimalFromServer(string URL)
         {
-
-
-            using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
+            using (var request = UnityWebRequest.Post(URL, ""))
             {
-
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                request.downloadHandler = new DownloadHandlerBuffer();
 
                 // Access Token
-                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+                var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
                 Debug.Log($"access_token = {access_token}");
                 // send access token to server
                 request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
@@ -146,15 +136,16 @@ namespace BluehatGames
                 yield return request.SendWebRequest();
 
                 // error
-                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                if (request.result == UnityWebRequest.Result.ConnectionError ||
+                    request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log(request.error);
                 }
                 // success
                 else
                 {
-                    string responseText = request.downloadHandler.text;
-                    string responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
+                    var responseText = request.downloadHandler.text;
+                    var responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
 
                     Debug.Log(request.downloadHandler.text);
 
@@ -174,11 +165,10 @@ namespace BluehatGames
         private void LoadAnimalPrefab(string animalName)
         {
             var path = $"Prefab/Animals/{animalName}";
-            GameObject obj = Resources.Load(path) as GameObject;
-            GameObject animal = Instantiate(obj, Vector3.zero, Quaternion.identity);
+            var obj = Resources.Load(path) as GameObject;
+            var animal = Instantiate(obj, Vector3.zero, Quaternion.identity);
             animal.transform.LookAt(Camera.main.transform);
             Debug.Log($"Creating Animal is Success! => {animalName}");
         }
-
     }
 }
