@@ -77,52 +77,51 @@ namespace BluehatGames
             if (isTest) access_token = tempAccessToken;
             Debug.Log($"access_token = {access_token}");
 
-            using (var webRequest = UnityWebRequest.Post(URL, ""))
+            using var webRequest = UnityWebRequest.Post(URL, "");
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            var requestData = new RequestFusionAnimalFormat();
+            requestData.animalId1 = selectedAnimalData_1.id;
+            requestData.animalId2 = selectedAnimalData_2.id;
+
+            var json = JsonUtility.ToJson(requestData);
+            Debug.Log(json);
+
+            var bodyRaw = Encoding.UTF8.GetBytes(json);
+            webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+            yield return webRequest.SendWebRequest();
+
+            var responseCode = webRequest.responseCode;
+            var responseText = webRequest.downloadHandler.text;
+
+            switch (responseCode)
             {
-                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
-                webRequest.SetRequestHeader("Content-Type", "application/json");
+                case 400:
+                case 419:
+                    var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
+                    Debug.Log($"responseCode 400 | msg = {responseMsg}");
+                    break;
+                default:
+                    if (webRequest.result is UnityWebRequest.Result.ConnectionError
+                        or UnityWebRequest.Result.ProtocolError)
+                    {
+                        Debug.Log($"Error: {webRequest.error}");
+                    }
+                    else
+                    {
+                        var responseData = JsonUtility.FromJson<AnimalDataFormat>(responseText);
+                        Debug.Log($"FusionManager | [{URL}] - {responseData}");
 
-                var requestData = new RequestFusionAnimalFormat();
-                requestData.animalId1 = selectedAnimalData_1.id;
-                requestData.animalId2 = selectedAnimalData_2.id;
+                        var resultAnimalId = responseData.id;
+                        // refresh data
+                        synthesisManager.SendRequestRefreshAnimalDataOnFusion(selectedAnimalData_1.id,
+                            selectedAnimalData_2.id, resultAnimalId);
+                    }
 
-                var json = JsonUtility.ToJson(requestData);
-                Debug.Log(json);
-
-                var bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = new DownloadHandlerBuffer();
-
-                yield return webRequest.SendWebRequest();
-
-                var responseCode = webRequest.responseCode;
-                var responseText = webRequest.downloadHandler.text;
-
-                switch (responseCode)
-                {
-                    case 400:
-                    case 419:
-                        var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
-                        Debug.Log($"responseCode 400 | msg = {responseMsg}");
-                        break;
-                    default:
-                        if (webRequest.isNetworkError || webRequest.isHttpError)
-                        {
-                            Debug.Log($"Error: {webRequest.error}");
-                        }
-                        else
-                        {
-                            var responseData = JsonUtility.FromJson<AnimalDataFormat>(responseText);
-                            Debug.Log($"FusionManager | [{URL}] - {responseData}");
-
-                            var resultAnimalId = responseData.id;
-                            // refresh data
-                            synthesisManager.SendRequestRefreshAnimalDataOnFusion(selectedAnimalData_1.id,
-                                selectedAnimalData_2.id, resultAnimalId);
-                        }
-
-                        break;
-                }
+                    break;
             }
         }
 

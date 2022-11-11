@@ -41,8 +41,7 @@ namespace BluehatGames
             request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
             yield return request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError)
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log(request.error);
             }
@@ -117,8 +116,7 @@ namespace BluehatGames
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
             yield return request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError)
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log(request.error);
             }
@@ -171,8 +169,7 @@ namespace BluehatGames
             request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
             yield return request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError)
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log(request.error);
             }

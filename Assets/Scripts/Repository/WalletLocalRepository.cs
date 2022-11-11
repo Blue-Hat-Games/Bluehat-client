@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BluehatGames
 {
-    public class WalletLocalRepositroy
+    public static class WalletLocalRepository
     {
         public static void SetWalletAddress(string walletAddress)
         {

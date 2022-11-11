@@ -34,7 +34,7 @@ namespace BluehatGames
             btn_wallet.onClick.AddListener(() =>
             {
                 // Local Repository에서 월렛 정보 가져옴.
-                var wallet = WalletLocalRepositroy.GetWalletInfo();
+                var wallet = WalletLocalRepository.GetWalletInfo();
                 walletPanel.SetActive(true);
                 if (wallet == null)
                 {
@@ -64,7 +64,7 @@ namespace BluehatGames
             btn_wallet_private_key_show.onClick.AddListener(() =>
             {
                 if (input_wallet_private_key.text == SECRET_HIDE)
-                    input_wallet_private_key.text = WalletLocalRepositroy.GetWallletPrivateKey();
+                    input_wallet_private_key.text = WalletLocalRepository.GetWallletPrivateKey();
                 else
                     input_wallet_private_key.text = SECRET_HIDE;
             });
@@ -72,7 +72,7 @@ namespace BluehatGames
             btn_klaytn_wallet_key_show.onClick.AddListener(() =>
             {
                 if (input_klaytn_wallet_key.text == SECRET_HIDE)
-                    input_klaytn_wallet_key.text = WalletLocalRepositroy.GetKlaytnWalletKey();
+                    input_klaytn_wallet_key.text = WalletLocalRepository.GetKlaytnWalletKey();
                 else
                     input_klaytn_wallet_key.text = SECRET_HIDE;
             });
@@ -91,38 +91,36 @@ namespace BluehatGames
 
         private IEnumerator CreateNewWallet()
         {
-            using (var request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, ""))
+            using var request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, "");
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            if (access_token == null)
             {
-                request.downloadHandler = new DownloadHandlerBuffer();
-
-                var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                if (access_token == null)
-                {
-                    Debug.Log("access_token is null. access_token is set \"0000\"");
-                    access_token = "0000";
-                }
-
+                Debug.Log("access_token is null. access_token is set \"0000\"");
                 access_token = "0000";
-                request.SetRequestHeader("Authorization", access_token);
+            }
 
-                yield return request.SendWebRequest();
+            access_token = "0000";
+            request.SetRequestHeader("Authorization", access_token);
 
-                if (request.isNetworkError || request.isHttpError)
-                {
-                    Debug.Log(request);
-                    Debug.Log(request.error);
-                }
-                else
-                {
-                    Debug.Log("Response: " + request.downloadHandler.text);
-                    var walletInfo = JsonUtility.FromJson<Wallet>(request.downloadHandler.text);
-                    WalletLocalRepositroy.setWalletInfo(walletInfo);
-                    input_wallet_address.text = walletInfo.address;
-                    input_wallet_private_key.text = SECRET_HIDE;
-                    input_klaytn_wallet_key.text = SECRET_HIDE;
-                    walletSignUpPanel.SetActive(false);
-                    walletInfoPanel.SetActive(true);
-                }
+            yield return request.SendWebRequest();
+
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request);
+                Debug.Log(request.error);
+            }
+            else
+            {
+                Debug.Log("Response: " + request.downloadHandler.text);
+                var walletInfo = JsonUtility.FromJson<Wallet>(request.downloadHandler.text);
+                WalletLocalRepository.setWalletInfo(walletInfo);
+                input_wallet_address.text = walletInfo.address;
+                input_wallet_private_key.text = SECRET_HIDE;
+                input_klaytn_wallet_key.text = SECRET_HIDE;
+                walletSignUpPanel.SetActive(false);
+                walletInfoPanel.SetActive(true);
             }
         }
     }

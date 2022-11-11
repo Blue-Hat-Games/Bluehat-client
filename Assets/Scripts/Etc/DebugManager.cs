@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// ReSharper disable once CheckNamespace
 namespace BluehatGames
 {
     public class DebugManager : MonoBehaviour

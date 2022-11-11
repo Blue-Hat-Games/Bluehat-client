@@ -52,48 +52,46 @@ namespace BluehatGames
 
         public IEnumerator GetNewAnimalFromServer(string URL)
         {
-            using (var request = UnityWebRequest.Post(URL, ""))
+            using var request = UnityWebRequest.Post(URL, "");
+            request.downloadHandler = new DownloadHandlerBuffer();
+
+            // Access Token
+            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
+            if (access_token == null || isTestMode)
             {
-                request.downloadHandler = new DownloadHandlerBuffer();
+                Debug.Log("access_token is null. or test mode. access_token is set \"0000\"");
+                access_token = "0000";
+            }
 
-                // Access Token
-                var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                if (access_token == null || isTestMode)
-                {
-                    Debug.Log("access_token is null. or test mode. access_token is set \"0000\"");
-                    access_token = "0000";
-                }
+            // send access token to server
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
 
-                // send access token to server
-                request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            yield return request.SendWebRequest();
 
-                yield return request.SendWebRequest();
+            // error
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+            }
+            // success
+            else
+            {
+                var responseText = request.downloadHandler.text;
+                var responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
 
-                // error
-                if (request.result == UnityWebRequest.Result.ConnectionError ||
-                    request.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.Log(request.error);
-                }
-                // success
-                else
-                {
-                    var responseText = request.downloadHandler.text;
-                    var responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
+                Debug.Log(request.downloadHandler.text);
 
-                    Debug.Log(request.downloadHandler.text);
+                var animalName = responseType;
+                resultAnimalText.text = $"{animalName}!";
 
-                    var animalName = responseType;
-                    resultAnimalText.text = $"{animalName}!";
+                LoadAnimalPrefab(animalName);
+                ShowResultPanel();
 
-                    LoadAnimalPrefab(animalName);
-                    ShowResultPanel();
-
-                    // 알 개수 차감
-                    var originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-                    PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, originEggCount - 1);
-                    eggText.text = (originEggCount - 1).ToString();
-                }
+                // 알 개수 차감
+                var originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
+                PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, originEggCount - 1);
+                eggText.text = (originEggCount - 1).ToString();
             }
         }
 

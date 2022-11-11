@@ -14,11 +14,6 @@ public class MarketNoticeController : MonoBehaviour
         StartCoroutine(ShowNoticeText());
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-    }
-
     private IEnumerator ShowNoticeText()
     {
         var idx = 0;

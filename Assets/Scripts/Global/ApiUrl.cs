@@ -49,46 +49,28 @@ namespace BluehatGames
 
         public string GetLiveServerApiUrl(ApiCategory apiCategory)
         {
-            var url = "";
-
-            switch (apiCategory)
+            var url = apiCategory switch
             {
-                case ApiCategory.emailLoginVerify:
-                    url = $"{liveServer}/{emailLoginVerify}";
-                    break;
-                case ApiCategory.userLogin:
-                    url = $"{liveServer}/{login}";
-                    break;
-                case ApiCategory.postAnimalNew:
-                    url = $"{liveServer}/{postAnimalNew}";
-                    break;
-                case ApiCategory.getAnimalList:
-                    url = $"{liveServer}/{getAnimalList}";
-                    break;
-            }
+                ApiCategory.emailLoginVerify => $"{liveServer}/{emailLoginVerify}",
+                ApiCategory.userLogin => $"{liveServer}/{login}",
+                ApiCategory.postAnimalNew => $"{liveServer}/{postAnimalNew}",
+                ApiCategory.getAnimalList => $"{liveServer}/{getAnimalList}",
+                _ => ""
+            };
 
             return url;
         }
 
         public string GetTestServerApiUrl(ApiCategory apiCategory)
         {
-            var url = "";
-
-            switch (apiCategory)
+            var url = apiCategory switch
             {
-                case ApiCategory.emailLoginVerify:
-                    url = $"{testServer}/{emailLoginVerify}";
-                    break;
-                case ApiCategory.userLogin:
-                    url = $"{testServer}/{login}";
-                    break;
-                case ApiCategory.postAnimalNew:
-                    url = $"{testServer}/{postAnimalNew}";
-                    break;
-                case ApiCategory.getAnimalList:
-                    url = $"{testServer}/{getAnimalList}";
-                    break;
-            }
+                ApiCategory.emailLoginVerify => $"{testServer}/{emailLoginVerify}",
+                ApiCategory.userLogin => $"{testServer}/{login}",
+                ApiCategory.postAnimalNew => $"{testServer}/{postAnimalNew}",
+                ApiCategory.getAnimalList => $"{testServer}/{getAnimalList}",
+                _ => ""
+            };
 
             return url;
         }

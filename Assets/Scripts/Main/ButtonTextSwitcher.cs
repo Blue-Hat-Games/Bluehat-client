@@ -13,9 +13,6 @@ public class ButtonTextSwitcher : MonoBehaviour
         StartCoroutine(SwitchText());
     }
 
-    private void Update()
-    {
-    }
 
     private IEnumerator SwitchText()
     {

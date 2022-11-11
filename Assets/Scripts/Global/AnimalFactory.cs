@@ -70,7 +70,7 @@ namespace BluehatGames
         public void LoadHatItemPrefab(string itemName, GameObject animalObject)
         {
             Debug.Log($"LoadHatItemPrefab() | itemName = {itemName}");
-            if (itemName == "None" || itemName == "") return;
+            if (itemName is "None" or "") return;
 
             var path = $"Prefab/Hats/{itemName}";
             var obj = Resources.Load(path) as GameObject;

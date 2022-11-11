@@ -3,9 +3,10 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace BluehatGames
 {
-    public class AESCrypto
+    public static class AESCrypto
     {
         private static readonly string PASSWORD = "dhn2llkdc72!dasdf";
         private static readonly string KEY = PASSWORD.Substring(0, 128 / 8);

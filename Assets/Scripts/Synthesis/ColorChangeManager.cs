@@ -72,37 +72,35 @@ namespace BluehatGames
             // TODO: 테스트이면 0000 으로 
             if (isTest) access_token = tempAccessToken;
             Debug.Log($"access_token = {access_token}");
-            using (var webRequest = UnityWebRequest.Post(URL, ""))
+            using var webRequest = UnityWebRequest.Post(URL, "");
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            var requestData = new RequestColorChangeAnimalFormat();
+            requestData.animalId = selectedAnimalData.id;
+
+            var json = JsonUtility.ToJson(requestData);
+            Debug.Log(json);
+
+            var bodyRaw = Encoding.UTF8.GetBytes(json);
+            webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
-                webRequest.SetRequestHeader("Content-Type", "application/json");
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                var responseText = webRequest.downloadHandler.text;
 
-                var requestData = new RequestColorChangeAnimalFormat();
-                requestData.animalId = selectedAnimalData.id;
+                var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
+                Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
 
-                var json = JsonUtility.ToJson(requestData);
-                Debug.Log(json);
-
-                var bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = new DownloadHandlerBuffer();
-
-                yield return webRequest.SendWebRequest();
-
-                if (webRequest.isNetworkError || webRequest.isHttpError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    var responseText = webRequest.downloadHandler.text;
-
-                    var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
-                    Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
-
-                    // refresh data
-                    synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, true);
-                }
+                // refresh data
+                synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, true);
             }
         }
 

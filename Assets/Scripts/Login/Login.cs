@@ -124,7 +124,7 @@ namespace BluehatGames
                     {
                         var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                         Debug.Log($"response => {response} | response.msg = {response.msg}");
-                        if (response.msg == "Register Success" || response.msg == "Login Success")
+                        if (response.msg is "Register Success" or "Login Success")
                         {
                             if (null != popupCoroutine) StopCoroutine(popupCoroutine);
 
@@ -149,12 +149,6 @@ namespace BluehatGames
             PlayerPrefs.SetInt(key, value);
         }
 
-        private int GetClientInfo(string key)
-        {
-            return PlayerPrefs.GetInt(key);
-        }
-
-
         private IEnumerator ShowAlertPopup(string text)
         {
             alertText.text = text;
@@ -168,7 +162,7 @@ namespace BluehatGames
             Debug.Log($"RequestAuthToServer | URL: {URL}, inputEmail: {inputEmail}");
             var playerInfo = new PlayerInfo(inputEmail);
             var jsonData = playerInfo.ToJson();
-            Debug.Log("Resutlt = " + playerInfo.ToJson());
+            Debug.Log("Result = " + playerInfo.ToJson());
 
             // 'emailLoginVerify' or 'login'
             if (URL == ApiUrl.emailLoginVerify)
@@ -182,36 +176,33 @@ namespace BluehatGames
             // byteEmail 
             var byteEmail = Encoding.UTF8.GetBytes(jsonData);
 
-            using (var request = UnityWebRequest.Post(URL, jsonData))
+            using var request = UnityWebRequest.Post(URL, jsonData);
+            request.uploadHandler = new UploadHandlerRaw(byteEmail);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+            if (request.responseCode == 409)
             {
-                request.uploadHandler = new UploadHandlerRaw(byteEmail);
-                request.downloadHandler = new DownloadHandlerBuffer();
-                request.SetRequestHeader("Content-Type", "application/json");
+                Debug.Log("Email Not Verified");
+                StartCoroutine(ShowAlertPopup("Email Not Verified"));
+            }
+            else if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log("request Error!");
+                Debug.Log(request.responseCode);
+                Debug.Log(request.error + " | " + request);
+            }
+            else
+            {
+                Debug.Log("request Success!");
+                action.Invoke(request);
 
-                yield return request.SendWebRequest();
-                if (request.responseCode == 409)
-                {
-                    Debug.Log("Email Not Verified");
-                    StartCoroutine(ShowAlertPopup("Email Not Verified"));
-                }
-                else if (request.result == UnityWebRequest.Result.ConnectionError ||
-                         request.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.Log("request Error!");
-                    Debug.Log(request.responseCode);
-                    Debug.Log(request.error + " | " + request);
-                }
+                // URL -> 'emailLoginVerify' or 'login'
+                if (URL == ApiUrl.emailLoginVerify)
+                    SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);
                 else
-                {
-                    Debug.Log("request Success!");
-                    action.Invoke(request);
-
-                    // URL -> 'emailLoginVerify' or 'login'
-                    if (URL == ApiUrl.emailLoginVerify)
-                        SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);
-                    else
-                        SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
-                }
+                    SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
             }
         }
 

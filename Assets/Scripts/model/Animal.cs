@@ -73,8 +73,12 @@ namespace BluehatGames
             var index = 0;
             for (var i = 0; i < restoreTexColors.Length; i++)
             {
-                if (i == 16) index = 0;
-                if (i == 48) index = 8;
+                index = i switch
+                {
+                    16 => 0,
+                    48 => 8,
+                    _ => index
+                };
 
                 restoreTexColors[i] = colorFromJson[index];
 
@@ -86,8 +90,6 @@ namespace BluehatGames
 
         private Texture2D color2Texture(Color32[] color, int width, int height)
         {
-            // Debug.Log($"color => {color}");
-            // Debug.Log($"width => {width}, height => {height}");
             var texture = new Texture2D(width, height);
             texture.SetPixels32(color);
             texture.Apply(true);

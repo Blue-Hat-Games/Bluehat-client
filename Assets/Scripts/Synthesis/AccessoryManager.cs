@@ -49,45 +49,41 @@ namespace BluehatGames
         {
             var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
-            var request = UnityWebRequest.Get(URL);
-
             if (isTest) access_token = tempAccessToken;
 
             Debug.Log($"access token = {access_token}");
 
-            using (var webRequest = UnityWebRequest.Post(URL, ""))
+            using var webRequest = UnityWebRequest.Post(URL, "");
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+
+            var requestData = new RequestRandomHatFormat();
+            requestData.animalId = selectedAnimalData.id;
+
+            var json = JsonUtility.ToJson(requestData);
+            Debug.Log(json);
+
+            var bodyRaw = Encoding.UTF8.GetBytes(json);
+            webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            webRequest.downloadHandler = new DownloadHandlerBuffer();
+
+            yield return webRequest.SendWebRequest();
+
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
-                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
-                webRequest.SetRequestHeader("Content-Type", "application/json");
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                var responseText = webRequest.downloadHandler.text;
 
-                var requestData = new RequestRandomHatFormat();
-                requestData.animalId = selectedAnimalData.id;
+                var new_item = JsonUtility.FromJson<ResponseHatResult>(responseText).new_item;
+                Debug.Log($"AccessoryManager | [{URL}] - new_item = {new_item}");
+                LoadHatItemPrefab(new_item);
+                synthesisManager.SetResultLoadingPanel(false);
 
-                var json = JsonUtility.ToJson(requestData);
-                Debug.Log(json);
-
-                var bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = new DownloadHandlerBuffer();
-
-                yield return webRequest.SendWebRequest();
-
-                if (webRequest.isNetworkError || webRequest.isHttpError)
-                {
-                    Debug.Log($"Error: {webRequest.error}");
-                }
-                else
-                {
-                    var responseText = webRequest.downloadHandler.text;
-
-                    var new_item = JsonUtility.FromJson<ResponseHatResult>(responseText).new_item;
-                    Debug.Log($"AccessoryManager | [{URL}] - new_item = {new_item}");
-                    LoadHatItemPrefab(new_item);
-                    synthesisManager.SetResultLoadingPanel(false);
-
-                    // refresh data
-                    synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, false);
-                }
+                // refresh data
+                synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, false);
             }
         }
 
