@@ -41,6 +41,7 @@ namespace BluehatGames
                 if (eggResultPanel.activeSelf)
                 {
                     eggResultPanel.SetActive(false);
+                    GameObject.Destroy(myNewAnimal);
                     return;
                 }
                 if (egg <= 0)
