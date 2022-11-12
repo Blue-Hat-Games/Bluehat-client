@@ -517,6 +517,7 @@ namespace BluehatGames
     {
         public string username;
         public int coin;
+        public int egg;
         public string wallet_address;
         public string email;
         public string createdAt;

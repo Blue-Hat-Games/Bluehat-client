@@ -24,13 +24,13 @@ namespace BluehatGames
 
         private GameObject myNewAnimal;
 
+        private int egg;
+
         void Start()
         {
-
-            PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, 79);
-            int myEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-            eggText.text = myEggCount.ToString();
+            StartCoroutine(GetUserInfo());
             eggAlertPanel.SetActive(false);
+            eggText.text = egg.ToString();
 
             eggButton.onClick.AddListener(() =>
             {
@@ -38,12 +38,24 @@ namespace BluehatGames
                 {
                     return;
                 }
-                if (myEggCount <= 0)
+                if (eggResultPanel.activeSelf)
+                {
+                    eggResultPanel.SetActive(false);
+                    return;
+                }
+                if (egg <= 0)
                 {
                     StartCoroutine(ShowAlertPanel());
                     return;
                 }
-                StartCoroutine(GetNewAnimalFromServer(ApiUrl.postAnimalNew));
+
+                else
+                {
+                    StartCoroutine(GetNewAnimalFromServer(ApiUrl.postAnimalNew));
+                    egg--;
+                    eggText.text = egg.ToString();
+                }
+
             });
 
 
@@ -52,6 +64,26 @@ namespace BluehatGames
                 eggResultPanel.SetActive(false);
                 GameObject.Destroy(myNewAnimal);
             });
+        }
+
+        public IEnumerator GetUserInfo()
+        {
+            using var webRequest = UnityWebRequest.Get(ApiUrl.getUserInfo);
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                var jsonData = webRequest.downloadHandler.text;
+                var user = JsonUtility.FromJson<User>(jsonData);
+                Debug.Log($"Received: {user.egg}");
+                egg = user.egg;
+                eggText.text = egg.ToString();
+            }
         }
 
         public IEnumerator GetNewAnimalFromServer(string URL)
@@ -83,11 +115,6 @@ namespace BluehatGames
 
                     LoadAnimalPrefab(animalName);
                     ShowResultPanel();
-
-                    // 알 개수 차감
-                    int originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-                    PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, originEggCount - 1);
-                    eggText.text = (originEggCount - 1).ToString();
                 }
             }
         }
