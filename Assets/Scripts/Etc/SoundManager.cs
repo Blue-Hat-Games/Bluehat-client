@@ -22,9 +22,9 @@ public class SoundManager : MonoBehaviour
 
     public void PlayEffectSound(AudioClip clip)
     {
-        for(int i=0; i<audioSources.Length; i++)
+        for (int i = 0; i < audioSources.Length; i++)
         {
-            if(audioSources[i].isPlaying == false)
+            if (audioSources[i].isPlaying == false)
             {
                 audioSources[i].clip = clip;
                 audioSources[i].Play();
@@ -32,15 +32,5 @@ public class SoundManager : MonoBehaviour
                 break;
             }
         }
-    }
-
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
     }
 }

@@ -41,8 +41,7 @@ namespace BluehatGames
         private IEnumerator GetMissionFromSever()
         {
             using var webRequest = UnityWebRequest.Get(ApiUrl.getQuestList);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
             yield return webRequest.SendWebRequest();
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {

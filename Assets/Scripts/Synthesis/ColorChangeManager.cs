@@ -11,9 +11,6 @@ namespace BluehatGames
 
     public class ColorChangeManager : MonoBehaviour
     {
-        public bool isTest = false;
-        public string tempAccessToken = "0000";
-
         private SynthesisManager synthesisManager;
 
         private GameObject selectedAnimalObject;
@@ -39,8 +36,8 @@ namespace BluehatGames
                     .transform
                     .Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
                 }
-                
-                if( resultAnimal != null)
+
+                if (resultAnimal != null)
                 {
                     resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
                 }
@@ -49,17 +46,17 @@ namespace BluehatGames
 
         public void ClearResultAnimal()
         {
-            if(resultAnimal)
+            if (resultAnimal)
             {
                 resultAnimal.SetActive(false);
                 DestroyParticle();
             }
-            if(selectedAnimalObject)
+            if (selectedAnimalObject)
             {
                 selectedAnimalObject.SetActive(false);
             }
         }
-        
+
         public void SetCurSelectedAnimal(AnimalDataFormat animalData, GameObject animalObject)
         {
             selectedAnimalData = animalData;
@@ -74,18 +71,9 @@ namespace BluehatGames
 
         public IEnumerator GetColorChangeResultFromServer(string URL)
         {
-            // Access Token
-            string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-
-            // TODO: 테스트이면 0000 으로 
-            if (isTest) 
-            {
-                access_token = tempAccessToken;
-            }
-            Debug.Log($"access_token = {access_token}");
             using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
             {
-                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
                 webRequest.SetRequestHeader("Content-Type", "application/json");
 
                 RequestColorChangeAnimalFormat requestData = new RequestColorChangeAnimalFormat();
@@ -110,7 +98,7 @@ namespace BluehatGames
 
                     var responseMsg = JsonUtility.FromJson<ResponseResult>(responseText).msg;
                     Debug.Log($"ColorChangeManager | [{URL}] - {responseMsg}");
-                    
+
                     // refresh data
                     synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, true);
                 }

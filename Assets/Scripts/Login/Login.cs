@@ -147,14 +147,12 @@ namespace BluehatGames
                     StartCoroutine(RequestAuthToServer(ApiUrl.login, email, (UnityWebRequest request) =>
                     {
                         var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
-                        Debug.Log($"response => {response} | response.msg = {response.msg}");
-                        if (response.msg == "Register Success" || response.msg == "Login Success")
+                        if (response.msg is "Register Success" or "Login Success")
                         {
                             if (null != popupCoroutine)
                             {
                                 StopCoroutine(popupCoroutine);
                             }
-
                             StartCoroutine(ShowAlertPopup(authCompleted));
                             if (response.msg == "Register Success")
                             {
@@ -164,7 +162,7 @@ namespace BluehatGames
                             {
                                 SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._LOGIN_COMPLETED);
                             }
-                            AuthKey.SetAuthKey(response.access_token);
+                            AccessToken.SetAccessToken(response.access_token);
                             SceneManager.LoadScene(SceneName._03_Main);
                         }
                         else
@@ -222,7 +220,7 @@ namespace BluehatGames
                     Debug.Log("Email Not Verified");
                     StartCoroutine(ShowAlertPopup("Email Not Verified"));
                 }
-                else if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                else if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log("request Error!");
                     Debug.Log(request.responseCode);

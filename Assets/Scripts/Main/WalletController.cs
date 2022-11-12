@@ -111,15 +111,7 @@ namespace BluehatGames
             using (UnityWebRequest request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, ""))
             {
                 request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-
-                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                if (access_token == null)
-                {
-                    Debug.Log("access_token is null. access_token is set \"0000\"");
-                    access_token = "0000";
-                }
-                access_token = "0000";
-                request.SetRequestHeader("Authorization", access_token);
+                request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
 
                 yield return request.SendWebRequest();
 

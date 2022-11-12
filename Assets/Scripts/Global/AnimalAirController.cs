@@ -13,11 +13,6 @@ namespace BluehatGames
     public class AnimalAirController : MonoBehaviour
     {
         public AnimalFactory animalFactory;
-
-        public string acessToken = "0000";
-        public bool isTest = false;
-        public string testAccessToken = "0000";
-
         private Dictionary<string, GameObject> animalObjectDictionary;
         private AnimalDataFormat[] prevAnimalDataArray;
         private AnimalDataFormat[] animalDataArray;
@@ -39,13 +34,7 @@ namespace BluehatGames
         public IEnumerator DownLoadGet(string URL)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            Debug.Log($"access token = {acessToken}");
-            acessToken = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            if (isTest)
-            {
-                acessToken = testAccessToken;
-            }
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, acessToken);
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -117,14 +106,7 @@ namespace BluehatGames
         private IEnumerator UpdateDataFromServer(string URL, string animalId, bool isColorChange)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            if (isTest)
-            {
-                access_token = testAccessToken;
-            }
-            Debug.Log($"access token = {access_token}");
-
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
@@ -157,13 +139,13 @@ namespace BluehatGames
                     GameObject animalObj = animalObjectDictionary[updatedAnimalData.id];
                     Animal animal = new Animal(updatedAnimalData);
                     // animal의 텍스처 변경
-                    if(isColorChange)
+                    if (isColorChange)
                     {
                         animalFactory.ChangeTextureAnimalObject(animalObj, animal);
                     }
                     else
                     {
-                        animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);                        
+                        animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);
                     }
                     GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
                 }
@@ -179,15 +161,7 @@ namespace BluehatGames
         private IEnumerator UpdateDataOnFusion(string URL, string animalId1, string animalId2, string resultAnimalId)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-
-            if (isTest)
-            {
-                access_token = testAccessToken;
-            }
-
-            Debug.Log($"access token = {access_token}");
-            request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+            request.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||
