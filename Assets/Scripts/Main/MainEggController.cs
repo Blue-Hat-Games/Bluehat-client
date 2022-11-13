@@ -20,17 +20,13 @@ namespace BluehatGames
         public Button resultExitButton;
         public Text resultAnimalText;
 
-        public bool isTestMode;
-
         private GameObject myNewAnimal;
 
         private int egg;
 
         void Start()
         {
-            StartCoroutine(GetUserInfo());
             eggAlertPanel.SetActive(false);
-            eggText.text = egg.ToString();
 
             eggButton.onClick.AddListener(() =>
             {
@@ -44,7 +40,7 @@ namespace BluehatGames
                     GameObject.Destroy(myNewAnimal);
                     return;
                 }
-                if (egg <= 0)
+                if (UserRepository.GetEgg() <= 0)
                 {
                     StartCoroutine(ShowAlertPanel());
                     return;
@@ -53,8 +49,8 @@ namespace BluehatGames
                 else
                 {
                     StartCoroutine(GetNewAnimalFromServer(ApiUrl.postAnimalNew));
-                    egg--;
-                    eggText.text = egg.ToString();
+                    UserRepository.SetEgg(UserRepository.GetEgg() - 1);
+                    eggText.text = UserRepository.GetEgg().ToString();
                 }
 
             });
@@ -67,25 +63,6 @@ namespace BluehatGames
             });
         }
 
-        public IEnumerator GetUserInfo()
-        {
-            using var webRequest = UnityWebRequest.Get(ApiUrl.getUserInfo);
-            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
-            yield return webRequest.SendWebRequest();
-            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log($"Error: {webRequest.error}");
-            }
-            else
-            {
-                Debug.Log($"Received: {webRequest.downloadHandler.text}");
-                var jsonData = webRequest.downloadHandler.text;
-                var user = JsonUtility.FromJson<User>(jsonData);
-                Debug.Log($"Received: {user.egg}");
-                egg = user.egg;
-                eggText.text = egg.ToString();
-            }
-        }
 
         public IEnumerator GetNewAnimalFromServer(string URL)
         {

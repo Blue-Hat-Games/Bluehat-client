@@ -112,7 +112,7 @@ public class MainSceneAnimal : MonoBehaviour
                 animalState = AnimalState.Idle;
                 yield break;
             }
-            if(Vector3.Distance(this.transform.eulerAngles, direction) > 0.1)
+            if (Vector3.Distance(this.transform.eulerAngles, direction) > 0.1)
             {
                 this.transform.eulerAngles = Vector3.Lerp(this.transform.eulerAngles, direction, 0.5f);
             }
@@ -121,13 +121,12 @@ public class MainSceneAnimal : MonoBehaviour
 
             rigidl.MovePosition(transform.position + transform.forward * animalMoveSpeed * Time.deltaTime);
         }
-    }   
+    }
 
     private void OnCollisionEnter(Collision coll)
     {
-        if(coll.gameObject.tag == "RestrictedArea")
+        if (coll.gameObject.tag == "RestrictedArea")
         {
-            Debug.Log("RestrictedArea collision -------------");
             isWallCollision = true;
         }
     }

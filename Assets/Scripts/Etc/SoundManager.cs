@@ -1,36 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class SoundManager : MonoBehaviour
+namespace BluehatGames
 {
-    public static SoundManager instance = null;
-    public AudioSource[] audioSources;
-
-    private void Awake()
+    public class SoundManager : MonoBehaviour
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else if (instance != this)
-        {
-            Destroy(this.gameObject);
-        }
-    }
+        public static SoundManager instance = null;
+        public AudioSource[] audioSources;
 
-    public void PlayEffectSound(AudioClip clip)
-    {
-        for (int i = 0; i < audioSources.Length; i++)
+        private void Awake()
         {
-            if (audioSources[i].isPlaying == false)
+            if (instance == null)
             {
-                audioSources[i].clip = clip;
-                audioSources[i].Play();
-
-                break;
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+            else if (instance != this)
+            {
+                Destroy(this.gameObject);
             }
         }
+
+        public void PlayEffectSound(AudioClip clip)
+        {
+            SoundUtil soundUtil = new SoundUtil();
+            if (soundUtil.isSoundEffectOn())
+            {
+                for (int i = 0; i < audioSources.Length; i++)
+                {
+                    if (audioSources[i].isPlaying == false)
+                    {
+                        audioSources[i].clip = clip;
+                        audioSources[i].Play();
+
+                        break;
+                    }
+                }
+            }
+
+        }
     }
+
 }

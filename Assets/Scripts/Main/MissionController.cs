@@ -13,6 +13,7 @@ namespace BluehatGames
         public Image img_btn_mission_alert;
         public GameObject missionPanel;
         public Button btn_mission_pannel_close;
+        public AudioClip upperButtonSound;
 
         public Transform missionContent;
         public GameObject missionCardPrefab;
@@ -22,6 +23,7 @@ namespace BluehatGames
             missionPanel.SetActive(false);
             btn_mission.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(upperButtonSound);
                 LoadMission();
                 missionPanel.SetActive(true);
             });
