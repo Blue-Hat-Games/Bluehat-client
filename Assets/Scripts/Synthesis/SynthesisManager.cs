@@ -311,12 +311,12 @@ namespace BluehatGames
             animal.transform.eulerAngles = new Vector3(0, animal.transform.eulerAngles.y, animal.transform.eulerAngles.z);
         }
 
-        public void TakeScreenshotForMarketPNG()
+        public void TakeScreenshotForMarketPNG(string resultAnimalId)
         {
-            StartCoroutine(TakeScreenshot());
+            StartCoroutine(TakeScreenshot(resultAnimalId));
         }
 
-        IEnumerator TakeScreenshot()
+        IEnumerator TakeScreenshot(string resultAnimalId)
         {
             yield return new WaitForEndOfFrame();
 
@@ -334,17 +334,18 @@ namespace BluehatGames
             {
                 Texture2D texture = resultTex;
                 byte[] bytes = texture.EncodeToPNG();
-                StartCoroutine(this.SendPNGToServer(bytes));
+                StartCoroutine(this.SendPNGToServer(bytes, resultAnimalId));
                 GameObject.Destroy(duplicatedAnimal);
 
             });
         }
 
-        IEnumerator SendPNGToServer(byte[] bytes)
+        IEnumerator SendPNGToServer(byte[] bytes, string resultAnimalId)
         {
             // Create a Web Form
             WWWForm form = new WWWForm();
-            form.AddField("wallet_address", "0x4f898b8e903120fffb07165a34409940971da4ae");
+            form.AddField("wallet_address", WalletLocalRepositroy.GetWalletAddress());
+            form.AddField("animal_id", resultAnimalId);
             form.AddBinaryData("file", bytes);
 
             // Upload to a cgi script
@@ -401,12 +402,12 @@ namespace BluehatGames
             btn_exitListView.gameObject.SetActive(true);
         }
 
-        public void RefreshAnimalThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData)
+        public void RefreshAnimalThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData, string resultAnimalId)
         {
-            StartCoroutine(UpdateThumbnail(updatedAnimalObject, animalData));
+            StartCoroutine(UpdateThumbnail(updatedAnimalObject, animalData, resultAnimalId));
         }
 
-        IEnumerator UpdateThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData)
+        IEnumerator UpdateThumbnail(GameObject updatedAnimalObject, AnimalDataFormat animalData, string resultAnimalId)
         {
             updatedAnimalObject.transform.position = thumbnailSpot.position;
             updatedAnimalObject.transform.rotation = thumbnailSpot.rotation;
@@ -454,7 +455,7 @@ namespace BluehatGames
             }
             else if (pannelSwitch.CheckStatus(PannelStatus.FUSION))
             {
-                fusionManager.OnRefreshAnimalDataAfterFusion(updatedAnimalObject);
+                fusionManager.OnRefreshAnimalDataAfterFusion(updatedAnimalObject, resultAnimalId);
             }
         }
 

@@ -103,7 +103,7 @@ namespace BluehatGames
                         Debug.Log($"responseCode 400 | msg = {responseMsg}");
                         break;
                     default:
-                        if (webRequest.isNetworkError || webRequest.isHttpError)
+                        if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
                         {
                             Debug.Log($"Error: {webRequest.error}");
                         }
@@ -122,7 +122,7 @@ namespace BluehatGames
             }
         }
 
-        public void OnRefreshAnimalDataAfterFusion(GameObject resultAnimalObject)
+        public void OnRefreshAnimalDataAfterFusion(GameObject resultAnimalObject, string resultAnimalId)
         {
             resultAnimalObject.transform.position = new Vector3(-2, -0.5f, resultAnimalObject.transform.position.z);
             resultAnimalObject.GetComponentInChildren<Animator>().speed = 0.3f;
@@ -134,7 +134,7 @@ namespace BluehatGames
 
             synthesisManager.SetResultLoadingPanel(false);
 
-            synthesisManager.TakeScreenshotForMarketPNG();
+            synthesisManager.TakeScreenshotForMarketPNG(resultAnimalId);
         }
 
         private GameObject tempParticle;
