@@ -41,8 +41,6 @@ namespace BluehatGames
         public Text animalDetailName;
         public Text animalDetailSellerName;
         public Text animalDetailPrice;
-        public Text animalDetailViewCount;
-        public Text animalDetailDescription;
         public RawImage animalDetailImg;
         public Button animalDetailBuyBtn;
         public Button animalDetailCloseBtn;
@@ -61,8 +59,6 @@ namespace BluehatGames
 
         public AnimalFactory animalFactory;
 
-        private String authToken;
-
         private GameObject[] pageItemObjects;
 
 
@@ -70,15 +66,12 @@ namespace BluehatGames
         {
             myAnimalPanel.SetActive(false);
             animalDetailPanel.SetActive(false);
-
-            authToken = "0000";
-            Debug.Log("authToken: " + authToken);
             pageItemObjects = new GameObject[5];
- 
+
 
             StartCoroutine(GetItemCount());
             StartCoroutine(GetItems());
-            StartCoroutine(GetUserInfo());
+            coinInfoText.text = UserRepository.GetCoin().ToString();
 
             nextBtn.onClick.AddListener(() =>
             {
@@ -95,7 +88,7 @@ namespace BluehatGames
             myAnimalBtn.onClick.AddListener(() =>
             {
                 myAnimalPanel.SetActive(true);
-                if(isBuyResult == false)
+                if (isBuyResult == false)
                 {
                     return;
                 }
@@ -155,25 +148,6 @@ namespace BluehatGames
             }
         }
 
-        private IEnumerator GetUserInfo()
-        {
-            string url = host + "/user";
-            using UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("Authorization", authToken);
-            yield return webRequest.SendWebRequest();
-            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log($"Error: {webRequest.error}");
-            }
-            else
-            {
-                var response = "{\"user\":" + webRequest.downloadHandler.text + "}";
-                var parseResult = JsonUtility.FromJson<UserInfo>(response);
-                user = parseResult.user;
-                coinInfoText.text = $"{user.coin.ToString()}";
-            }
-        }
-
         private IEnumerator GetItems()
         {
             string url = host + "/market/list?order=" + order + "&limit=" + limit.ToString() + "&page=" + page.ToString();
@@ -187,19 +161,19 @@ namespace BluehatGames
             {
                 var response = "{\"items\":" + webRequest.downloadHandler.text + "}";
                 ItemCard[] parseResult = JsonUtility.FromJson<ItemCardList>(response).items;
-                if(hasItemObjects)
+                if (hasItemObjects)
                 {
                     hasItemObjects = false;
-                    for(int i=0; i<pageItemObjects.Length; i++)
+                    for (int i = 0; i < pageItemObjects.Length; i++)
                     {
-                        if(pageItemObjects[i] != null)
+                        if (pageItemObjects[i] != null)
                         {
                             Destroy(pageItemObjects[i]);
                         }
                     }
                 }
                 StartCoroutine(MakeAnimalThumbnail(parseResult));
-                
+
             }
         }
 
@@ -215,7 +189,7 @@ namespace BluehatGames
         public Transform thumbnailSpot;
         public Camera thumbnailCamera;
         public RenderTexture renderTexture;
-        
+
         private bool hasItemObjects = false;
 
         IEnumerator MakeAnimalThumbnail(ItemCard[] itemCardArray)
@@ -223,7 +197,7 @@ namespace BluehatGames
             hasItemObjects = true;
 
             for (int i = 0; i < itemCardArray.Length; i++)
-            {   
+            {
                 ItemCard item = itemCardArray[i];
                 GameObject itemObj = GameObject.Instantiate(marketItemPrefab);
                 pageItemObjects[i] = itemObj;
@@ -233,7 +207,7 @@ namespace BluehatGames
                 itemObj.transform.Find("animal_name").GetComponent<Text>().text = item.username;
                 itemObj.transform.Find("price").GetComponent<Text>().text = item.price.ToString();
                 itemObj.transform.Find("view_count").GetComponent<Text>().text = item.view_count.ToString();
-                
+
                 RawImage rawImage = itemObj.transform.Find("animal_img").GetComponent<RawImage>();
 
                 AnimalDataFormat updatedAnimalData = new AnimalDataFormat();
@@ -244,7 +218,7 @@ namespace BluehatGames
                 updatedAnimalData.headItem = item.head_item;
                 updatedAnimalData.pattern = "";
                 updatedAnimalData.color = item.color;
-                
+
                 Debug.Log($"MarketManager | id = {item.id.ToString()}, animal_type = {item.animal_type}, color = {item.color}");
 
                 Animal animal = new Animal(updatedAnimalData);
@@ -255,7 +229,7 @@ namespace BluehatGames
                 animalObject.transform.rotation = thumbnailSpot.rotation;
 
                 thumbnailCamera.Render();
-                
+
                 yield return new WaitForEndOfFrame();
 
                 animalObject.SetActive(false);
@@ -289,9 +263,9 @@ namespace BluehatGames
 
         private IEnumerator GetUserAnimal()
         {
-            string url = host + "/animal/get-user-animal";
+            string url = host + "/animal/get-user-animal?nft=true";
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
-            webRequest.SetRequestHeader("Authorization", authToken);
+            webRequest.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             yield return webRequest.SendWebRequest();
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
@@ -310,9 +284,9 @@ namespace BluehatGames
         IEnumerator MakeMyAnimalThumbnail(AnimalDataFormat[] animalDataArray)
         {
             for (int i = 0; i < animalDataArray.Length; i++)
-            {                    
+            {
                 AnimalDataFormat animalData = animalDataArray[i];
-    
+
                 GameObject itemObj = GameObject.Instantiate(myAnimalItemPrefab, myAnimalContent, true);
                 itemObj.transform.Find("animal_id").GetComponent<Text>().text = animalData.id;
                 itemObj.transform.Find("animal_name").GetComponent<Text>().text = animalData.name;
@@ -326,9 +300,9 @@ namespace BluehatGames
                     myAnimalDetailRawImage.texture = rawImage.texture;
                     myAnimalDetailType.text = animalData.animalType;
                     string hatItemStr = animalData.headItem;
-                    if(animalData.headItem == "" || animalData.headItem == "None")
-                    {   
-                        hatItemStr = "-"; 
+                    if (animalData.headItem == "" || animalData.headItem == "None")
+                    {
+                        hatItemStr = "-";
                     }
                     myAnimalHatItem.text = hatItemStr;
                     myAnimalIdHidedData.text = animalData.id;
@@ -342,7 +316,7 @@ namespace BluehatGames
                 animalObject.transform.rotation = thumbnailSpot.rotation;
 
                 thumbnailCamera.Render();
-                
+
                 yield return new WaitForEndOfFrame();
 
                 animalObject.SetActive(false);
@@ -352,7 +326,7 @@ namespace BluehatGames
                     rawImage.texture = resultTex;
                 });
 
-                if(i == 0)
+                if (i == 0)
                 {
                     myAnimalDetailName.text = animalData.name;
                     myAnimalDetailRawImage.texture = rawImage.texture;
@@ -378,10 +352,8 @@ namespace BluehatGames
             {
                 animalDetailPanel.SetActive(true);
                 var animalInfo = JsonUtility.FromJson<AnimalDetailFromServer>(webRequest.downloadHandler.text).data;
-                animalDetailDescription.text = animalInfo.description;
                 animalDetailName.text = animalInfo.animal_name;
                 animalDetailPrice.text = animalInfo.price.ToString();
-                animalDetailViewCount.text = animalInfo.view_count + " Views";
                 animalDetailSellerName.text = animalInfo.username;
                 var buyAnimalId = animalInfo.id;
                 animalDetailBuyBtn.onClick.AddListener(() =>
@@ -400,7 +372,7 @@ namespace BluehatGames
         {
             string url = host + "/market/sell";
             using UnityWebRequest webRequest = UnityWebRequest.Post(url, "");
-            webRequest.SetRequestHeader("Authorization", authToken);
+            webRequest.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             webRequest.SetRequestHeader("Content-Type", "application/json");
             var price = myAnimalInputPrice.text;
             var animalId = myAnimalIdHidedData.text;
@@ -422,14 +394,14 @@ namespace BluehatGames
 
         public string paySuccessMessage;
         public string payFailMessage;
-        
+
         private bool isBuyResult = true;
 
         private IEnumerator BuyAnimal(int id)
         {
             string url = host + "/market/buy";
             using UnityWebRequest webRequest = new UnityWebRequest(url, "POST");
-            webRequest.SetRequestHeader("Authorization", authToken);
+            webRequest.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             webRequest.SetRequestHeader("Content-Type", "application/json");
             string json = "{\"buy_animal_id\":" + id.ToString() + "}";
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
@@ -444,7 +416,7 @@ namespace BluehatGames
             {
                 var result = JsonUtility.FromJson<AnimalBuyResult>(webRequest.downloadHandler.text);
                 OpenAlertPanel(result.msg == "success" ? paySuccessMessage : payFailMessage, animalDetailPanel);
-                if(result.msg == "success")
+                if (result.msg == "success")
                 {
                     isBuyResult = true;
                 }
@@ -522,6 +494,7 @@ namespace BluehatGames
     {
         public string username;
         public int coin;
+        public int egg;
         public string wallet_address;
         public string email;
         public string createdAt;

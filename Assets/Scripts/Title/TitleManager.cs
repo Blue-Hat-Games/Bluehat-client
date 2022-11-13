@@ -42,7 +42,7 @@ namespace BluehatGames
                 }
                 else
                 {
-                    if (AuthKey.CheckAuthKey())
+                    if (AccessToken.CheckAcessToken())
                     {
                         infoText.text = "Login Success!";
                         yield return new WaitForSeconds(2);

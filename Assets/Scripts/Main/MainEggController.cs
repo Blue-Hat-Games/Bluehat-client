@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-namespace BluehatGames 
+namespace BluehatGames
 {
     public class MainEggController : MonoBehaviour
     {
         public Text eggText;
         public Button eggButton;
         public GameObject eggResultPanel;
-        
+
         public GameObject eggAlertPanel;
 
         public Camera overUICamera;
@@ -20,37 +20,49 @@ namespace BluehatGames
         public Button resultExitButton;
         public Text resultAnimalText;
 
-        public bool isTestMode;
-
         private GameObject myNewAnimal;
-        
+
+        private int egg;
+
         void Start()
         {
-
-            PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, 79);
-            int myEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-            eggText.text = myEggCount.ToString();
             eggAlertPanel.SetActive(false);
 
-            eggButton.onClick.AddListener(() => {
-                if(eggAlertPanel.activeSelf)
+            eggButton.onClick.AddListener(() =>
+            {
+                if (eggAlertPanel.activeSelf)
                 {
                     return;
                 }
-                if(myEggCount <= 0)
+                if (eggResultPanel.activeSelf)
+                {
+                    eggResultPanel.SetActive(false);
+                    GameObject.Destroy(myNewAnimal);
+                    return;
+                }
+                if (UserRepository.GetEgg() <= 0)
                 {
                     StartCoroutine(ShowAlertPanel());
                     return;
                 }
-                StartCoroutine(GetNewAnimalFromServer(ApiUrl.postAnimalNew));
+
+                else
+                {
+                    StartCoroutine(GetNewAnimalFromServer(ApiUrl.postAnimalNew));
+                    UserRepository.SetEgg(UserRepository.GetEgg() - 1);
+                    eggText.text = UserRepository.GetEgg().ToString();
+                }
+
             });
 
 
-            resultExitButton.onClick.AddListener(() => {
+            resultExitButton.onClick.AddListener(() =>
+            {
                 eggResultPanel.SetActive(false);
                 GameObject.Destroy(myNewAnimal);
             });
         }
+
 
         public IEnumerator GetNewAnimalFromServer(string URL)
         {
@@ -58,15 +70,8 @@ namespace BluehatGames
             {
                 request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
 
-                // Access Token
-                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                if(access_token == null || isTestMode)
-                {
-                    Debug.Log("access_token is null. or test mode. access_token is set \"0000\"");
-                    access_token = "0000";
-                }
                 // send access token to server
-                request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+                request.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
 
                 yield return request.SendWebRequest();
 
@@ -88,11 +93,6 @@ namespace BluehatGames
 
                     LoadAnimalPrefab(animalName);
                     ShowResultPanel();
-
-                    // 알 개수 차감
-                    int originEggCount = PlayerPrefs.GetInt(PlayerPrefsKey.key_AnimalEgg);
-                    PlayerPrefs.SetInt(PlayerPrefsKey.key_AnimalEgg, originEggCount - 1);
-                    eggText.text = (originEggCount-1).ToString();
                 }
             }
         }

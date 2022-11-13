@@ -32,9 +32,7 @@ namespace BluehatGames
         public IEnumerator DownLoadGet(string URL)
         {
             UnityWebRequest request = UnityWebRequest.Get(URL);
-            var access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-            Debug.Log($"access token = {access_token}");
-            request.SetRequestHeader("Authorization", access_token);
+            request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ConnectionError ||

@@ -9,9 +9,6 @@ namespace BluehatGames
 {
     public class AccessoryManager : MonoBehaviour
     {
-        public bool isTest = false;
-        public string tempAccessToken = "0000";
-
         private SynthesisManager synthesisManager;
         public AnimalDataFormat selectedAnimalData;
         public GameObject selectedAnimalObject;
@@ -31,20 +28,12 @@ namespace BluehatGames
 
         public IEnumerator GetRandomHatResultFromServer(string URL)
         {
-            string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
 
             UnityWebRequest request = UnityWebRequest.Get(URL);
 
-            if (isTest)
-            {
-                access_token = tempAccessToken;
-            }
-
-            Debug.Log($"access token = {access_token}");
-
             using (UnityWebRequest webRequest = UnityWebRequest.Post(URL, ""))
             {
-                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
+                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
                 webRequest.SetRequestHeader("Content-Type", "application/json");
 
                 RequestRandomHatFormat requestData = new RequestRandomHatFormat();
@@ -77,7 +66,7 @@ namespace BluehatGames
                 }
             }
         }
-                
+
         private void LoadHatItemPrefab(string itemName)
         {
             var path = $"Prefab/Hats/{itemName}";
@@ -86,17 +75,17 @@ namespace BluehatGames
             Transform[] allChildren = selectedAnimalObject.GetComponentsInChildren<Transform>();
             Transform hatPoint = null;
 
-            foreach(Transform childTr in allChildren) 
+            foreach (Transform childTr in allChildren)
             {
-                if(childTr.name == "HatPoint")
+                if (childTr.name == "HatPoint")
                 {
-                    hatPoint = childTr;   
+                    hatPoint = childTr;
                 }
             }
-            
-            if(hatPoint.childCount > 0)
+
+            if (hatPoint.childCount > 0)
             {
-                Destroy(hatPoint.GetChild(0).gameObject); 
+                Destroy(hatPoint.GetChild(0).gameObject);
             }
             CreateHatParticle(hatPoint);
             hatObj.transform.SetParent(hatPoint);
@@ -125,7 +114,7 @@ namespace BluehatGames
 
         void Start()
         {
-            
+
         }
 
         void Update()
@@ -140,11 +129,11 @@ namespace BluehatGames
                 }
             }
 
-            if(resultAnimal != null)
+            if (resultAnimal != null)
             {
                 resultAnimal.transform.Rotate(0f, -Input.GetAxis("Mouse X") * 10, 0f, Space.World);
             }
-            
+
         }
     }
 }

@@ -13,6 +13,7 @@ namespace BluehatGames
         public Image img_btn_wallet_alert;
         public GameObject walletPanel;
         public Button btn_wallet_pannel_close;
+        public AudioClip upperButtonSound;
 
         [Header("Wallet SignUp")]
         public GameObject walletSignUpPanel;
@@ -35,6 +36,7 @@ namespace BluehatGames
             walletPanel.SetActive(false);
             btn_wallet.onClick.AddListener(() =>
             {
+                SoundManager.instance.PlayEffectSound(upperButtonSound);
                 // Local Repository에서 월렛 정보 가져옴.
                 Wallet wallet = WalletLocalRepositroy.GetWalletInfo();
                 walletPanel.SetActive(true);
@@ -111,15 +113,7 @@ namespace BluehatGames
             using (UnityWebRequest request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, ""))
             {
                 request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-
-                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                if (access_token == null)
-                {
-                    Debug.Log("access_token is null. access_token is set \"0000\"");
-                    access_token = "0000";
-                }
-                access_token = "0000";
-                request.SetRequestHeader("Authorization", access_token);
+                request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
 
                 yield return request.SendWebRequest();
 
@@ -138,6 +132,7 @@ namespace BluehatGames
                     input_klaytn_wallet_key.text = SECRET_HIDE;
                     walletSignUpPanel.SetActive(false);
                     walletInfoPanel.SetActive(true);
+                    img_btn_wallet_alert.gameObject.SetActive(false);
                 }
             }
         }

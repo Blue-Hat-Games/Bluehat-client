@@ -14,7 +14,6 @@ namespace BluehatGames
         public Button btn_synthesis;
         public Button btn_multiplay;
         public Button btn_nftMarket;
-        // public Button btn_exit;
 
         [Header("Setting Button")]
         public Button btn_setting;
@@ -23,6 +22,8 @@ namespace BluehatGames
         public Button btn_logout;
         public Toggle toggle_music;
         public Toggle toggle_sound_effect;
+        public Button bnt_change_name;
+        public InputField input_name;
         private DataManager dataManager;
 
         [Header("Alert Panel")]
@@ -37,8 +38,15 @@ namespace BluehatGames
         public AudioClip upperButtonSound;
         public AudioClip mainButtonSound;
 
+        [Header("Wallet Info alert")]
+        public Image img_btn_wallet_alert;
+
+        [Header("User Egg")]
+        public Text eggText;
+
         void Start()
         {
+            StartCoroutine(GetUserInfo());
             dataManager = GameObject.FindObjectOfType<DataManager>();
             AlertPanel.SetActive(false);
             soundUtil = new SoundUtil();
@@ -52,12 +60,6 @@ namespace BluehatGames
             {
                 audioSource.Stop();
                 toggle_music.isOn = false;
-            }
-
-            if (GetClientInfo(PlayerPrefsKey.key_authStatus) == AuthStatus._JOIN_COMPLETED)
-            {
-                Debug.Log("Player Status => Join Completed");
-                StartCoroutine(GetFirstAnimalFromServer(ApiUrl.postAnimalNew));
             }
 
             btn_synthesis.onClick.AddListener(() =>
@@ -82,7 +84,7 @@ namespace BluehatGames
             settingPanel.SetActive(false);
             btn_logout.onClick.AddListener(() =>
             {
-                AuthKey.ClearAuthKey();
+                PlayerPrefs.DeleteAll();
                 PlayerPrefs.SetInt(PlayerPrefsKey.key_authStatus, AuthStatus._INIT);
                 SceneManager.LoadScene(SceneName._01_Title);
             });
@@ -116,69 +118,86 @@ namespace BluehatGames
                     soundUtil.turnOffBackgroundMusic();
                 }
             });
-        }
-        void SaveClientInfo(string key, int value)
-        {
-            PlayerPrefs.SetInt(key, value);
-        }
 
-        int GetClientInfo(string key)
-        {
-            return PlayerPrefs.GetInt(key);
-        }
-
-
-        public IEnumerator GetFirstAnimalFromServer(string URL)
-        {
-
-
-            using (UnityWebRequest request = UnityWebRequest.Post(URL, ""))
+            toggle_sound_effect.onValueChanged.AddListener((bool value) =>
             {
-
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
-
-                // Access Token
-                string access_token = PlayerPrefs.GetString(PlayerPrefsKey.key_accessToken);
-                Debug.Log($"access_token = {access_token}");
-                // send access token to server
-                request.SetRequestHeader(ApiUrl.AuthGetHeader, access_token);
-
-                yield return request.SendWebRequest();
-
-                // error
-                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                if (value)
                 {
-                    Debug.Log(request.error);
+                    soundUtil.turnOnSoundEffect();
+                    SoundManager.instance.PlayEffectSound(upperButtonSound);
                 }
-                // success
                 else
                 {
-                    string responseText = request.downloadHandler.text;
-                    string responseType = JsonUtility.FromJson<ResponseAnimalNew>(responseText).type;
-
-                    Debug.Log(request.downloadHandler.text);
-
-                    var animalName = responseType;
-                    // Data manager
-                    dataManager.AddNewAnimal(animalName);
-                    LoadAnimalPrefab(animalName);
-
-                    AlertPanel.SetActive(true);
-                    text_fistAnimal.text = $"Your First Animal is {animalName}!";
-                    text_fistAnimal.gameObject.SetActive(true);
-                    SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._GENERAL_USER);
+                    soundUtil.turnOffSoundEffect();
                 }
+            });
+
+            bnt_change_name.onClick.AddListener(() =>
+            {
+                StartCoroutine(ChangeUserName(input_name.text));
+            });
+        }
+
+        private void ShowUserInfo(bool showWalletAlert)
+        {
+            Debug.Log(UserRepository.GetUsername());
+            img_btn_wallet_alert.gameObject.SetActive(showWalletAlert);
+            if (UserRepository.GetUsername() != null)
+            {
+                input_name.text = UserRepository.GetUsername();
+            }
+            eggText.text = UserRepository.GetEgg().ToString();
+        }
+
+        public IEnumerator GetUserInfo()
+        {
+            using var webRequest = UnityWebRequest.Get(ApiUrl.getUserInfo);
+            webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
+            yield return webRequest.SendWebRequest();
+            if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log($"Error: {webRequest.error}");
+            }
+            else
+            {
+                Debug.Log($"Received: {webRequest.downloadHandler.text}");
+                var jsonData = webRequest.downloadHandler.text;
+                var user = JsonUtility.FromJson<User>(jsonData);
+                UserRepository.SetUserInfo(user.username, user.coin, user.egg);
+                bool noWallet = user.wallet_address is "" or null;
+                ShowUserInfo(noWallet);
             }
         }
 
-        private void LoadAnimalPrefab(string animalName)
-        {
-            var path = $"Prefab/Animals/{animalName}";
-            GameObject obj = Resources.Load(path) as GameObject;
-            GameObject animal = Instantiate(obj, Vector3.zero, Quaternion.identity);
-            animal.transform.LookAt(Camera.main.transform);
-            Debug.Log($"Creating Animal is Success! => {animalName}");
-        }
 
+
+        public IEnumerator ChangeUserName(string new_name)
+        {
+            using (UnityWebRequest webRequest = UnityWebRequest.Post(ApiUrl.ChangeUserName, ""))
+            {
+                webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+
+                string json = "{\"username\":\"" + new_name + "\"}";
+                Debug.Log(json);
+
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+                webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.Log($"Error: {webRequest.error}");
+                }
+                else
+                {
+                    string responseText = webRequest.downloadHandler.text;
+                    Debug.Log(responseText);
+                }
+            }
+        }
     }
+
 }
