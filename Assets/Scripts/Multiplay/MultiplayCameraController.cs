@@ -55,6 +55,8 @@ public class MultiplayCameraController : MonoBehaviour
         yAngle = 0;
         this.transform.rotation = Quaternion.Euler(yAngle, xAngle, 0);
         cameraComp = this.gameObject.GetComponentInChildren<Camera>();
+        
+        this.transform.transform.position = new Vector3(player.transform.position.x, player.transform.position.y + distanceY, player.transform.position.z - distanceZ);
 
         rightFingerId = -1; // -1은 추적중이 아닌 손가락
         halfScreenWidth = Screen.width / 2;
@@ -77,19 +79,24 @@ public class MultiplayCameraController : MonoBehaviour
             return;
         }
         Debug.Log($"player.name = {player.name}");
-        Vector3 goalPos = new Vector3(player.transform.position.x, player.transform.position.y + distanceY, player.transform.position.z + distanceZ);
+        Vector3 goalPos = new Vector3(player.transform.position.x, player.transform.position.y + distanceY, player.transform.position.z - distanceZ);
         this.transform.position = Vector3.Lerp(this.transform.position, goalPos, this.speed);
+                        cameraComp.transform.LookAt(player.transform.position);                
+
 
         if(Application.isEditor)
         {
             float rotX = Input.GetAxis("Mouse X") * speed * Time.deltaTime;
             float rotY = Input.GetAxis("Mouse Y") * speed * Time.deltaTime;
 
-            cameraComp.transform.RotateAround(player.transform.position, Vector3.right, -rotY);
-            cameraComp.transform.RotateAround(player.transform.position, Vector3.up, -rotX);
+            if(rotX != 0 && rotY != 0)
+            {
+                cameraComp.transform.RotateAround(player.transform.position, Vector3.right, -rotY);
+                cameraComp.transform.RotateAround(player.transform.position, Vector3.up, -rotX);
 
-            Vector3 localAngle = cameraComp.transform.localEulerAngles;
-            cameraComp.transform.LookAt(player.transform.position);
+                Vector3 localAngle = cameraComp.transform.localEulerAngles;
+                cameraComp.transform.LookAt(player.transform.position);
+            }
         }
         
         GetTouchInput();
@@ -141,8 +148,9 @@ public class MultiplayCameraController : MonoBehaviour
                         this.prevPoint = t.position - t.deltaPosition;
                         touchDeltaPosition = t.deltaPosition;
 
-                        cameraComp.transform.RotateAround(this.player.transform.position, Vector3.up, -(t.position.x - this.prevPoint.x) * 0.2f);
-                        cameraComp.transform.RotateAround(this.player.transform.position, Vector3.right, -(t.position.y - this.prevPoint.y) * 0.2f);
+                        Vector3 adjustRotatePoint = new Vector3(this.player.transform.position.x, this.player.transform.position.y + 5, this.player.transform.position.x);
+                        cameraComp.transform.RotateAround(adjustRotatePoint, Vector3.up, -(t.position.x - this.prevPoint.x) * 0.2f);
+                        cameraComp.transform.RotateAround(adjustRotatePoint, Vector3.right, -(t.position.y - this.prevPoint.y) * 0.2f);
                         this.prevPoint = t.position;
                         
                         cameraComp.transform.LookAt(player.transform.position);                

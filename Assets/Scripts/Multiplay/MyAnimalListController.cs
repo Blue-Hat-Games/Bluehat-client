@@ -75,7 +75,6 @@ namespace BluehatGames
             {
                 int curIdx = index;
                 GameObject animalObject = animalObjectDictionary.Values.ToList()[curIdx];
-                Debug.Log($"animalDataArray.length = {animalDataArray.Length}, contentUiPool.size = {contentUiPool.GetPoolSize()}");
                 contentUiDictionary.Add(animalDataArray[i].id, contentUiPool.GetObject());
 
                 animalObject.transform.position = thumbnailSpot.position;

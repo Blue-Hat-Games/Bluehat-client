@@ -13,7 +13,6 @@ namespace BluehatGames
         public float scaleChangeOnce = 0.2f;
         public float scaleAdjustValue = 0.01f;
         public float scaleChangeSeconds = 0.1f;
-        public int obstacleRespawnTime = 15;
 
         private GameObject obstacleParticle1;
         private ParticleSystem obstacleParticleSystem1;
@@ -75,11 +74,9 @@ namespace BluehatGames
             {
                 // 에테르 게이지를 더해준다.
                 PlayerStatusController.instance.AddAetherEnergy();
+
                 PhotonView pv = coll.gameObject.GetComponent<PhotonView>();
-                
-                // coll.gameObject.SetActive(false);
-                ShowOffObstacle(pv.ViewID);
-                // PhotonNetwork.Destroy(coll.gameObject);
+                pv.RPC("ShowOffObstacle", RpcTarget.All);
                 
                 scaleCoroutine = StartCoroutine(UpdatePlayerScale());
 
@@ -127,17 +124,6 @@ namespace BluehatGames
 
         }
 
-        [PunRPC] // 이 밑의 함수는 RPC함수가 되고, 원격에서 호출할 수 있는 상태가 됨
-        public void ShowOffObstacle(int photonViewId) 
-        {
-            PhotonNetwork.GetPhotonView(photonViewId).gameObject.SetActive(false);
-            StartCoroutine(ReactiveObstacle(photonViewId));
-        }
-
-        IEnumerator ReactiveObstacle(int photonViewId)
-        {
-            yield return new WaitForSeconds(obstacleRespawnTime);
-            PhotonNetwork.GetPhotonView(photonViewId).gameObject.SetActive(true);
-        }
+        
     }
 }
