@@ -147,7 +147,7 @@ namespace BluehatGames
                     {
                         animalFactory.LoadHatItemPrefab(updatedAnimalData.headItem, animalObj);
                     }
-                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
+                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData, animalId);
                 }
             }
         }
@@ -203,7 +203,7 @@ namespace BluehatGames
                     // 딕셔너리에 추가
                     animalObjectDictionary.Add(updatedAnimalData.id, animalObj);
                     // synthesisManager 에서 썸네일 추가해줌 
-                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData);
+                    GameObject.FindObjectOfType<SynthesisManager>().RefreshAnimalThumbnail(animalObj, updatedAnimalData, resultAnimalId);
                 }
             }
         }
