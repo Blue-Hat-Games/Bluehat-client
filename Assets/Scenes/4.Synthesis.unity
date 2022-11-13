@@ -247,8 +247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4a9e44a36b94dd58a3b87f83f516e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 0
-  tempAccessToken: 0000
   selectedAnimalData:
     name: 
     tier: 0
@@ -1952,8 +1950,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2121e6dd1cfd85344817ea91264f28ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTest: 0
-  tempAccessToken: 0000
   selectedAnimalData:
     name: 
     tier: 0
@@ -2216,6 +2212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 899001733}
   - component: {fileID: 899001732}
+  - component: {fileID: 899001734}
   m_Layer: 0
   m_Name: AetherController
   m_TagString: Untagged
@@ -2230,7 +2227,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 899001731}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d614a9680068c4e5cb105d7ea908fe2f, type: 3}
   m_Name: 
@@ -2251,6 +2248,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &899001734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899001731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a7859d7817d4488c8b36e83d0267309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinText: {fileID: 1393291516}
 --- !u!1 &932310301
 GameObject:
   m_ObjectHideFlags: 0
@@ -4139,9 +4149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animalFactory: {fileID: 1739391805}
-  acessToken: 0000
-  isTest: 0
-  testAccessToken: 0000
 --- !u!4 &1341115605
 Transform:
   m_ObjectHideFlags: 0

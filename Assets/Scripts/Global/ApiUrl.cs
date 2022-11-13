@@ -25,6 +25,8 @@ namespace BluehatGames
         //User
         public const string getUserInfo = "https://api.bluehat.games/user";
 
+        public const string ChangeUserName = "https://api.bluehat.games/user/edit-info";
+
         //Animal
         public const string postAnimalNew = "https://api.bluehat.games/animal/make-animal";
         public const string getAnimalList = "https://api.bluehat.games/animal";
