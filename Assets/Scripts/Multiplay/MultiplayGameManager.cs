@@ -26,7 +26,7 @@ namespace BluehatGames
         public void SetPlayerPrefabPath(string animalName)
         {
             Debug.Log($"setPlayerPrefabPath -> {animalName}");
-            playerPrefabPath = $"Prefab/Animals/{animalName}";
+            playerPrefabPath = $"Prefab/MultiplayAnimals/{animalName}";
         }
 
         private void Awake()
@@ -95,7 +95,6 @@ namespace BluehatGames
             GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, spawnPoint.rotation);
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
-            // camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
             camera.GetComponent<MultiplayCameraController>().SetCameraTarget(playerTemp);
             loadingPanel.SetActive(false);
 
@@ -103,14 +102,15 @@ namespace BluehatGames
 
         private void SetMultiplayAnimalObject(GameObject animalPlayer)
         {
+            Debug.Log($"Create animalPlayer | name = {animalPlayer.name}");
             if(cupid != null)
             {
                 cupid.SetAnimalTexture(animalPlayer);
             }
-            animalPlayer.AddComponent<MultiplayAnimalController>();
+            // animalPlayer.AddComponent<MultiplayAnimalController>();
             PlayerTrigger playerTrigger = animalPlayer.AddComponent<PlayerTrigger>();
             playerTrigger.SetEatEffectAudioClip(eatEffectSound);
-            animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
+            // animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
         }
 
         public void LeaveRoom()

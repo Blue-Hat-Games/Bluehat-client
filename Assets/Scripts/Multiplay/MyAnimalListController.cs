@@ -108,6 +108,7 @@ namespace BluehatGames
                         // 선택한 동물 활성화
                         animalObject.SetActive(true);
                         activeAnimalObject = animalObject;
+                        GameObject.FindObjectOfType<PhotonManager>().SetconnectButtonActive(true);
 
                         GameObject.FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
                         // id를 저장

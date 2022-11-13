@@ -13,7 +13,8 @@ namespace BluehatGames
         public float scaleChangeOnce = 0.2f;
         public float scaleAdjustValue = 0.01f;
         public float scaleChangeSeconds = 0.1f;
-        
+        public int obstacleRespawnTime = 15;
+
         private GameObject obstacleParticle1;
         private ParticleSystem obstacleParticleSystem1;
         private GameObject obstacleParticle2;
@@ -23,8 +24,13 @@ namespace BluehatGames
 
         bool isFirst = false;
 
+        private MultiplayCameraController camController;
+        private PlayerStatusController statusController;
+
         void Start()
         {
+            statusController = GameObject.FindObjectOfType<PlayerStatusController>();
+
             obstacleParticle1 = MultiplayGameManager.instance.GetObstacleTriggerParticle();
             obstacleParticleSystem1 = obstacleParticle1.GetComponent<ParticleSystem>();
 
@@ -55,18 +61,26 @@ namespace BluehatGames
                 obstacleParticleSystem2.Play();
             }
         }
+        
+        public void SetMultiplayCameraController(MultiplayCameraController instance)
+        {
+            camController = instance;
+        }
 
         void OnTriggerEnter(Collider coll)
         {
+            if(statusController.IsGameOver()) return;
+            
             if (coll.tag == "Obstacle")
             {
                 // 에테르 게이지를 더해준다.
                 PlayerStatusController.instance.AddAetherEnergy();
                 PhotonView pv = coll.gameObject.GetComponent<PhotonView>();
-                if (pv.IsMine)
-                {
-                    PhotonNetwork.Destroy(coll.gameObject);
-                }
+                
+                // coll.gameObject.SetActive(false);
+                ShowOffObstacle(pv.ViewID);
+                // PhotonNetwork.Destroy(coll.gameObject);
+                
                 scaleCoroutine = StartCoroutine(UpdatePlayerScale());
 
                 if(isFirst)
@@ -98,8 +112,32 @@ namespace BluehatGames
             for(float i = curScaleValue; i < goalScaleValue; i += scaleAdjustValue)
             {
                 this.gameObject.transform.localScale = new Vector3(i, i, i);
+                UpdateCameraDistance(i);
                 yield return new WaitForSeconds(scaleChangeSeconds);
             }
+        }
+
+        private void UpdateCameraDistance(float value)
+        {
+            if(camController == null)
+            {
+                camController = GameObject.FindObjectOfType<MultiplayCameraController>();
+            }
+            camController.AdjustCamDistance(scaleAdjustValue);
+
+        }
+
+        [PunRPC] // 이 밑의 함수는 RPC함수가 되고, 원격에서 호출할 수 있는 상태가 됨
+        public void ShowOffObstacle(int photonViewId) 
+        {
+            PhotonNetwork.GetPhotonView(photonViewId).gameObject.SetActive(false);
+            StartCoroutine(ReactiveObstacle(photonViewId));
+        }
+
+        IEnumerator ReactiveObstacle(int photonViewId)
+        {
+            yield return new WaitForSeconds(obstacleRespawnTime);
+            PhotonNetwork.GetPhotonView(photonViewId).gameObject.SetActive(true);
         }
     }
 }

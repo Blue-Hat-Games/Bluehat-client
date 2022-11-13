@@ -43,11 +43,17 @@ namespace BluehatGames
             {
                 Connect();
             });
+            connectButton.gameObject.SetActive(false);
 
             goToMainButton.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneName._03_Main);
             });
+        }
+
+        public void SetconnectButtonActive(bool isActive)
+        {
+            connectButton.gameObject.SetActive(isActive);
         }
 
         public override void OnConnectedToMaster()
