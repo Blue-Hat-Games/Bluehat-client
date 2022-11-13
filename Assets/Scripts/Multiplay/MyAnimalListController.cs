@@ -75,7 +75,6 @@ namespace BluehatGames
             {
                 int curIdx = index;
                 GameObject animalObject = animalObjectDictionary.Values.ToList()[curIdx];
-                Debug.Log($"animalDataArray.length = {animalDataArray.Length}, contentUiPool.size = {contentUiPool.GetPoolSize()}");
                 contentUiDictionary.Add(animalDataArray[i].id, contentUiPool.GetObject());
 
                 animalObject.transform.position = thumbnailSpot.position;
@@ -108,6 +107,7 @@ namespace BluehatGames
                         // 선택한 동물 활성화
                         animalObject.SetActive(true);
                         activeAnimalObject = animalObject;
+                        GameObject.FindObjectOfType<PhotonManager>().SetconnectButtonActive(true);
 
                         GameObject.FindObjectOfType<SelectedAnimalDataCupid>().SetSelectedAnimalData(animalDataArray[curIdx]);
                         // id를 저장

@@ -43,11 +43,17 @@ namespace BluehatGames
             {
                 Connect();
             });
+            connectButton.gameObject.SetActive(false);
 
             goToMainButton.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneName._03_Main);
             });
+        }
+
+        public void SetconnectButtonActive(bool isActive)
+        {
+            connectButton.gameObject.SetActive(isActive);
         }
 
         public override void OnConnectedToMaster()
@@ -103,19 +109,19 @@ namespace BluehatGames
                 yield return new WaitForEndOfFrame();
             }
 
-            MultiplayGameManager.instance?.SetIsConnectTrue();
-            // while(true) {
-            //     yield return null;
-            //     Debug.Log("RepeatIsConnect....");
-            //     if(MultiplayGameManager.instance) {
-            //         MultiplayGameManager.instance?.SetIsConnectTrue();
-            //         if(MultiplayGameManager.instance.IsConnectTrue()) {
-            //             yield break;
-            //         }    
-            //     }
+            // MultiplayGameManager.instance?.SetIsConnectTrue();
+            while(true) {
+                yield return null;
+                Debug.Log("RepeatIsConnect....");
+                if(MultiplayGameManager.instance) {
+                    MultiplayGameManager.instance?.SetIsConnectTrue();
+                    if(MultiplayGameManager.instance.IsConnectTrue()) {
+                        yield break;
+                    }    
+                }
 
-
-            // }
+            }
+            
         }
 
         // 1. connection 과정 시작

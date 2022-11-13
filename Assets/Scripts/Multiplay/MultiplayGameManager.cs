@@ -23,10 +23,11 @@ namespace BluehatGames
 
         private SelectedAnimalDataCupid cupid;
 
+        private int myPlayerViewID = 0;
         public void SetPlayerPrefabPath(string animalName)
         {
             Debug.Log($"setPlayerPrefabPath -> {animalName}");
-            playerPrefabPath = $"Prefab/Animals/{animalName}";
+            playerPrefabPath = $"Prefab/MultiplayAnimals/{animalName}";
         }
 
         private void Awake()
@@ -76,6 +77,11 @@ namespace BluehatGames
             this.isConnect = true;
         }
 
+        public int GetMyPlayerPhotonViewID()
+        {
+            return this.myPlayerViewID;
+        }
+        
         IEnumerator CreatePlayer()
         {
             Debug.Log("MultiplayGameManager => CreatePlayer()");
@@ -95,22 +101,23 @@ namespace BluehatGames
             GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, spawnPoint.rotation);
             SetMultiplayAnimalObject(playerTemp);
             GameObject camera = GameObject.Instantiate(cameraPrefab);
-            // camera.GetComponent<PlayerCam>().SetCameraTarget(playerTemp);
             camera.GetComponent<MultiplayCameraController>().SetCameraTarget(playerTemp);
-            loadingPanel.SetActive(false);
+            myPlayerViewID = playerTemp.GetComponent<PhotonView>().ViewID;
 
+            loadingPanel.SetActive(false);
         }
 
         private void SetMultiplayAnimalObject(GameObject animalPlayer)
         {
+            Debug.Log($"Create animalPlayer | name = {animalPlayer.name}");
             if(cupid != null)
             {
                 cupid.SetAnimalTexture(animalPlayer);
+                cupid.SetHatObject(animalPlayer);
             }
-            animalPlayer.AddComponent<MultiplayAnimalController>();
             PlayerTrigger playerTrigger = animalPlayer.AddComponent<PlayerTrigger>();
             playerTrigger.SetEatEffectAudioClip(eatEffectSound);
-            animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
+            // animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
         }
 
         public void LeaveRoom()

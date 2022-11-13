@@ -79,6 +79,11 @@ namespace BluehatGames
             }
         }
 
+        public bool IsGameOver()
+        {
+            return isGameOver;
+        }
+
         public void SetStartTimeAttack()
         {
             isStartTimeAttack = true;
