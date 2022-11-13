@@ -131,22 +131,12 @@ public class MultiplayCameraController : MonoBehaviour
                         FirstPoint = t.position;
                         xAngleTemp = xAngle;
                         yAngleTemp = yAngle;
-                        Debug.Log("오른쪽 손가락 입력");
                     }
                     break;
                 case TouchPhase.Moved:
 
                     if(t.position.x > this.halfScreenWidth && t.fingerId == this.rightFingerId)
                     {
-                        Debug.Log("----- 오른쪽 손가락 입력 중 -----");
-
-                        // SecondPoint = t.position;
-                        // xAngle = xAngleTemp + (SecondPoint.x - FirstPoint.x) * 180 / Screen.width;
-                        // yAngle = yAngleTemp + (SecondPoint.y - FirstPoint.y) * 90 / Screen.height;
-                        // // this.transform.rotation = Quaternion.Euler(yAngle, xAngle, 0.0f);
-
-                        // transform.RotateAround(player.transform.position, Vector3.up, -xAngle * Time.deltaTime);
-                        // transform.RotateAround(Vector3.right, yAngle)
                         // 수평
                         this.prevPoint = t.position - t.deltaPosition;
                         touchDeltaPosition = t.deltaPosition;
@@ -155,12 +145,7 @@ public class MultiplayCameraController : MonoBehaviour
                         cameraComp.transform.RotateAround(this.player.transform.position, Vector3.right, -(t.position.y - this.prevPoint.y) * 0.2f);
                         this.prevPoint = t.position;
                         
-                        cameraComp.transform.LookAt(player.transform.position);
-
-                        // // 수직
-                        // this.lookInput = t.deltaPosition * this.cameraSensitivity * Time.deltaTime;
-                        // this.cameraPitch = Mathf.Clamp(this.cameraPitch - this.lookInput.y, 10f, 35f);
-                        // this.cameraTransform.localRotation = Quaternion.Euler(this.cameraPitch, 0, 0);
+                        cameraComp.transform.LookAt(player.transform.position);                
                     }
                     
                     break;
