@@ -16,7 +16,7 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
     protected Joystick joystick;
     protected Joybutton joybutton;
 
-    private float moveSpeed = 10;
+    private float moveSpeed = 15;
     private float jumpPower = 6;
     public float rotSpeed = 10;
 
@@ -29,30 +29,21 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
     private bool isGround = true;
 
     private MultiplayCameraController multiplayCameraController;
-    Quaternion _initialRotation;
-    public float minClamp = -90.0f;
-    public float maxClamp = 90f;
-    float _pitch, _yaw;
-    float prevH, prevV;
 
-    public Vector3 prevCamForwardVector;
-    private GameObject testSphere;
 
     void Start()
     {
-        testSphere = GameObject.Find("TestSphere").gameObject;
-
-        prevCamForwardVector = Vector3.zero;
         joystick = FindObjectOfType<Joystick>();
         joybutton = FindObjectOfType<Joybutton>();
 
         rigid = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
 
-        _initialRotation = this.transform.rotation;
         multiplayCameraController = GameObject.FindObjectOfType<MultiplayCameraController>();
-        prevH = 0;
-        prevV = 0;
+        Transform CameraTr = multiplayCameraController.GetCameraTransform();
+        Vector3 lookForward = new Vector3(CameraTr.forward.x, 0f, CameraTr.forward.z).normalized;
+        Vector3 lookRight = new Vector3(CameraTr.right.x, 0f, CameraTr.right.z).normalized;
+        Vector3 moveDir = lookForward * 0 + lookRight * 0;
     }
 
     void Update()
@@ -66,17 +57,6 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
 
         // 애니메이터 파라미터 설정 
         animator.SetFloat(ANIM_PARAMETER_MOTIONSPEED, joystick.InputScale);
-        // 이동 방향으로 회전  
-        
-
-
-        // 조이스틱 h, v가 0이 아닐 때
-        // - 값이 이전과 다르게 변했으면 그 방향으로 이동시켜줌
-        // - 값이 이전과 같으면 그 방향으로 이동시켜줌
-        // - 그런데 이 때 touch delta position에 변화가 있으면 deltaPos에 맞게 이동 방향을 바꿔줌
-
-
-
 
         var h = joystick.Horizontal;
         var v = joystick.Vertical;
@@ -105,9 +85,6 @@ public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
             rigid.velocity = new Vector3(0, rigid.velocity.y, 0);
             
         }
-
-        prevH = h;
-        prevV = v;
 
         // Jump에 대한 처리
         if (isGround && joybutton.Pressed)

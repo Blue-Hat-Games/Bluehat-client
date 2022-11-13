@@ -102,6 +102,10 @@ public class MultiplayCameraController : MonoBehaviour
 
     public Transform GetCameraTransform()
     {
+        if(cameraComp == null)
+        {
+            cameraComp = this.gameObject.GetComponentInChildren<Camera>();
+        }
         return this.cameraComp.transform;
     }
     
@@ -148,6 +152,7 @@ public class MultiplayCameraController : MonoBehaviour
                         touchDeltaPosition = t.deltaPosition;
 
                         cameraComp.transform.RotateAround(this.player.transform.position, Vector3.up, -(t.position.x - this.prevPoint.x) * 0.2f);
+                        cameraComp.transform.RotateAround(this.player.transform.position, Vector3.right, -(t.position.y - this.prevPoint.y) * 0.2f);
                         this.prevPoint = t.position;
                         
                         cameraComp.transform.LookAt(player.transform.position);
