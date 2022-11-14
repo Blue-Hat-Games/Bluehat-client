@@ -45,6 +45,8 @@ namespace BluehatGames
         public Button animalDetailBuyBtn;
         public Button animalDetailCloseBtn;
 
+        public Image myAnimalImg;
+
         [Header("MyAnimalDetail UI")]
         public Text myAnimalIdHidedData;
         public RawImage myAnimalDetailRawImage;
@@ -263,7 +265,7 @@ namespace BluehatGames
 
         private IEnumerator GetUserAnimal()
         {
-            string url = host + "/animal/get-user-animal?nft=true";
+            string url = host + "/animal/get-user-animal?nft=true&market=true";
             using UnityWebRequest webRequest = UnityWebRequest.Get(url);
             webRequest.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             yield return webRequest.SendWebRequest();
@@ -355,6 +357,13 @@ namespace BluehatGames
                 animalDetailName.text = animalInfo.animal_name;
                 animalDetailPrice.text = animalInfo.price.ToString();
                 animalDetailSellerName.text = animalInfo.username;
+                Debug.Log(animalInfo.username);
+                Debug.Log(UserRepository.GetUsername());
+                if (animalInfo.username.Equals(UserRepository.GetUsername()))
+                {
+                    myAnimalImg.gameObject.SetActive(true);
+                    animalDetailPrice.text = "Redo";
+                }
                 var buyAnimalId = animalInfo.id;
                 animalDetailBuyBtn.onClick.AddListener(() =>
                 {
@@ -399,6 +408,7 @@ namespace BluehatGames
 
         private IEnumerator BuyAnimal(int id)
         {
+            Debug.Log("Buy Animal");
             string url = host + "/market/buy";
             using UnityWebRequest webRequest = new UnityWebRequest(url, "POST");
             webRequest.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
