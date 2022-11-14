@@ -411,7 +411,7 @@ namespace BluehatGames
         {
             updatedAnimalObject.transform.position = thumbnailSpot.position;
             updatedAnimalObject.transform.rotation = thumbnailSpot.rotation;
-            updatedAnimalObject.transform.LookAt(thumbnailCamera.transform);
+            // updatedAnimalObject.transform.LookAt(thumbnailCamera.transform);
 
             ResetAnimalState(updatedAnimalObject);
             thumbnailCamera.Render();
@@ -566,7 +566,7 @@ namespace BluehatGames
 
                 animalObject.transform.position = thumbnailSpot.position;
                 animalObject.transform.rotation = thumbnailSpot.rotation;
-                animalObject.transform.LookAt(thumbnailCamera.transform);
+                // animalObject.transform.LookAt(thumbnailCamera.transform);
                 animalObjectArray[curIdx] = animalObject;
                 animalObject.name = $"{animalObject.name}_{calledCount}";
                 ResetAnimalState(animalObject);

@@ -17,7 +17,6 @@ public class MultiplayCameraController : MonoBehaviour
     public Button btn; // 시점(yaw)을 원상태로 되돌리는 버튼
 
     public Transform cameraTransform;
-    public float cameraSensitivity = 3;
 
     private Vector2 lookInput;
     private float cameraPitch; // pitch 시점
@@ -78,10 +77,9 @@ public class MultiplayCameraController : MonoBehaviour
         {
             return;
         }
-        Debug.Log($"player.name = {player.name}");
         Vector3 goalPos = new Vector3(player.transform.position.x, player.transform.position.y + distanceY, player.transform.position.z - distanceZ);
         this.transform.position = Vector3.Lerp(this.transform.position, goalPos, this.speed);
-                        cameraComp.transform.LookAt(player.transform.position);                
+        cameraComp.transform.LookAt(player.transform.position);                
 
 
         if(Application.isEditor)
@@ -148,7 +146,7 @@ public class MultiplayCameraController : MonoBehaviour
                         this.prevPoint = t.position - t.deltaPosition;
                         touchDeltaPosition = t.deltaPosition;
 
-                        Vector3 adjustRotatePoint = new Vector3(this.player.transform.position.x, this.player.transform.position.y + 5, this.player.transform.position.x);
+                        Vector3 adjustRotatePoint = new Vector3(this.player.transform.position.x, this.player.transform.position.y + 5, this.player.transform.position.z);
                         cameraComp.transform.RotateAround(adjustRotatePoint, Vector3.up, -(t.position.x - this.prevPoint.x) * 0.2f);
                         cameraComp.transform.RotateAround(adjustRotatePoint, Vector3.right, -(t.position.y - this.prevPoint.y) * 0.2f);
                         this.prevPoint = t.position;
