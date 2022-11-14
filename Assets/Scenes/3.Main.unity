@@ -455,6 +455,7 @@ MonoBehaviour:
   btn_wallet_private_key_show: {fileID: 1122448063}
   input_klaytn_wallet_key: {fileID: 685694708}
   btn_klaytn_wallet_key_show: {fileID: 1612697934}
+  Mission: {fileID: 1616940596}
 --- !u!4 &25118050
 Transform:
   m_ObjectHideFlags: 0
@@ -6154,6 +6155,7 @@ MonoBehaviour:
   mainButtonSound: {fileID: 8300000, guid: ca5d5ba66e7ac48e9af05ff332d83c90, type: 3}
   img_btn_wallet_alert: {fileID: 115599939}
   eggText: {fileID: 442239045}
+  Mission: {fileID: 1616940596}
 --- !u!4 &305601770
 Transform:
   m_ObjectHideFlags: 0
@@ -29342,6 +29344,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4353699184651281081, guid: 6ab95afc5b621784ca0606b0b15afde3, type: 3}
   m_PrefabInstance: {fileID: 1613504251}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1616940596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1616940598}
+  - component: {fileID: 1616940597}
+  m_Layer: 0
+  m_Name: MissionUtils
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1616940597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1616940596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c44b98d85426a4e5ba140ed480b14a68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1616940598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1616940596}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1273.5177, y: 859.55774, z: 7.3538504}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1617916452
 GameObject:
   m_ObjectHideFlags: 0

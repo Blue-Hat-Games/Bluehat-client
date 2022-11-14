@@ -44,6 +44,8 @@ namespace BluehatGames
         [Header("User Egg")]
         public Text eggText;
 
+        public GameObject Mission;
+
         void Start()
         {
             StartCoroutine(GetUserInfo());
@@ -195,6 +197,8 @@ namespace BluehatGames
                 {
                     string responseText = webRequest.downloadHandler.text;
                     Debug.Log(responseText);
+                    MissionUtils missionResult = Mission.GetComponent<MissionUtils>();
+                    missionResult.createWalletEvent();
                 }
             }
         }
