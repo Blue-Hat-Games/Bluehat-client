@@ -106,6 +106,11 @@ namespace BluehatGames
         public Button btn_startFusion;
         public GameObject fusionResults;
 
+
+        [Header("Constraint")]
+        public GameObject constraintPanel;
+        public Button btn_constraint;
+
         [Header("AnimalListThumbnail")]
         public Camera thumbnailCamera;
         public RenderTexture renderTexture;
@@ -152,6 +157,13 @@ namespace BluehatGames
             btn_startFusion.gameObject.SetActive(false);
 
             pannelSwitch = new PannelSwitch(panel_colorChange, panel_accessory, panel_fusion);
+            constraintPanel.SetActive(false);
+
+            btn_constraint.onClick.AddListener(() =>
+            {
+                constraintPanel.SetActive(false);
+                pannelSwitch.ChangeStatus(PannelStatus.COLOR_CHANGE);
+            });
 
             btn_goToMain.onClick.AddListener(() =>
             {
@@ -169,7 +181,7 @@ namespace BluehatGames
                 panel_result.SetActive(false);
                 colorChangeManager.ClearResultAnimal();
                 fusionManager.ClearResultAnimal();
-                if(pannelSwitch.CheckStatus(PannelStatus.FUSION) == false)
+                if (pannelSwitch.CheckStatus(PannelStatus.FUSION) == false)
                 {
                     animalListView.SetActive(true);
                 }
@@ -248,6 +260,10 @@ namespace BluehatGames
         {
             btn_fusion.onClick.AddListener(() =>
             {
+                if (WalletLocalRepositroy.GetWalletAddress() == null)
+                {
+                    constraintPanel.SetActive(true);
+                }
                 btn_fusion.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                 btn_colorChange.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
                 btn_accessory.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
@@ -321,16 +337,16 @@ namespace BluehatGames
             animalListView.SetActive(false);
 
             resultAnimalImg.SetActive(true);
-            
-            if(pannelSwitch.CheckStatus(PannelStatus.COLOR_CHANGE))
+
+            if (pannelSwitch.CheckStatus(PannelStatus.COLOR_CHANGE))
             {
                 colorChangeManager.CreateResultAnimalParticle();
             }
-            else if(pannelSwitch.CheckStatus(PannelStatus.FUSION))
+            else if (pannelSwitch.CheckStatus(PannelStatus.FUSION))
             {
                 fusionManager.CreateResultAnimalParticle();
             }
-            else if(pannelSwitch.CheckStatus(PannelStatus.ACCESORY))
+            else if (pannelSwitch.CheckStatus(PannelStatus.ACCESORY))
             {
                 accessoryManager.CreateHatParticle();
             }

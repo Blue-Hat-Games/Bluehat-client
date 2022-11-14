@@ -64,16 +64,33 @@ namespace BluehatGames
         private GameObject[] pageItemObjects;
 
 
+        [Header("Warning Panel")]
+        public GameObject constraintPanel;
+        public Button backToMainBtnInConstraintPanel;
+
+
         void Start()
         {
             myAnimalPanel.SetActive(false);
             animalDetailPanel.SetActive(false);
             pageItemObjects = new GameObject[5];
 
-
             StartCoroutine(GetItemCount());
             StartCoroutine(GetItems());
             coinInfoText.text = UserRepository.GetCoin().ToString();
+
+            if (WalletLocalRepositroy.GetWalletAddress() == null)
+            {
+                constraintPanel.SetActive(true);
+            }
+            else
+            {
+                constraintPanel.SetActive(false);
+            }
+            backToMainBtnInConstraintPanel.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene(SceneName._03_Main);
+            });
 
             nextBtn.onClick.AddListener(() =>
             {
@@ -391,13 +408,14 @@ namespace BluehatGames
             var animalId = myAnimalIdHidedData.text;
             var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + WalletLocalRepositroy.GetWallletPrivateKey() + "}";
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+            Debug.Log(json);
             webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
             webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
             yield return webRequest.SendWebRequest();
             if (webRequest.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log($"Error: {webRequest.error}");
-                OpenAlertPanel(sellFailString, myAnimalPanel);
+                OpenAlertPanel("판매에 실패하였습니다.", myAnimalPanel);
             }
             else
             {

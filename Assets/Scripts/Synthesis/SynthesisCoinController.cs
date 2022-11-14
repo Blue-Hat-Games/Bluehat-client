@@ -1,14 +1,16 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 
 namespace BluehatGames
 {
     public class SynthesisCoinController : MonoBehaviour
     {
-        public TextMeshProUGUI coinText;
+        public Text coinText;
         void Start()
         {
+            Debug.Log("SynthesisCoinController Start");
             coinText.text = UserRepository.GetCoin().ToString();
+            Debug.Log("SynthesisCoinController Start coinText.text : " + coinText.text);
         }
     }
 }
