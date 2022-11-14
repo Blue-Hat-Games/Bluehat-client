@@ -321,6 +321,19 @@ namespace BluehatGames
             animalListView.SetActive(false);
 
             resultAnimalImg.SetActive(true);
+            
+            if(pannelSwitch.CheckStatus(PannelStatus.COLOR_CHANGE))
+            {
+                colorChangeManager.CreateResultAnimalParticle();
+            }
+            else if(pannelSwitch.CheckStatus(PannelStatus.FUSION))
+            {
+                fusionManager.CreateResultAnimalParticle();
+            }
+            else if(pannelSwitch.CheckStatus(PannelStatus.ACCESORY))
+            {
+                accessoryManager.CreateHatParticle();
+            }
         }
 
         void ResetAnimalState(GameObject animal)

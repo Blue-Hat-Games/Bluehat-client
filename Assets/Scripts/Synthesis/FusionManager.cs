@@ -128,7 +128,6 @@ namespace BluehatGames
             resultAnimalObject.GetComponentInChildren<Animator>().speed = 0.3f;
             resultAnimal = resultAnimalObject;
             resultAnimal.transform.position = thumbnailSpot.transform.position;
-            CreateResultAnimalParticle(resultAnimal.transform);
             resultAnimal.transform.LookAt(Camera.main.transform);
             resultAnimal.transform.eulerAngles = new Vector3(0, resultAnimal.transform.eulerAngles.y, 0);
 
@@ -138,9 +137,9 @@ namespace BluehatGames
         }
 
         private GameObject tempParticle;
-        private void CreateResultAnimalParticle(Transform particlePoint)
+        public void CreateResultAnimalParticle()
         {
-            Vector3 newPos = new Vector3(particlePoint.position.x, particlePoint.position.y + 0.5f, particlePoint.position.z);
+            Vector3 newPos = new Vector3(-2, -1, 0);
             tempParticle = Instantiate(resultAnimalParticle, newPos, Quaternion.identity);
             tempParticle.GetComponent<ParticleSystem>().Play();
         }

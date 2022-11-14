@@ -69,6 +69,7 @@ namespace BluehatGames
 
         }
 
+        private Transform curHatPoint;
         private void LoadHatItemPrefab(string itemName)
         {
             var path = $"Prefab/Hats/{itemName}";
@@ -85,20 +86,22 @@ namespace BluehatGames
                 }
             }
 
+            curHatPoint = hatPoint;
+
             if (hatPoint.childCount > 0)
             {
                 Destroy(hatPoint.GetChild(0).gameObject);
             }
-            CreateHatParticle(hatPoint);
             hatObj.transform.SetParent(hatPoint);
             hatObj.transform.localPosition = Vector3.zero;
             hatObj.transform.localEulerAngles = Vector3.zero;
         }
 
         private GameObject tempParticle;
-        private void CreateHatParticle(Transform hatPoint)
+        public void CreateHatParticle()
         {
-            tempParticle = Instantiate(hatParticle, hatPoint.position, Quaternion.identity);
+            Vector3 newPos = new Vector3(-2, curHatPoint.position.y, 0);
+            tempParticle = Instantiate(hatParticle, newPos, Quaternion.identity);
             tempParticle.GetComponent<ParticleSystem>().Play();
             Invoke("DestroyParticle", 2.0f);
         }
