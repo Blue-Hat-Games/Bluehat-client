@@ -29,6 +29,8 @@ namespace BluehatGames
         public InputField input_klaytn_wallet_key;
         public Button btn_klaytn_wallet_key_show;
 
+        public GameObject Mission;
+
 
 
         void Start()
@@ -133,6 +135,8 @@ namespace BluehatGames
                     walletSignUpPanel.SetActive(false);
                     walletInfoPanel.SetActive(true);
                     img_btn_wallet_alert.gameObject.SetActive(false);
+                    MissionUtils missionResult = Mission.GetComponent<MissionUtils>();
+                    missionResult.createWalletEvent();
                 }
             }
         }
