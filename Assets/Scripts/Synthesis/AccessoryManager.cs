@@ -64,7 +64,9 @@ namespace BluehatGames
                     // refresh data
                     synthesisManager.SendRequestRefreshAnimalData(selectedAnimalData.id, false);
                 }
+                webRequest.Dispose();
             }
+
         }
 
         private void LoadHatItemPrefab(string itemName)

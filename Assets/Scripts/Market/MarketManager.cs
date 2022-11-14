@@ -148,6 +148,8 @@ namespace BluehatGames
             {
                 Debug.Log($"Received: {webRequest.downloadHandler.text}");
             }
+            webRequest.Dispose();
+
         }
 
         private IEnumerator GetItems()
@@ -177,6 +179,8 @@ namespace BluehatGames
                 StartCoroutine(MakeAnimalThumbnail(parseResult));
 
             }
+            webRequest.Dispose();
+
         }
 
 
@@ -399,6 +403,7 @@ namespace BluehatGames
             {
                 OpenAlertPanel(sellSuccessString, myAnimalPanel);
             }
+            webRequest.Dispose();
         }
 
         public string paySuccessMessage;
@@ -431,6 +436,8 @@ namespace BluehatGames
                     isBuyResult = true;
                 }
             }
+            webRequest.Dispose();
+
         }
     }
 
