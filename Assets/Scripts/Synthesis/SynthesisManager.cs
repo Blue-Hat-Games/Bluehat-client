@@ -83,6 +83,7 @@ namespace BluehatGames
 
         [Header("Result Pannel")]
         public GameObject panel_result;
+        public GameObject resultAnimalImg;
         public GameObject panel_result_LoadingImg;
         public Button btn_result;
 
@@ -103,7 +104,7 @@ namespace BluehatGames
         public Button btn_fusion;
         public Button btn_exitListView;
         public Button btn_startFusion;
-        public Image img_klaytnLogo;
+        public GameObject fusionResults;
 
         [Header("AnimalListThumbnail")]
         public Camera thumbnailCamera;
@@ -140,6 +141,7 @@ namespace BluehatGames
         private PannelSwitch pannelSwitch;
         void Start()
         {
+            loadingPanel.SetActive(true);
             colorChangeManager.SetSynthesisManager(this);
             fusionManager.SetSynthesisManager(this);
             accessoryManager.SetSynthesisManager(this);
@@ -167,6 +169,10 @@ namespace BluehatGames
                 panel_result.SetActive(false);
                 colorChangeManager.ClearResultAnimal();
                 fusionManager.ClearResultAnimal();
+                if(pannelSwitch.CheckStatus(PannelStatus.FUSION) == false)
+                {
+                    animalListView.SetActive(true);
+                }
             });
 
             InitContentViewUIObjectPool();
@@ -214,7 +220,7 @@ namespace BluehatGames
                 pannelSwitch.ChangeStatus(PannelStatus.COLOR_CHANGE);
                 panel_result.SetActive(false);
                 animalListView.SetActive(true);
-                img_klaytnLogo.gameObject.SetActive(false);
+                fusionResults.gameObject.SetActive(false);
                 btn_exitListView.gameObject.SetActive(false); // 색 변경에서는 exit button 사용 안함
                 ClearAnimals();
             });
@@ -222,10 +228,13 @@ namespace BluehatGames
             // start color change button in color change menu
             btn_startColorChange.onClick.AddListener(() =>
             {
+                btn_startColorChange.gameObject.SetActive(false);
                 panel_result.SetActive(true);
                 panel_result_LoadingImg.SetActive(true);
-                img_klaytnLogo.gameObject.SetActive(false);
                 animalListView.SetActive(false);
+                resultAnimalImg.gameObject.SetActive(false);
+                fusionResults.gameObject.SetActive(false);
+                // animalListView.SetActive(false);
                 // sub aether count
                 AetherController.instance.SubAetherCount();
                 colorChangeManager.SendColorChangeAPI();
@@ -254,8 +263,10 @@ namespace BluehatGames
             btn_startFusion.onClick.AddListener(() =>
             {
                 panel_result.SetActive(true);
+                animalListView.SetActive(false);
                 panel_result_LoadingImg.SetActive(true);
-                img_klaytnLogo.gameObject.SetActive(true);
+                resultAnimalImg.SetActive(false);
+                fusionResults.gameObject.SetActive(true);
                 AetherController.instance.SubAetherCount();
                 fusionManager.SendFusionAPI();
                 ClearAnimals();
@@ -269,7 +280,7 @@ namespace BluehatGames
                 btn_accessory.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                 btn_colorChange.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
                 btn_fusion.transform.GetChild(0).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 15);
-
+                fusionResults.gameObject.SetActive(false);
                 pannelSwitch.ChangeStatus(PannelStatus.ACCESORY);
                 panel_result.SetActive(false);
                 btn_startAccessory.gameObject.SetActive(false);
@@ -281,6 +292,10 @@ namespace BluehatGames
             {
                 panel_result.SetActive(true);
                 panel_result_LoadingImg.SetActive(true);
+                animalListView.SetActive(false);
+
+                resultAnimalImg.SetActive(false);
+                fusionResults.SetActive(false);
                 AetherController.instance.SubAetherCount();
                 accessoryManager.SendRandomHatAPI();
             });
@@ -295,11 +310,17 @@ namespace BluehatGames
             }
 
             panel_result_LoadingImg.gameObject.SetActive(isActive);
+            animalListView.SetActive(!isActive);
+
+            resultAnimalImg.SetActive(!isActive);
         }
 
         public void ShowOffResultLoadingImage()
         {
             panel_result_LoadingImg.gameObject.SetActive(false);
+            animalListView.SetActive(false);
+
+            resultAnimalImg.SetActive(true);
         }
 
         void ResetAnimalState(GameObject animal)
@@ -434,13 +455,14 @@ namespace BluehatGames
                 uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                 uiSet.GetComponent<Button>().onClick.AddListener(() =>
                 {
-                    animalListView.SetActive(false);
                     if (pannelSwitch.CheckStatus(PannelStatus.COLOR_CHANGE))
                     {
                         OnClickColorChangeThumbnail(animalData, updatedAnimalObject);
                     }
                     else if (pannelSwitch.CheckStatus(PannelStatus.FUSION))
                     {
+                        // 합성인 경우에만 썸네일 누르면 리스트 닫도록 함
+                        animalListView.SetActive(false);
                         OnClickFusionThumbnail(animalData, updatedAnimalObject);
                     }
                 });
@@ -588,7 +610,6 @@ namespace BluehatGames
                     uiSet.GetComponentInChildren<RawImage>().texture = resultTex;
                     uiSet.GetComponent<Button>().onClick.AddListener(() =>
                     {
-                        animalListView.SetActive(false);
                         // ------------------------ 색변경 모드이면 ------------------------
                         if (pannelSwitch.CheckStatus(PannelStatus.COLOR_CHANGE))
                         {
@@ -597,6 +618,7 @@ namespace BluehatGames
                         // ------------------------ 합성 모드이면 ------------------------
                         else if (pannelSwitch.CheckStatus(PannelStatus.FUSION))
                         {
+                            animalListView.SetActive(false);
                             OnClickFusionThumbnail(animalDataArray[curIdx], animalObjectArray[curIdx]);
                         }
                         // ------------------------ 꾸미기 모드이면 ------------------------

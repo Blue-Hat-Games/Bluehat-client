@@ -76,9 +76,9 @@ namespace BluehatGames
         [Header("Alert Popup")]
         public GameObject alertPopup;
         public Text alertText;
-        private string emailMessage = "Email OK.";
-        private string authCompleted = "Auth OK";
-        private string warnEmailMessage = "Email Not OK.";
+        private string emailMessage = "이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!";
+        private string authCompleted = "인증에 성공했습니다!";
+        private string warnEmailMessage = "유효한 이메일이 아닙니다.";
         private string warnWalletMessage = "Wallet Address Not OK.";
 
 
@@ -130,12 +130,12 @@ namespace BluehatGames
 
                         if (response.msg == "fail")
                         {
-                            StartCoroutine(ShowAlertPopup("Can't send email."));
+                            StartCoroutine(ShowAlertPopup("이메일을 보내지 못했습니다.\n 다시 시도해주세요."));
                             return;
                         }
                         else
                         {
-                            Debug.Log("Send Email Success");
+                            Debug.Log("이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!");
                             loginBtn.SetBtnLogin();
                         }
                     }));
