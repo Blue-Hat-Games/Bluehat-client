@@ -142,9 +142,9 @@ namespace BluehatGames
             {
                 // 이 방안에 있는 모든 사용자에게 브로드캐스트 
                 // - 내 포지션 값을 보내보자
-                stream.SendNext(transform.position);
-                stream.SendNext(transform.rotation);
-                stream.SendNext(transform.localScale);
+                stream.SendNext((Vector3)transform.position);
+                stream.SendNext((Quaternion)transform.rotation);
+                stream.SendNext((Vector3)transform.localScale);
                 Debug.Log($"stream.SendNext | scale = {transform.localScale}");
             }
             // 내가 데이터를 받는 중이라면 
