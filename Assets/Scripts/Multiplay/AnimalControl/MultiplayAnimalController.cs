@@ -70,6 +70,11 @@ namespace BluehatGames
                 return;
             }
 
+            if(PlayerStatusController.instance.IsGameOver())
+            {
+                return;
+            }
+            
             // 애니메이터 파라미터 설정 
             animator.SetFloat(ANIM_PARAMETER_MOTIONSPEED, joystick.InputScale);
 
@@ -77,8 +82,8 @@ namespace BluehatGames
             var v = joystick.Vertical;
 
             Vector3 dir = new Vector3(h, 0, v);
-            Debug.Log($"joystick h = {h}, v = {v}");
-            Debug.Log($"joystick dir = {dir}");
+            // Debug.Log($"joystick h = {h}, v = {v}");
+            // Debug.Log($"joystick dir = {dir}");
             // rigid.velocity = new Vector3(h * moveSpeed, rigid.velocity.y, v * moveSpeed);
             
             if (!(h == 0 && v == 0)) // 조이스틱에 값이 들어오고 있을 때 
@@ -88,7 +93,7 @@ namespace BluehatGames
                 Vector3 lookForward = new Vector3(CameraTr.forward.x, 0f, CameraTr.forward.z).normalized;
                 Vector3 lookRight = new Vector3(CameraTr.right.x, 0f, CameraTr.right.z).normalized;
                 Vector3 moveDir = lookForward * v + lookRight * h;
-                Debug.Log($"moveDir => {moveDir}");
+                // Debug.Log($"moveDir => {moveDir}");
                 this.transform.forward = moveDir;
                 transform.position += moveDir * Time.deltaTime * 5f;
 
@@ -146,8 +151,9 @@ namespace BluehatGames
                 if(remoteScale.x < 1 | remoteScale.y < 1 | remoteScale.z < 1)
                 {
                     remoteScale = new Vector3(1, 1, 1);
-
+                    
                 }
+                Debug.Log($"stream.ReceiveNext | remoteScale => {remoteScale}");
             }
         }
 
