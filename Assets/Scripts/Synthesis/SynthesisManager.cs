@@ -28,6 +28,7 @@ namespace BluehatGames
             public GameObject panel_colorChange;
             public GameObject panel_accessory;
             public GameObject panel_fusion;
+
             public PannelSwitch(GameObject panel_colorChange, GameObject panel_accessory, GameObject panel_fusion)
             {
                 this.panel_colorChange = panel_colorChange;
@@ -74,7 +75,7 @@ namespace BluehatGames
         public AnimalFactory animalFactory;
 
         public AnimalAirController animalAirController;
-
+        public SynthesisCoinController synthesisCoinController;
         [Header("Common UI")]
         public GameObject animalListView;
         public Transform animalListContentsView;
@@ -248,7 +249,7 @@ namespace BluehatGames
                 fusionResults.gameObject.SetActive(false);
                 // animalListView.SetActive(false);
                 // sub aether count
-                AetherController.instance.SubAetherCount();
+                synthesisCoinController.SubAetherCount();
                 colorChangeManager.SendColorChangeAPI();
             });
 
@@ -283,7 +284,7 @@ namespace BluehatGames
                 panel_result_LoadingImg.SetActive(true);
                 resultAnimalImg.SetActive(false);
                 fusionResults.gameObject.SetActive(true);
-                AetherController.instance.SubAetherCount();
+                synthesisCoinController.SubAetherCount();
                 fusionManager.SendFusionAPI();
                 ClearAnimals();
             });
@@ -312,7 +313,7 @@ namespace BluehatGames
 
                 resultAnimalImg.SetActive(false);
                 fusionResults.SetActive(false);
-                AetherController.instance.SubAetherCount();
+                synthesisCoinController.SubAetherCount();
                 accessoryManager.SendRandomHatAPI();
             });
         }

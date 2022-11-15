@@ -12,5 +12,11 @@ namespace BluehatGames
             coinText.text = UserRepository.GetCoin().ToString();
             Debug.Log("SynthesisCoinController Start coinText.text : " + coinText.text);
         }
+
+        public void SubAetherCount()
+        {
+            
+        }
     }
+
 }

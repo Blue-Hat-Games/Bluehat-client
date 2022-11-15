@@ -139,7 +139,7 @@ namespace BluehatGames
         private GameObject tempParticle;
         public void CreateResultAnimalParticle()
         {
-            Vector3 newPos = new Vector3(-2, -1, 0);
+            Vector3 newPos = new Vector3(-2, 0, 0);
             tempParticle = Instantiate(resultAnimalParticle, newPos, Quaternion.identity);
             tempParticle.GetComponent<ParticleSystem>().Play();
         }
