@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-namespace BluehatGames 
+namespace BluehatGames
 {
 
     public class MultiplayAnimalController : MonoBehaviourPun, IPunObservable
@@ -43,7 +43,7 @@ namespace BluehatGames
             animator = GetComponentInChildren<Animator>();
 
             multiplayCameraController = GameObject.FindObjectOfType<MultiplayCameraController>();
-            if(multiplayCameraController)
+            if (multiplayCameraController)
             {
                 Transform CameraTr = multiplayCameraController.GetCameraTransform();
                 Vector3 lookForward = new Vector3(CameraTr.forward.x, 0f, CameraTr.forward.z).normalized;
@@ -53,7 +53,7 @@ namespace BluehatGames
             PhotonView pv = this.gameObject.GetComponent<PhotonView>();
             Debug.Log($"pv object = {this.gameObject.name}, pv.IsMine = {pv.IsMine}");
             cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
-            if(pv.IsMine)
+            if (pv.IsMine)
             {
                 AnimalDataFormat data = cupid.GetSelectedAnimalData();
                 string json = JsonUtility.ToJson(data);
@@ -63,6 +63,10 @@ namespace BluehatGames
 
         void Update()
         {
+            if (this.transform.localScale.x == 0 | this.transform.localScale.y == 0 || this.transform.localScale.z == 0)
+            {
+                this.transform.localScale = new Vector3(1, 1, 1);
+            }
             // 리모트 캐릭터 처리
             if (photonView.IsMine == false)
             {
@@ -70,11 +74,11 @@ namespace BluehatGames
                 return;
             }
 
-            if(PlayerStatusController.instance.IsGameOver())
+            if (PlayerStatusController.instance.IsGameOver())
             {
                 return;
             }
-            
+
             // 애니메이터 파라미터 설정 
             animator.SetFloat(ANIM_PARAMETER_MOTIONSPEED, joystick.InputScale);
 
@@ -85,11 +89,11 @@ namespace BluehatGames
             // Debug.Log($"joystick h = {h}, v = {v}");
             // Debug.Log($"joystick dir = {dir}");
             // rigid.velocity = new Vector3(h * moveSpeed, rigid.velocity.y, v * moveSpeed);
-            
+
             if (!(h == 0 && v == 0)) // 조이스틱에 값이 들어오고 있을 때 
             {
                 Transform CameraTr = multiplayCameraController.GetCameraTransform();
-                
+
                 Vector3 lookForward = new Vector3(CameraTr.forward.x, 0f, CameraTr.forward.z).normalized;
                 Vector3 lookRight = new Vector3(CameraTr.right.x, 0f, CameraTr.right.z).normalized;
                 Vector3 moveDir = lookForward * v + lookRight * h;
@@ -103,7 +107,7 @@ namespace BluehatGames
             else
             {
                 rigid.velocity = new Vector3(0, rigid.velocity.y, 0);
-                
+
             }
 
             // Jump에 대한 처리
@@ -121,6 +125,10 @@ namespace BluehatGames
             transform.position = Vector3.Lerp(transform.position, remotePos, 10 * Time.deltaTime);
             transform.rotation = Quaternion.Lerp(transform.rotation, remoteRot, 10 * Time.deltaTime);
             transform.localScale = Vector3.Lerp(transform.localScale, remoteScale, 10 * Time.deltaTime);
+            if (transform.localScale.x == 0 | transform.localScale.y == 0 || transform.localScale.z == 0)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
         }
 
         private bool isFirst = true;
@@ -129,7 +137,6 @@ namespace BluehatGames
         // - 데이터를 네트워크 사용자 간에 보내고 받고 하게 하는 콜백 함수
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            Debug.Log("--- OnPhotonSerializeView ---");
             // 내가 데이터를 보내는 중이라면
             if (stream.IsWriting) // 내꺼보내는 거
             {
@@ -148,11 +155,6 @@ namespace BluehatGames
                 remoteRot = (Quaternion)stream.ReceiveNext();
                 remoteScale = (Vector3)stream.ReceiveNext();
 
-                if(remoteScale.x < 1 | remoteScale.y < 1 | remoteScale.z < 1)
-                {
-                    remoteScale = new Vector3(1, 1, 1);
-                    
-                }
                 Debug.Log($"stream.ReceiveNext | remoteScale => {remoteScale}");
             }
         }
@@ -162,7 +164,7 @@ namespace BluehatGames
         {
             AnimalDataFormat dataForm = JsonUtility.FromJson<AnimalDataFormat>(jsonData);
             Debug.Log($"ChatMessage {dataForm.id}, {dataForm.animalType}, thisGameObject = {this.gameObject.name}");
-            if(cupid == null)
+            if (cupid == null)
             {
                 cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
             }
