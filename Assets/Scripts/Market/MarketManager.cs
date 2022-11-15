@@ -406,7 +406,7 @@ namespace BluehatGames
             webRequest.SetRequestHeader("Content-Type", "application/json");
             var price = myAnimalInputPrice.text;
             var animalId = myAnimalIdHidedData.text;
-            var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\":" + WalletLocalRepositroy.GetWallletPrivateKey() + "}";
+            var json = "{\"animal_id\":" + animalId + ", " + "\"price\":" + price + ", " + "\"seller_private_key\": \"" + WalletLocalRepositroy.GetWallletPrivateKey() + "\"}";
             byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
             Debug.Log(json);
             webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
