@@ -419,7 +419,7 @@ namespace BluehatGames
             }
             else
             {
-                OpenAlertPanel(sellSuccessString, myAnimalPanel);
+                OpenAlertPanel("판매에 성공하였습니다. \n 잠시후 업데이트 됩니다.", myAnimalPanel);
             }
             webRequest.Dispose();
         }
