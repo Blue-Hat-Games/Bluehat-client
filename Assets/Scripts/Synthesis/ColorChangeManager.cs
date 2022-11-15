@@ -20,6 +20,7 @@ namespace BluehatGames
         private GameObject resultAnimal;
         public GameObject resultAnimalParticle;
         public Transform thumbnailSpot;
+        public Transform thumbnailCamera;
 
         public void SetSynthesisManager(SynthesisManager instance)
         {
@@ -109,12 +110,12 @@ namespace BluehatGames
         {
             GameObject obj = synthesisManager.GetAnimalObject(selectedAnimalData.id);
             obj.transform.position = this.thumbnailSpot.transform.position;
+            obj.transform.rotation = this.thumbnailSpot.transform.rotation  ;
 
             obj.SetActive(true);
             resultAnimal = obj;
 
             // obj.transform.position = new Vector3(-2, -1, obj.transform.position.z);
-            obj.transform.LookAt(Camera.main.transform);
             obj.transform.eulerAngles = new Vector3(0, obj.transform.eulerAngles.y, 0);
 
             synthesisManager.SetResultLoadingPanel(false);

@@ -373,12 +373,12 @@ namespace BluehatGames
 
             GameObject resultAnimal = fusionManager.GetResultAnimal();
             // 사진 찍기용
-            GameObject duplicatedAnimal = GameObject.Instantiate(resultAnimal);
+            // GameObject duplicatedAnimal = GameObject.Instantiate(resultAnimal);
             ResetAnimalState(resultAnimal);
-            ResetAnimalState(duplicatedAnimal);
-
-            duplicatedAnimal.transform.position = thumbnailSpot.position;
-            duplicatedAnimal.transform.eulerAngles = new Vector3(-5, -144, 0);
+            // ResetAnimalState(duplicatedAnimal);
+            
+            // duplicatedAnimal.transform.position = thumbnailSpot.position;
+            // duplicatedAnimal.transform.eulerAngles = new Vector3(-5, -144, 0);
             thumbnailCamera.Render();
 
             ToTexture2D(renderTexture, (Texture2D resultTex) =>
@@ -386,7 +386,7 @@ namespace BluehatGames
                 Texture2D texture = resultTex;
                 byte[] bytes = texture.EncodeToPNG();
                 StartCoroutine(this.SendPNGToServer(bytes, resultAnimalId));
-                GameObject.Destroy(duplicatedAnimal);
+                // GameObject.Destroy(duplicatedAnimal);
 
             });
         }
@@ -622,7 +622,7 @@ namespace BluehatGames
                 animalObjectArray[curIdx] = animalObject;
                 animalObject.name = $"{animalObject.name}_{calledCount}";
                 ResetAnimalState(animalObject);
-
+                
                 thumbnailCamera.Render();
 
                 var uiSet = contentUiDictionary[animalDataArray[i].id];

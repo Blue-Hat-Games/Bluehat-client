@@ -29,6 +29,7 @@ namespace BluehatGames
         private GameObject resultAnimal;
 
         public Transform thumbnailSpot;
+        public GameObject thumbnailCamera;
 
         public GameObject resultAnimalParticle;
         public void SetSynthesisManager(SynthesisManager instance)
@@ -128,7 +129,9 @@ namespace BluehatGames
             resultAnimalObject.GetComponentInChildren<Animator>().speed = 0.3f;
             resultAnimal = resultAnimalObject;
             resultAnimal.transform.position = thumbnailSpot.transform.position;
-            resultAnimal.transform.LookAt(Camera.main.transform);
+            resultAnimal.transform.rotation = thumbnailSpot.transform.rotation;
+
+            // resultAnimal.transform.LookAt(thumbnailCamera.transform);
             resultAnimal.transform.eulerAngles = new Vector3(0, resultAnimal.transform.eulerAngles.y, 0);
 
             synthesisManager.SetResultLoadingPanel(false);
