@@ -44,7 +44,7 @@ namespace BluehatGames
         public const string getQuestCount = "https://api.bluehat.games/quest/count";
 
         public const string setCompleteQuest = "https://api.bluehat.games/quest/complete";
-        public const string updateCoinAndEgg = "http://api.bluehat.games/user/update-coin-and-egg";
+        public const string updateCoinAndEgg = "https://api.bluehat.games/user/update-coin-and-egg";
 
         // wallet
         public const string CreateNewWallet = "https://api.bluehat.games" + "/wallet/create-new-wallet";
