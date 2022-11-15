@@ -145,7 +145,7 @@ namespace BluehatGames
 
                 if(remoteScale.x < 1 | remoteScale.y < 1 | remoteScale.z < 1)
                 {
-                    remoteScale = new Vector(1, 1, 1);
+                    remoteScale = new Vector3(1, 1, 1);
 
                 }
             }
