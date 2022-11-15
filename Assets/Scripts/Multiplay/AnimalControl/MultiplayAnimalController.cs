@@ -128,43 +128,26 @@ namespace BluehatGames
             // 내가 데이터를 보내는 중이라면
             if (stream.IsWriting) // 내꺼보내는 거
             {
-                // if(isFirst)
-                // {
-                //     isFirst = false;
-                    
-                //     SelectedAnimalDataCupid cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
-                //     AnimalDataFormat data = cupid.GetSelectedAnimalData();
-                //     // string headItem = data.headItem;
-                //     string jsonData = JsonUtility.ToJson(data);
-                //     Debug.Log($"Sender: MyHeadItem = {data.headItem}");
-                //     stream.SendNext(jsonData);
-                // }
-
                 // 이 방안에 있는 모든 사용자에게 브로드캐스트 
                 // - 내 포지션 값을 보내보자
                 stream.SendNext(transform.position);
                 stream.SendNext(transform.rotation);
                 stream.SendNext(transform.localScale);
+                Debug.Log($"stream.SendNext | scale = {transform.localScale}");
             }
             // 내가 데이터를 받는 중이라면 
             else // 원격에 있는 나 
             {
-                // if(isFirst)
-                // {
-                //     isFirst = false;
-                //     string jsonData = (string)stream.ReceiveNext();
-                //     SelectedAnimalDataCupid cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
-                    
-                //     AnimalDataFormat data = JsonUtility.FromJson<AnimalDataFormat>(jsonData);
-                //     cupid.LoadHatItemPrefab(data.headItem, this.gameObject);
-                //     cupid.SetRemoteAnimalTexture(data, this.gameObject);
-                    
-                //     Debug.Log($"SetMyCostume | myheaditem = {data.headItem}");
-                // }
                 // 순서대로 보내면 순서대로 들어옴. 근데 타입캐스팅 해주어야 함
                 remotePos = (Vector3)stream.ReceiveNext();
                 remoteRot = (Quaternion)stream.ReceiveNext();
                 remoteScale = (Vector3)stream.ReceiveNext();
+
+                if(remoteScale.x < 1 | remoteScale.y < 1 | remoteScale.z < 1)
+                {
+                    remoteScale = new Vector(1, 1, 1);
+
+                }
             }
         }
 
