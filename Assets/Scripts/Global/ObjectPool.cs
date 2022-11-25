@@ -1,60 +1,51 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
 public class ObjectPool : MonoBehaviour
 {
-    private int poolSize;
+    private Transform objectPoolParent;
 
     private Queue<GameObject> objectPoolQueue;
+    private int poolSize;
     private GameObject prefab;
-
-    private Transform objectPoolParent;
 
     public void Init(int initSize, GameObject prefab, Transform objectPoolParent)
     {
         objectPoolQueue = new Queue<GameObject>();
         this.prefab = prefab;
-        this.objectPoolParent = this.transform;
+        this.objectPoolParent = transform;
 
-        for(int i = 0; i < initSize; i++)
-        {
-            objectPoolQueue.Enqueue(CreateNewObject());
-        }
-
+        for (var i = 0; i < initSize; i++) objectPoolQueue.Enqueue(CreateNewObject());
     }
 
     private GameObject CreateNewObject()
     {
-        var newObj = Instantiate(this.prefab);
-        newObj.transform.SetParent(this.objectPoolParent);
+        var newObj = Instantiate(prefab);
+        newObj.transform.SetParent(objectPoolParent);
         newObj.SetActive(false);
         return newObj;
     }
 
     public GameObject GetObject()
     {
-        if(objectPoolQueue.Count > 0)
+        if (objectPoolQueue.Count > 0)
         {
-            var obj = this.objectPoolQueue.Dequeue();
+            var obj = objectPoolQueue.Dequeue();
             obj.transform.SetParent(objectPoolParent);
             obj.gameObject.SetActive(true);
             return obj;
         }
-        else
-        {
-            var newObj = CreateNewObject();
-            newObj.SetActive(true);
-            return newObj; 
-        }
+
+        var newObj = CreateNewObject();
+        newObj.SetActive(true);
+        return newObj;
     }
 
     public void RetrunPoolObject(GameObject obj)
     {
         obj.gameObject.SetActive(false);
-        obj.transform.SetParent(this.objectPoolParent);
-        this.objectPoolQueue.Enqueue(obj);
+        obj.transform.SetParent(objectPoolParent);
+        objectPoolQueue.Enqueue(obj);
     }
 
     public int GetPoolSize()

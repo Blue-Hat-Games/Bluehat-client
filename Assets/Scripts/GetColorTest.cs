@@ -1,66 +1,43 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Drawing;
-using UnityEditor;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class GetColorTest : MonoBehaviour
 {
     public string URL = "192.168.84.169:3000/animal";
     public Texture2D huskyTex;
-    private Texture2D huskyTex2;
 
     public RawImage resultTex;
     public string fileName = "test";
 
     public Renderer huskyMesh_j;
-
-    public IEnumerator DownLoadGet(string URL)
-    {
-        UnityWebRequest request = UnityWebRequest.Get(URL);
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.ConnectionError ||
-            request.result == UnityWebRequest.Result.ProtocolError)
-        {
-            Debug.Log(request.error);
-        }
-        else
-        {
-            Debug.Log(request.downloadHandler.data);
-        }
-    }
+    private Texture2D huskyTex2;
 
 
-    void Start()
+    private void Start()
     {
         StartCoroutine(DownLoadGet(URL));
         // ------------------------------------------------------------------
         huskyTex2 = new Texture2D(huskyTex.width, huskyTex.height, TextureFormat.ARGB32, false);
-        UnityEngine.Color[] sourcePixels = huskyTex.GetPixels();
-        for (int h = 0; h < huskyTex.height; h++)
+        var sourcePixels = huskyTex.GetPixels();
+        for (var h = 0; h < huskyTex.height; h++)
+        for (var w = 0; w < huskyTex.width; w++)
         {
-            for (int w = 0; w < huskyTex.width; w++)
-            {
-                UnityEngine.Color color = sourcePixels[h * huskyTex.width + w];
-                color = new UnityEngine.Color(1, color.g * 0.5f, color.b * 0.5f, 1);
-                huskyTex2.SetPixel(w, h, color);
+            var color = sourcePixels[h * huskyTex.width + w];
+            color = new Color(1, color.g * 0.5f, color.b * 0.5f, 1);
+            huskyTex2.SetPixel(w, h, color);
 
-                Debug.Log($"Color = {color.r * 255}, ${color.g * 255}, ${color.b * 255}");
-                int r = (int)color.r * 255;
-                int g = (int)color.g * 255;
-                int b = (int)color.b * 255;
-
-                // System.Drawing.Color myColor = System.Drawing.Color.FromArgb(r, g, b);
-                // string hex = myColor.R.ToString("X2") + myColor.G.ToString("X2") + myColor.B.ToString("X2");
-                // Debug.Log($"hex : ${hex}");
-            }
+            Debug.Log($"Color = {color.r * 255}, ${color.g * 255}, ${color.b * 255}");
+            var r = (int)color.r * 255;
+            var g = (int)color.g * 255;
+            var b = (int)color.b * 255;
+            // System.Drawing.Color myColor = System.Drawing.Color.FromArgb(r, g, b);
+            // string hex = myColor.R.ToString("X2") + myColor.G.ToString("X2") + myColor.B.ToString("X2");
+            // Debug.Log($"hex : ${hex}");
         }
+
         huskyTex2.Apply();
         resultTex.texture = huskyTex2;
         huskyMesh_j.material.SetTexture("_MainTex", huskyTex2);
@@ -75,20 +52,28 @@ public class GetColorTest : MonoBehaviour
         //    Debug.Log(ShaderUtil.GetPropertyName(huskyMesh_j.material.shader, index) + "      "
         //    + shaderPropertyTypes[(int)ShaderUtil.GetPropertyType(huskyMesh_j.material.shader, index)]);
         //}
-
     }
+
+    public IEnumerator DownLoadGet(string URL)
+    {
+        var request = UnityWebRequest.Get(URL);
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.ConnectionError ||
+            request.result == UnityWebRequest.Result.ProtocolError)
+            Debug.Log(request.error);
+        else
+            Debug.Log(request.downloadHandler.data);
+    }
+
     private void SaveTexture2DToPNGFile(Texture2D texture, string directoryPath, string fileName)
     {
+        if (false == Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
 
-        if (false == Directory.Exists(directoryPath))
-        {
-            Directory.CreateDirectory(directoryPath);
-        }
+        var texturePNGBytes = texture.EncodeToPNG();
 
-        byte[] texturePNGBytes = texture.EncodeToPNG();
-
-        string filePath = directoryPath + fileName + ".png";
+        var filePath = directoryPath + fileName + ".png";
         File.WriteAllBytes(filePath, texturePNGBytes);
-
     }
 }

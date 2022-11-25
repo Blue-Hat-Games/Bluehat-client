@@ -1,39 +1,32 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Pun;
+using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    private PhotonView pv;
     public int obstacleRespawnTime = 15;
+    private PhotonView pv;
 
-    void Start()
+    private void Start()
     {
-        pv = this.gameObject.GetComponent<PhotonView>();
+        pv = gameObject.GetComponent<PhotonView>();
     }
 
 
-   [PunRPC] // 이 밑의 함수는 RPC함수가 되고, 원격에서 호출할 수 있는 상태가 됨
-    public void ShowOffObstacle() 
+    [PunRPC] // 이 밑의 함수는 RPC함수가 되고, 원격에서 호출할 수 있는 상태가 됨
+    public void ShowOffObstacle()
     {
-        StartCoroutine(ReactiveObstacle()); 
-        Renderer[] renderers = this.gameObject.GetComponentsInChildren<Renderer>();
-        foreach(Renderer ren in renderers)
-        {
-            ren.enabled = false;
-        }
+        StartCoroutine(ReactiveObstacle());
+        var renderers = gameObject.GetComponentsInChildren<Renderer>();
+        foreach (var ren in renderers) ren.enabled = false;
         // this.gameObject.SetActive(false);
     }
 
-    IEnumerator ReactiveObstacle()
+    private IEnumerator ReactiveObstacle()
     {
         yield return new WaitForSeconds(obstacleRespawnTime);
-        Renderer[] renderers = this.gameObject.GetComponentsInChildren<Renderer>();
-        foreach(Renderer ren in renderers)
-        {
-            ren.enabled = true;
-        }
+        var renderers = gameObject.GetComponentsInChildren<Renderer>();
+        foreach (var ren in renderers) ren.enabled = true;
         // this.gameObject.SetActive(true);
     }
 }

@@ -1,37 +1,34 @@
 using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-
 using Photon.Pun;
 using Photon.Realtime;
-
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace BluehatGames
 {
     public class PhotonManager : MonoBehaviourPunCallbacks
     {
-        private readonly string gameVersion = "v1.0";
-        private byte maxPlayersPerRoom = 8;
-        private bool isConnecting = false;
-
         [Header("UI")]
         // public InputField nickNameInputField;
         public Button connectButton;
+
         public Button goToMainButton;
 
         public GameObject controlPanel; // inputField, PlayButton
         public GameObject progressPanel; // connecting ...
-        void Awake()
+        private readonly string gameVersion = "v1.0";
+        private bool isConnecting;
+        private readonly byte maxPlayersPerRoom = 8;
+
+        private void Awake()
         {
             // 이후에 들어온 플레이어에게 현재 씬 상황을 자동으로 적용시켜줌
             PhotonNetwork.AutomaticallySyncScene = true;
         }
 
 
-        void Start()
+        private void Start()
         {
             controlPanel.SetActive(true);
             progressPanel.SetActive(false);
@@ -39,16 +36,10 @@ namespace BluehatGames
 
             // Connect 버튼을 누른 경우 접속 시도 
             // - 닉네임 설정은 PlayerNameInputField에서 해줌
-            connectButton.onClick.AddListener(() =>
-            {
-                Connect();
-            });
+            connectButton.onClick.AddListener(() => { Connect(); });
             connectButton.gameObject.SetActive(false);
 
-            goToMainButton.onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene(SceneName._03_Main);
-            });
+            goToMainButton.onClick.AddListener(() => { SceneManager.LoadScene(SceneName._03_Main); });
         }
 
         public void SetconnectButtonActive(bool isActive)
@@ -60,14 +51,14 @@ namespace BluehatGames
         {
             Debug.Log("01. 포톤 서버에 접속");
             if (isConnecting)
-            {
                 // 존재하는 룸에 우선 조인을 시도하고, 없다면 OnJoinRandomFailed() 가 호출됨
                 PhotonNetwork.JoinRandomRoom();
-            }
         }
+
         public override void OnDisconnected(DisconnectCause cause)
         {
-            Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
+            Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}",
+                cause);
         }
 
         // JoinRandomRoom()에 실패하면 호출됨
@@ -76,7 +67,7 @@ namespace BluehatGames
             Debug.Log("02. 랜덤 룸 접속 실패");
 
             // 룸 속성 설정
-            RoomOptions ro = new RoomOptions();
+            var ro = new RoomOptions();
             ro.IsOpen = true;
             ro.IsVisible = true;
             ro.MaxPlayers = maxPlayersPerRoom; // 8명까지만 입장가능하게 하자 
@@ -101,7 +92,7 @@ namespace BluehatGames
             }
         }
 
-        IEnumerator RepeatIsConnect()
+        private IEnumerator RepeatIsConnect()
         {
             while (PhotonNetwork.LevelLoadingProgress < 1)
             {
@@ -110,18 +101,16 @@ namespace BluehatGames
             }
 
             // MultiplayGameManager.instance?.SetIsConnectTrue();
-            while(true) {
+            while (true)
+            {
                 yield return null;
                 Debug.Log("RepeatIsConnect....");
-                if(MultiplayGameManager.instance) {
+                if (MultiplayGameManager.instance)
+                {
                     MultiplayGameManager.instance?.SetIsConnectTrue();
-                    if(MultiplayGameManager.instance.IsConnectTrue()) {
-                        yield break;
-                    }    
+                    if (MultiplayGameManager.instance.IsConnectTrue()) yield break;
                 }
-
             }
-            
         }
 
         // 1. connection 과정 시작
@@ -150,6 +139,5 @@ namespace BluehatGames
                 PhotonNetwork.ConnectUsingSettings();
             }
         }
-
     }
 }

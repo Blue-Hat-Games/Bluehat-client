@@ -1,68 +1,61 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 using Photon.Pun;
-using Photon.Realtime;
+using UnityEngine;
 
 namespace BluehatGames
 {
     public class MultiplayGameManager : MonoBehaviour
     {
-        public static MultiplayGameManager instance = null;
-        private bool isConnect = false;
+        public static MultiplayGameManager instance;
         public Transform spawnPoint;
 
         public string playerPrefabPath;
         public GameObject cameraPrefab;
-        private string selectedAnimal;
         public GameObject loadingPanel;
 
         public GameObject obstacleTriggerParticle;
-        public AudioClip eatEffectSound; 
+        public AudioClip eatEffectSound;
 
         private SelectedAnimalDataCupid cupid;
+        private bool isConnect;
 
-        private int myPlayerViewID = 0;
-        public void SetPlayerPrefabPath(string animalName)
-        {
-            Debug.Log($"setPlayerPrefabPath -> {animalName}");
-            playerPrefabPath = $"Prefab/MultiplayAnimals/{animalName}";
-        }
+        private int myPlayerViewID;
+        private string selectedAnimal;
 
         private void Awake()
         {
             if (instance == null)
             {
                 instance = this;
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
             else if (instance != this)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
+        }
+
+        private void Start()
+        {
+            cupid = FindObjectOfType<SelectedAnimalDataCupid>();
+            if (cupid == null)
+                Debug.Log("cupid null");
+            else
+                playerPrefabPath = cupid.GetSelectedAnimalType();
+
+            SetPlayerPrefabPath(playerPrefabPath);
+
+            StartCoroutine(CreatePlayer());
+        }
+
+        public void SetPlayerPrefabPath(string animalName)
+        {
+            Debug.Log($"setPlayerPrefabPath -> {animalName}");
+            playerPrefabPath = $"Prefab/MultiplayAnimals/{animalName}";
         }
 
         public void GameOver()
         {
-
-        }
-
-        void Start()
-        {
-            cupid = GameObject.FindObjectOfType<SelectedAnimalDataCupid>();
-            if(cupid == null)
-            {
-                Debug.Log("cupid null");
-            }
-            else
-            {
-                playerPrefabPath = cupid.GetSelectedAnimalType();
-            }
-        
-            SetPlayerPrefabPath(playerPrefabPath);
-
-            StartCoroutine(CreatePlayer());
         }
 
         public bool IsConnectTrue()
@@ -74,15 +67,15 @@ namespace BluehatGames
         public void SetIsConnectTrue()
         {
             Debug.Log("SetIsConnectTrue");
-            this.isConnect = true;
+            isConnect = true;
         }
 
         public int GetMyPlayerPhotonViewID()
         {
-            return this.myPlayerViewID;
+            return myPlayerViewID;
         }
-        
-        IEnumerator CreatePlayer()
+
+        private IEnumerator CreatePlayer()
         {
             Debug.Log("MultiplayGameManager => CreatePlayer()");
             // isConnect = true
@@ -92,15 +85,15 @@ namespace BluehatGames
 
             PlayerStatusController.instance.SetStartTimeAttack();
             // 360도 Sphere 공간안에서 랜덤으로 한 점을 찍은 것
-            Vector3 adjustedPos = spawnPoint.position;
-            Vector3 randPos = Random.insideUnitSphere * 5;
+            var adjustedPos = spawnPoint.position;
+            var randPos = Random.insideUnitSphere * 5;
             // 0,0에서 10m 사이 까지의 거리 중 랜덤으로 설정
             adjustedPos = new Vector3(adjustedPos.x + randPos.x, adjustedPos.y, adjustedPos.z + randPos.z);
-            
+
             // 클라이언트가 새로 방에 들어오면 마스터 클라이언트가 자동으로 환경을 맞춰줌 
-            GameObject playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, spawnPoint.rotation);
+            var playerTemp = PhotonNetwork.Instantiate(playerPrefabPath, adjustedPos, spawnPoint.rotation);
             SetMultiplayAnimalObject(playerTemp);
-            GameObject camera = GameObject.Instantiate(cameraPrefab);
+            var camera = Instantiate(cameraPrefab);
             camera.GetComponent<MultiplayCameraController>().SetCameraTarget(playerTemp);
             myPlayerViewID = playerTemp.GetComponent<PhotonView>().ViewID;
 
@@ -110,12 +103,13 @@ namespace BluehatGames
         private void SetMultiplayAnimalObject(GameObject animalPlayer)
         {
             Debug.Log($"Create animalPlayer | name = {animalPlayer.name}");
-            if(cupid != null)
+            if (cupid != null)
             {
                 cupid.SetAnimalTexture(animalPlayer);
                 cupid.SetHatObject(animalPlayer);
             }
-            PlayerTrigger playerTrigger = animalPlayer.AddComponent<PlayerTrigger>();
+
+            var playerTrigger = animalPlayer.AddComponent<PlayerTrigger>();
             playerTrigger.SetEatEffectAudioClip(eatEffectSound);
             // animalPlayer.GetComponentInChildren<Animator>().gameObject.AddComponent<PhotonAnimatorView>();
         }
@@ -128,7 +122,7 @@ namespace BluehatGames
 
         public GameObject GetObstacleTriggerParticle()
         {
-            return Instantiate(this.obstacleTriggerParticle, Vector3.zero, Quaternion.identity);
+            return Instantiate(obstacleTriggerParticle, Vector3.zero, Quaternion.identity);
         }
     }
 }

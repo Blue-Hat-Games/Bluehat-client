@@ -1,28 +1,27 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace BluehatGames
 {
     public class WalletController : MonoBehaviour
     {
-
-        private static string SECRET_HIDE = "•••••••••••••••••••••••••••••••••••••••••••••••••";
+        private static readonly string SECRET_HIDE = "•••••••••••••••••••••••••••••••••••••••••••••••••";
         public Button btn_wallet;
         public Image img_btn_wallet_alert;
         public GameObject walletPanel;
         public Button btn_wallet_pannel_close;
         public AudioClip upperButtonSound;
 
-        [Header("Wallet SignUp")]
-        public GameObject walletSignUpPanel;
+        [Header("Wallet SignUp")] public GameObject walletSignUpPanel;
+
         public Button btn_wallet_login;
         public Button btn_wallet_signup;
 
 
-        [Header("Wallet Info")]
-        public GameObject walletInfoPanel;
+        [Header("Wallet Info")] public GameObject walletInfoPanel;
+
         public InputField input_wallet_address;
         public InputField input_wallet_private_key;
         public Button btn_wallet_private_key_show;
@@ -32,15 +31,14 @@ namespace BluehatGames
         public GameObject Mission;
 
 
-
-        void Start()
+        private void Start()
         {
             walletPanel.SetActive(false);
             btn_wallet.onClick.AddListener(() =>
             {
                 SoundManager.instance.PlayEffectSound(upperButtonSound);
                 // Local Repository에서 월렛 정보 가져옴.
-                Wallet wallet = WalletLocalRepositroy.GetWalletInfo();
+                var wallet = WalletLocalRepositroy.GetWalletInfo();
                 walletPanel.SetActive(true);
                 if (wallet == null)
                 {
@@ -63,38 +61,24 @@ namespace BluehatGames
             });
 
 
-            btn_wallet_signup.onClick.AddListener(() =>
-            {
-                StartCoroutine(CreateNewWallet());
-            });
+            btn_wallet_signup.onClick.AddListener(() => { StartCoroutine(CreateNewWallet()); });
 
-            btn_wallet_login.onClick.AddListener(() =>
-            {
-
-            });
+            btn_wallet_login.onClick.AddListener(() => { });
 
             btn_wallet_private_key_show.onClick.AddListener(() =>
             {
                 if (input_wallet_private_key.text == SECRET_HIDE)
-                {
                     input_wallet_private_key.text = WalletLocalRepositroy.GetWallletPrivateKey();
-                }
                 else
-                {
                     input_wallet_private_key.text = SECRET_HIDE;
-                }
             });
 
             btn_klaytn_wallet_key_show.onClick.AddListener(() =>
             {
                 if (input_klaytn_wallet_key.text == SECRET_HIDE)
-                {
                     input_klaytn_wallet_key.text = WalletLocalRepositroy.GetKlaytnWalletKey();
-                }
                 else
-                {
                     input_klaytn_wallet_key.text = SECRET_HIDE;
-                }
             });
         }
 
@@ -109,12 +93,11 @@ namespace BluehatGames
         }
 
 
-
-        IEnumerator CreateNewWallet()
+        private IEnumerator CreateNewWallet()
         {
-            using (UnityWebRequest request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, ""))
+            using (var request = UnityWebRequest.Post(ApiUrl.CreateNewWallet, ""))
             {
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
 
                 yield return request.SendWebRequest();
@@ -127,7 +110,7 @@ namespace BluehatGames
                 else
                 {
                     Debug.Log("Response: " + request.downloadHandler.text);
-                    Wallet walletInfo = JsonUtility.FromJson<Wallet>(request.downloadHandler.text);
+                    var walletInfo = JsonUtility.FromJson<Wallet>(request.downloadHandler.text);
                     WalletLocalRepositroy.setWalletInfo(walletInfo);
                     input_wallet_address.text = walletInfo.address;
                     input_wallet_private_key.text = SECRET_HIDE;
@@ -135,13 +118,10 @@ namespace BluehatGames
                     walletSignUpPanel.SetActive(false);
                     walletInfoPanel.SetActive(true);
                     img_btn_wallet_alert.gameObject.SetActive(false);
-                    MissionUtils missionResult = Mission.GetComponent<MissionUtils>();
+                    var missionResult = Mission.GetComponent<MissionUtils>();
                     missionResult.createWalletEvent();
                 }
             }
         }
-
     }
-
-
 }

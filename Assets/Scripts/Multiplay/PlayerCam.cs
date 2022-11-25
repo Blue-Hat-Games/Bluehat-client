@@ -1,28 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCam : MonoBehaviour
 {
     public float cameraRotSpeed = 3;
-    private Transform targetTr;
     private float deltaX;
     private Joystick joystick;
+    private Transform targetTr;
 
-    void Start()
+    private void Start()
     {
         joystick = FindObjectOfType<Joystick>();
     }
 
-    public void SetCameraTarget(GameObject animal)
-    {
-        targetTr = animal.transform;
-
-        Debug.Log($"target setting completed => {animal.name}");
-    }
-
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (null == targetTr || null == joystick)
             return;
@@ -31,6 +22,13 @@ public class PlayerCam : MonoBehaviour
         var lookAxisRot = Quaternion.LookRotation(targetTr.forward);
         var projRot = Vector3.ProjectOnPlane(lookAxisRot.eulerAngles, Vector3.right);
 
-        this.transform.position = new Vector3(targetTr.position.x, targetTr.position.y + 3, targetTr.position.z - 10);
+        transform.position = new Vector3(targetTr.position.x, targetTr.position.y + 3, targetTr.position.z - 10);
+    }
+
+    public void SetCameraTarget(GameObject animal)
+    {
+        targetTr = animal.transform;
+
+        Debug.Log($"target setting completed => {animal.name}");
     }
 }

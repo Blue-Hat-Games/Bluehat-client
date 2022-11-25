@@ -1,12 +1,11 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace BluehatGames
 {
-    [System.Serializable]
+    [Serializable]
     public class AnimalDataFromServer
     {
         public string name;
@@ -17,21 +16,20 @@ namespace BluehatGames
         public string bodyItem;
         public string footItem;
         public string pattern;
-
     }
+
     public class GetUserAnimalTest : MonoBehaviour
     {
-        void Start()
+        public AnimalDataFromServer[] animalData;
+
+        private void Start()
         {
-
             StartCoroutine(DownLoadGet(ApiUrl.getAnimalList));
-
         }
 
-        public AnimalDataFromServer[] animalData;
         public IEnumerator DownLoadGet(string URL)
         {
-            UnityWebRequest request = UnityWebRequest.Get(URL);
+            var request = UnityWebRequest.Get(URL);
             request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
             yield return request.SendWebRequest();
 
@@ -47,13 +45,10 @@ namespace BluehatGames
                 var animalData = JsonHelper.FromJson<AnimalDataFromServer>(request.downloadHandler.text);
                 Debug.Log($"animalData = ${animalData.Length}");
 
-                for (int i = 0; i < animalData.Length; i++)
-                {
-                    Debug.Log($"animalData[i].name = {animalData[i].name}, animalData[i].type = {animalData[i].animalType}");
-
-                }
+                for (var i = 0; i < animalData.Length; i++)
+                    Debug.Log(
+                        $"animalData[i].name = {animalData[i].name}, animalData[i].type = {animalData[i].animalType}");
             }
         }
-
     }
 }
