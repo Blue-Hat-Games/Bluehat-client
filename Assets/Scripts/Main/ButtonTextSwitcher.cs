@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,24 +8,23 @@ public class ButtonTextSwitcher : MonoBehaviour
     public string[] switchTexts;
     public int switchTime;
 
-    void Start()
+    private void Start()
     {
         StartCoroutine(SwitchText());
     }
 
-    IEnumerator SwitchText()
+    private void Update()
     {
-        int idx = 0;
-        while(true)
+    }
+
+    private IEnumerator SwitchText()
+    {
+        var idx = 0;
+        while (true)
         {
-            buttonText.text = switchTexts[idx%switchTexts.Length];
+            buttonText.text = switchTexts[idx % switchTexts.Length];
             yield return new WaitForSeconds(switchTime);
             idx++;
         }
-    }
-
-    void Update()
-    {
-        
     }
 }

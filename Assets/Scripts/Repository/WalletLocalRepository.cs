@@ -31,57 +31,42 @@ namespace BluehatGames
         public static string GetWalletAddress()
         {
             if (PlayerPrefs.HasKey(PlayerPrefsKey.key_WalletAddress))
-            {
                 return PlayerPrefs.GetString(PlayerPrefsKey.key_WalletAddress);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static string GetWallletPrivateKey()
         {
             if (PlayerPrefs.HasKey(PlayerPrefsKey.key_WalletPrivateKey))
             {
-                string privateKey = PlayerPrefs.GetString(PlayerPrefsKey.key_WalletPrivateKey);
+                var privateKey = PlayerPrefs.GetString(PlayerPrefsKey.key_WalletPrivateKey);
                 privateKey = AESCrypto.AESDecrypt128(privateKey);
                 return privateKey;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static string GetKlaytnWalletKey()
         {
             if (PlayerPrefs.HasKey(PlayerPrefsKey.key_KlaytnWalletKey))
             {
-                string klaytnWalletKey = PlayerPrefs.GetString(PlayerPrefsKey.key_KlaytnWalletKey);
+                var klaytnWalletKey = PlayerPrefs.GetString(PlayerPrefsKey.key_KlaytnWalletKey);
                 klaytnWalletKey = AESCrypto.AESDecrypt128(klaytnWalletKey);
                 return klaytnWalletKey;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static Wallet GetWalletInfo()
         {
-            string address = GetWalletAddress();
-            string privateKey = GetWallletPrivateKey();
-            string klaytnWalletKey = GetKlaytnWalletKey();
+            var address = GetWalletAddress();
+            var privateKey = GetWallletPrivateKey();
+            var klaytnWalletKey = GetKlaytnWalletKey();
             if (address != null && privateKey != null && klaytnWalletKey != null)
-            {
                 return new Wallet(address, privateKey, klaytnWalletKey);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
-
     }
 }

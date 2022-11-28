@@ -1,6 +1,8 @@
+using System;
 
-[System.Serializable]
-public class AnimalDataFormat {
+[Serializable]
+public class AnimalDataFormat
+{
     public string name;
     public int tier;
     public string color;

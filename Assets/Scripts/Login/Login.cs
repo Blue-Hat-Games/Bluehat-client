@@ -11,16 +11,15 @@ namespace BluehatGames
 {
     public class LoginBtn
     {
-        private Button btn_login;
-        private Button btn_resend_email;
-        private LoginBtnStatus btn_status;
-
-
         public enum LoginBtnStatus
         {
             SendEmail,
             Login
         }
+
+        private readonly Button btn_login;
+        private readonly Button btn_resend_email;
+        private LoginBtnStatus btn_status;
 
         public LoginBtn(Button btn_login, Button btn_resend_email)
         {
@@ -32,6 +31,7 @@ namespace BluehatGames
         {
             return btn_status;
         }
+
         public void SetBtnSendEmail()
         {
             btn_status = LoginBtnStatus.SendEmail;
@@ -45,17 +45,17 @@ namespace BluehatGames
             btn_login.GetComponentInChildren<Text>().text = "Login";
             btn_resend_email.gameObject.SetActive(true);
         }
-
-
     }
 
     public class PlayerInfo
     {
         public string email;
+
         public PlayerInfo(string email)
         {
             this.email = email;
         }
+
         public string ToJson()
         {
             return JsonUtility.ToJson(this);
@@ -65,63 +65,43 @@ namespace BluehatGames
 
     public class Login : MonoBehaviour
     {
-        [Header("Buttons")]
-        public Button btn_login;
+        [Header("Buttons")] public Button btn_login;
 
         public Button btn_resend_email;
 
-        [Header("InputFields")]
-        public InputField inputEmail;
+        [Header("InputFields")] public InputField inputEmail;
 
-        [Header("Alert Popup")]
-        public GameObject alertPopup;
+        [Header("Alert Popup")] public GameObject alertPopup;
+
         public Text alertText;
-        private string emailMessage = "이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!";
-        private string authCompleted = "인증에 성공했습니다!";
-        private string warnEmailMessage = "유효한 이메일이 아닙니다.";
-        private string warnWalletMessage = "Wallet Address Not OK.";
 
 
-        [Header("Control Variables")]
-        public int popupShowTime;
+        [Header("Control Variables")] public int popupShowTime;
+
+        private readonly string authCompleted = "인증에 성공했습니다!";
+        private readonly string emailMessage = "이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!";
 
         private Coroutine popupCoroutine;
+        private readonly string warnEmailMessage = "유효한 이메일이 아닙니다.";
+        private string warnWalletMessage = "Wallet Address Not OK.";
 
-        void SaveClientInfo(string key, int value)
+        private void Start()
         {
-            PlayerPrefs.SetInt(key, value);
-        }
-
-        int GetClientInfo(string key)
-        {
-            return PlayerPrefs.GetInt(key);
-        }
-
-        void Start()
-        {
-            LoginBtn loginBtn = new LoginBtn(btn_login, btn_resend_email);
+            var loginBtn = new LoginBtn(btn_login, btn_resend_email);
             loginBtn.SetBtnSendEmail();
 
             // If click resend email button, login btn status change
-            btn_resend_email.onClick.AddListener(() =>
-            {
-                loginBtn.SetBtnSendEmail();
-            });
+            btn_resend_email.onClick.AddListener(() => { loginBtn.SetBtnSendEmail(); });
 
             // Login Btn Click
             btn_login.onClick.AddListener(() =>
             {
-                string email = inputEmail.text;
-                if (false == IsValidInputData(email))
-                {
-                    return; // Input Data is not Valid
-                }
+                var email = inputEmail.text;
+                if (false == IsValidInputData(email)) return; // Input Data is not Valid
 
                 // If Login Btn Status Send email
                 if (loginBtn.GetBtnStatus() == LoginBtn.LoginBtnStatus.SendEmail)
-                {
-
-                    StartCoroutine(RequestAuthToServer(ApiUrl.emailLoginVerify, email, (UnityWebRequest request) =>
+                    StartCoroutine(RequestAuthToServer(ApiUrl.emailLoginVerify, email, request =>
                     {
                         StartCoroutine(ShowAlertPopup(emailMessage));
 
@@ -133,35 +113,24 @@ namespace BluehatGames
                             StartCoroutine(ShowAlertPopup("이메일을 보내지 못했습니다.\n 다시 시도해주세요."));
                             return;
                         }
-                        else
-                        {
-                            Debug.Log("이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!");
-                            loginBtn.SetBtnLogin();
-                        }
+
+                        Debug.Log("이메일을 보냈습니다.\n 메일함에서 인증을 완료해주세요!");
+                        loginBtn.SetBtnLogin();
                     }));
-                }
 
                 // If Login Btn status is Login
                 else
-                {
-                    StartCoroutine(RequestAuthToServer(ApiUrl.login, email, (UnityWebRequest request) =>
+                    StartCoroutine(RequestAuthToServer(ApiUrl.login, email, request =>
                     {
                         var response = JsonUtility.FromJson<ResponseLogin>(request.downloadHandler.text);
                         if (response.msg is "Register Success" or "Login Success")
                         {
-                            if (null != popupCoroutine)
-                            {
-                                StopCoroutine(popupCoroutine);
-                            }
+                            if (null != popupCoroutine) StopCoroutine(popupCoroutine);
                             StartCoroutine(ShowAlertPopup(authCompleted));
                             if (response.msg == "Register Success")
-                            {
                                 SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
-                            }
                             else
-                            {
                                 SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._LOGIN_COMPLETED);
-                            }
                             AccessToken.SetAccessToken(response.access_token);
                             SceneManager.LoadScene(SceneName._03_Main);
                         }
@@ -170,14 +139,21 @@ namespace BluehatGames
                             Debug.LogError("Server: Email not Verified.");
                         }
                     }));
-                }
-
             });
+        }
 
+        private void SaveClientInfo(string key, int value)
+        {
+            PlayerPrefs.SetInt(key, value);
+        }
+
+        private int GetClientInfo(string key)
+        {
+            return PlayerPrefs.GetInt(key);
         }
 
 
-        IEnumerator ShowAlertPopup(string text)
+        private IEnumerator ShowAlertPopup(string text)
         {
             alertText.text = text;
             alertPopup.SetActive(true);
@@ -185,33 +161,29 @@ namespace BluehatGames
             alertPopup.SetActive(false);
         }
 
-        IEnumerator RequestAuthToServer(string URL, string inputEmail, Action<UnityWebRequest> action)
+        private IEnumerator RequestAuthToServer(string URL, string inputEmail, Action<UnityWebRequest> action)
         {
             Debug.Log($"RequestAuthToServer | URL: {URL}, inputEmail: {inputEmail}");
-            PlayerInfo playerInfo = new PlayerInfo(inputEmail);
-            string jsonData = playerInfo.ToJson();
+            var playerInfo = new PlayerInfo(inputEmail);
+            var jsonData = playerInfo.ToJson();
             Debug.Log("Resutlt = " + playerInfo.ToJson());
 
             // 'emailLoginVerify' or 'login'
             if (URL == ApiUrl.emailLoginVerify)
             {
-
-                if (null != popupCoroutine)
-                {
-                    StopCoroutine(popupCoroutine);
-                }
+                if (null != popupCoroutine) StopCoroutine(popupCoroutine);
 
                 // alert popup 
                 StartCoroutine(ShowAlertPopup(emailMessage));
             }
 
             // byteEmail 
-            byte[] byteEmail = Encoding.UTF8.GetBytes(jsonData);
+            var byteEmail = Encoding.UTF8.GetBytes(jsonData);
 
-            using (UnityWebRequest request = UnityWebRequest.Post(URL, jsonData))
+            using (var request = UnityWebRequest.Post(URL, jsonData))
             {
                 request.uploadHandler = new UploadHandlerRaw(byteEmail);
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Content-Type", "application/json");
 
                 yield return request.SendWebRequest();
@@ -220,7 +192,8 @@ namespace BluehatGames
                     Debug.Log("Email Not Verified");
                     StartCoroutine(ShowAlertPopup("Email Not Verified"));
                 }
-                else if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+                else if (request.result is UnityWebRequest.Result.ConnectionError
+                         or UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log("request Error!");
                     Debug.Log(request.responseCode);
@@ -233,19 +206,15 @@ namespace BluehatGames
 
                     // URL -> 'emailLoginVerify' or 'login'
                     if (URL == ApiUrl.emailLoginVerify)
-                    {
                         SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._EMAIL_AUTHENTICATING);
-                    }
                     else
-                    {
                         SaveClientInfo(PlayerPrefsKey.key_authStatus, AuthStatus._JOIN_COMPLETED);
-                    }
                 }
             }
         }
 
 
-        bool IsValidInputData(string inputEmail)
+        private bool IsValidInputData(string inputEmail)
         {
             // warn email
             if (false == IsValidEmail(inputEmail))
@@ -260,7 +229,8 @@ namespace BluehatGames
         // check valid email
         private bool IsValidEmail(string email)
         {
-            bool valid = Regex.IsMatch(email, @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
+            var valid = Regex.IsMatch(email,
+                @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
             return valid;
         }
     }

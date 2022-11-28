@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace BluehatGames
@@ -16,21 +12,15 @@ namespace BluehatGames
         public AudioClip upperButtonSound;
 
 
-        void Start()
+        private void Start()
         {
-
             btn_ranking.onClick.AddListener(() =>
             {
                 SoundManager.instance.PlayEffectSound(upperButtonSound);
                 rankingPanel.SetActive(true);
             });
 
-            btn_ranking_pannel_close.onClick.AddListener(() =>
-            {
-                rankingPanel.SetActive(false);
-            });
+            btn_ranking_pannel_close.onClick.AddListener(() => { rankingPanel.SetActive(false); });
         }
-
-
     }
 }

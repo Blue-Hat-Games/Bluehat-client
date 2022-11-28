@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 namespace BluehatGames
 {
     public class SoundManager : MonoBehaviour
     {
-        public static SoundManager instance = null;
+        public static SoundManager instance;
         public AudioSource[] audioSources;
 
         private void Awake()
@@ -13,21 +12,19 @@ namespace BluehatGames
             if (instance == null)
             {
                 instance = this;
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
             else if (instance != this)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
 
         public void PlayEffectSound(AudioClip clip)
         {
-            SoundUtil soundUtil = new SoundUtil();
+            var soundUtil = new SoundUtil();
             if (soundUtil.isSoundEffectOn())
-            {
-                for (int i = 0; i < audioSources.Length; i++)
-                {
+                for (var i = 0; i < audioSources.Length; i++)
                     if (audioSources[i].isPlaying == false)
                     {
                         audioSources[i].clip = clip;
@@ -35,10 +32,6 @@ namespace BluehatGames
 
                         break;
                     }
-                }
-            }
-
         }
     }
-
 }

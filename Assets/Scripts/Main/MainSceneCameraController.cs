@@ -1,18 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class MainSceneCameraController : MonoBehaviour
 {
-    public GameObject target;       // 타겟이 될 게임오브젝트
-    private Vector3 point = Vector3.zero;   // 타겟의 위치(바라볼 위치)
+    public GameObject target; // 타겟이 될 게임오브젝트
 
-    private float rotationX = 0.0f;         // X축 회전값
-    private float rotationY = 0.0f;         // Y축 회전값
-    private float speed = 100.0f;           // 회전속도
+    public float maxUp;
+    public float maxDown;
+    private Vector3 point = Vector3.zero; // 타겟의 위치(바라볼 위치)
 
-    void Start()
+    private float rotationX; // X축 회전값
+    private float rotationY; // Y축 회전값
+    private readonly float speed = 100.0f; // 회전속도
+
+    private void Start()
     {
         // 바라볼 위치 얻기
         point = target.transform.position;
@@ -27,20 +28,14 @@ public class MainSceneCameraController : MonoBehaviour
 
         // 회전후 타겟 바라보기
         transform.LookAt(point);
-
     }
 
-    public float maxUp;
-    public float maxDown;
-    void Update()
+    private void Update()
     {
         // 마우스가 눌러지면,
         if (Input.GetMouseButton(0))
         {
-            if(EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
+            if (EventSystem.current.IsPointerOverGameObject()) return;
             // 회전후 타겟 바라보기
             transform.LookAt(point);
 
@@ -48,14 +43,9 @@ public class MainSceneCameraController : MonoBehaviour
             var horizontalAxis = Input.GetAxis("Mouse X") * Time.deltaTime * speed;
             var verticalAxis = Input.GetAxis("Mouse Y") * Time.deltaTime * speed;
 
-            if(rotationY + verticalAxis > maxUp)
-            {
+            if (rotationY + verticalAxis > maxUp)
                 verticalAxis = maxUp - rotationY;
-            }
-            else if(rotationY + verticalAxis < maxDown)
-            {
-                verticalAxis = maxDown - rotationY;
-            }
+            else if (rotationY + verticalAxis < maxDown) verticalAxis = maxDown - rotationY;
 
             // 각 축으로 회전
             // Y축은 마우스를 내릴때 카메라는 올라가야 하므로 반대로 적용
@@ -63,7 +53,6 @@ public class MainSceneCameraController : MonoBehaviour
             transform.RotateAround(point, Vector3.up, horizontalAxis);
 
             rotationY += verticalAxis;
-
         }
     }
 }

@@ -1,11 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 
 namespace BluehatGames
 {
@@ -25,6 +18,7 @@ namespace BluehatGames
         {
             PlayerPrefs.SetInt(PlayerPrefsKey.key_SoundEffect, 1);
         }
+
         public void turnOffSoundEffect()
         {
             PlayerPrefs.SetInt(PlayerPrefsKey.key_SoundEffect, 0);

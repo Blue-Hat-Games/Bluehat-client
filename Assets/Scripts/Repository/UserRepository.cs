@@ -1,6 +1,3 @@
-using UnityEngine;
-
-
 namespace BluehatGames
 {
     public static class UserRepository

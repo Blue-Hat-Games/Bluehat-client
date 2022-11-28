@@ -3,18 +3,17 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
 namespace BluehatGames
 {
     public class MissionUtils : MonoBehaviour
     {
         private string eventName;
+
         public void sendGetEggEvent(int eggCount)
         {
-            eventName = "getEgg" + eggCount.ToString();
+            eventName = "getEgg" + eggCount;
             Debug.Log("sendGetEggEvent : " + eventName);
             StartCoroutine(MissionEventCoroutine(eventName));
-
         }
 
         public void createWalletEvent()
@@ -33,19 +32,20 @@ namespace BluehatGames
 
         private IEnumerator MissionEventCoroutine(string eventName)
         {
-            using (UnityWebRequest request = UnityWebRequest.Post(ApiUrl.setCompleteQuest, ""))
+            using (var request = UnityWebRequest.Post(ApiUrl.setCompleteQuest, ""))
             {
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                request.downloadHandler = new DownloadHandlerBuffer();
                 request.SetRequestHeader("Authorization", AccessToken.GetAccessToken());
                 request.SetRequestHeader("Content-Type", "application/json");
 
-                string json = "{\"event\":\"" + eventName + "\"}";
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                var json = "{\"event\":\"" + eventName + "\"}";
+                var bodyRaw = Encoding.UTF8.GetBytes(json);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
                 yield return request.SendWebRequest();
 
-                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+                if (request.result == UnityWebRequest.Result.ConnectionError ||
+                    request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log(request);
                     Debug.Log(request.error);
@@ -56,8 +56,5 @@ namespace BluehatGames
                 }
             }
         }
-
-
-
     }
 }

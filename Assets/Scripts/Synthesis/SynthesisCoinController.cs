@@ -1,16 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Networking;
 using System.Text;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 namespace BluehatGames
 {
     public class SynthesisCoinController : MonoBehaviour
     {
         public Text coinText;
-        void Start()
+
+        private void Start()
         {
             Debug.Log("SynthesisCoinController Start");
             coinText.text = UserRepository.GetCoin().ToString();
@@ -24,22 +24,22 @@ namespace BluehatGames
 
         private IEnumerator UpdateCoinData(string URL)
         {
-            using(UnityWebRequest request = UnityWebRequest.Post(URL, ""))
+            using (var request = UnityWebRequest.Post(URL, ""))
             {
                 request.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
                 Debug.Log($"accessToken = {AccessToken.GetAccessToken()}");
                 request.SetRequestHeader("Content-Type", "application/json");
 
-                RequestCoinAndEggFormat requestData = new RequestCoinAndEggFormat();
+                var requestData = new RequestCoinAndEggFormat();
                 requestData.coin = "-1";
                 requestData.egg = "0";
 
-                string json = JsonUtility.ToJson(requestData);
+                var json = JsonUtility.ToJson(requestData);
 
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
+                var bodyRaw = Encoding.UTF8.GetBytes(json);
 
-                request.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                request.downloadHandler = new DownloadHandlerBuffer();
 
                 yield return request.SendWebRequest();
 
@@ -51,13 +51,11 @@ namespace BluehatGames
                 else
                 {
                     Debug.Log(request.downloadHandler.text);
-                    string jsonData = request.downloadHandler.text;
+                    var jsonData = request.downloadHandler.text;
                 }
 
                 request.Dispose();
             }
         }
     }
-
-
 }

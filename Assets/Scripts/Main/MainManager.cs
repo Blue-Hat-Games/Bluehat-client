@@ -1,22 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 namespace BluehatGames
 {
-
     public class MainManager : MonoBehaviour
     {
         public Button btn_synthesis;
         public Button btn_multiplay;
         public Button btn_nftMarket;
 
-        [Header("Setting Button")]
-        public Button btn_setting;
+        [Header("Setting Button")] public Button btn_setting;
+
         public GameObject settingPanel;
         public Button btn_setting_close;
         public Button btn_logout;
@@ -24,32 +22,30 @@ namespace BluehatGames
         public Toggle toggle_sound_effect;
         public Button bnt_change_name;
         public InputField input_name;
-        private DataManager dataManager;
 
-        [Header("Alert Panel")]
-        public Text text_fistAnimal;
+        [Header("Alert Panel")] public Text text_fistAnimal;
+
         public Button AlertDoneBtn;
         public GameObject AlertPanel;
 
-        [Header("Music")]
-        public AudioSource audioSource;
-        private SoundUtil soundUtil;
+        [Header("Music")] public AudioSource audioSource;
+
         public AudioClip multiplayButtonSound;
         public AudioClip upperButtonSound;
         public AudioClip mainButtonSound;
 
-        [Header("Wallet Info alert")]
-        public Image img_btn_wallet_alert;
+        [Header("Wallet Info alert")] public Image img_btn_wallet_alert;
 
-        [Header("User Egg")]
-        public Text eggText;
+        [Header("User Egg")] public Text eggText;
 
         public GameObject Mission;
+        private DataManager dataManager;
+        private SoundUtil soundUtil;
 
-        void Start()
+        private void Start()
         {
             StartCoroutine(GetUserInfo());
-            dataManager = GameObject.FindObjectOfType<DataManager>();
+            dataManager = FindObjectOfType<DataManager>();
             AlertPanel.SetActive(false);
             soundUtil = new SoundUtil();
 
@@ -97,17 +93,11 @@ namespace BluehatGames
                 settingPanel.SetActive(true);
             });
 
-            btn_setting_close.onClick.AddListener(() =>
-            {
-                settingPanel.SetActive(false);
-            });
+            btn_setting_close.onClick.AddListener(() => { settingPanel.SetActive(false); });
 
-            AlertDoneBtn.onClick.AddListener(() =>
-            {
-                AlertPanel.SetActive(false);
-            });
+            AlertDoneBtn.onClick.AddListener(() => { AlertPanel.SetActive(false); });
 
-            toggle_music.onValueChanged.AddListener((bool value) =>
+            toggle_music.onValueChanged.AddListener(value =>
             {
                 if (value)
                 {
@@ -121,7 +111,7 @@ namespace BluehatGames
                 }
             });
 
-            toggle_sound_effect.onValueChanged.AddListener((bool value) =>
+            toggle_sound_effect.onValueChanged.AddListener(value =>
             {
                 if (value)
                 {
@@ -134,20 +124,14 @@ namespace BluehatGames
                 }
             });
 
-            bnt_change_name.onClick.AddListener(() =>
-            {
-                StartCoroutine(ChangeUserName(input_name.text));
-            });
+            bnt_change_name.onClick.AddListener(() => { StartCoroutine(ChangeUserName(input_name.text)); });
         }
 
         private void ShowUserInfo(bool showWalletAlert)
         {
             Debug.Log(UserRepository.GetUsername());
             img_btn_wallet_alert.gameObject.SetActive(showWalletAlert);
-            if (UserRepository.GetUsername() != null)
-            {
-                input_name.text = UserRepository.GetUsername();
-            }
+            if (UserRepository.GetUsername() != null) input_name.text = UserRepository.GetUsername();
             eggText.text = UserRepository.GetEgg().ToString();
         }
 
@@ -166,26 +150,25 @@ namespace BluehatGames
                 var jsonData = webRequest.downloadHandler.text;
                 var user = JsonUtility.FromJson<User>(jsonData);
                 UserRepository.SetUserInfo(user.username, user.coin, user.egg);
-                bool noWallet = user.wallet_address is "" or null;
+                var noWallet = user.wallet_address is "" or null;
                 ShowUserInfo(noWallet);
             }
         }
 
 
-
         public IEnumerator ChangeUserName(string new_name)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Post(ApiUrl.ChangeUserName, ""))
+            using (var webRequest = UnityWebRequest.Post(ApiUrl.ChangeUserName, ""))
             {
                 webRequest.SetRequestHeader(ApiUrl.AuthGetHeader, AccessToken.GetAccessToken());
                 webRequest.SetRequestHeader("Content-Type", "application/json");
 
-                string json = "{\"username\":\"" + new_name + "\"}";
+                var json = "{\"username\":\"" + new_name + "\"}";
                 Debug.Log(json);
 
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-                webRequest.uploadHandler = (UploadHandler)new UploadHandlerRaw(bodyRaw);
-                webRequest.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+                var bodyRaw = Encoding.UTF8.GetBytes(json);
+                webRequest.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
 
                 yield return webRequest.SendWebRequest();
 
@@ -195,13 +178,12 @@ namespace BluehatGames
                 }
                 else
                 {
-                    string responseText = webRequest.downloadHandler.text;
+                    var responseText = webRequest.downloadHandler.text;
                     Debug.Log(responseText);
-                    MissionUtils missionResult = Mission.GetComponent<MissionUtils>();
+                    var missionResult = Mission.GetComponent<MissionUtils>();
                     missionResult.createWalletEvent();
                 }
             }
         }
     }
-
 }
